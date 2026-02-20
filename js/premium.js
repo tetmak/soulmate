@@ -22,10 +22,10 @@
     // ═══════════════════════════════════════════════════════════
     //    YAPILANDIRMA — Paddle Dashboard'dan al
     // ═══════════════════════════════════════════════════════════
-    var PADDLE_CLIENT_TOKEN = 'live_59edd8bebc28b6a13576a572172';           // Paddle → Developer Tools → Authentication → Client-side token
-    var PADDLE_PRICE_MONTHLY = 'pri_01khyj8vyqh159d29723wzv3tc';          // TRY 79.99/Monthly
-    var PADDLE_PRICE_YEARLY = 'pri_01khyjaczgd78ad1qnjhn344ph';           // $599.99/Yearly (⚠️ USD — TRY'ye çevrilmeli)
-    var PADDLE_ENV = 'production';             // 'sandbox' veya 'production'
+    var PADDLE_CLIENT_TOKEN = 'test_1917c8739eeec42ab948b39da0d';           // Paddle Sandbox → Developer Tools → Authentication → Client-side token
+    var PADDLE_PRICE_MONTHLY = 'pri_01khyq04yfrd52w6qn8bar13q1';          // Sandbox Aylık
+    var PADDLE_PRICE_YEARLY = 'pri_01khyq0rwvw8cttc184xas0h5t';           // Sandbox Yıllık
+    var PADDLE_ENV = 'sandbox';             // 'sandbox' veya 'production'
 
     // ─── FREE LİMİTLER ──────────────────────────────────────
     var FREE_LIMITS = {
