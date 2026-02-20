@@ -67,7 +67,7 @@
             await loadPaddleSDK();
             if (!window.Paddle) return;
 
-            if (PADDLE_ENV === 'sandbox') {
+            if (PADDLE_ENV === 'sandbox' && window.Paddle.Environment && window.Paddle.Environment.set) {
                 window.Paddle.Environment.set('sandbox');
             }
             window.Paddle.Initialize({
