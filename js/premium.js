@@ -82,7 +82,7 @@
     // ─── PADDLE EVENT HANDLER ──────────────────────────────────
     function handlePaddleEvent(event) {
         if (!event || !event.name) return;
-        console.log('[Premium] Paddle event:', event.name);
+        console.log('[Premium] Paddle event:', event.name, event.data || '', event.type || '');
 
         if (event.name === 'checkout.completed') {
             var data = event.data;
