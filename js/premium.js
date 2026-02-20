@@ -25,7 +25,7 @@
     var PADDLE_CLIENT_TOKEN = 'apikey_01khykwe086v8rgdcp2mw4v8zf';           // Paddle → Developer Tools → Authentication → Client-side token
     var PADDLE_PRICE_MONTHLY = 'pri_01khyjaczgd78ad1qnjhn344ph';          // Paddle → Catalog → Prices → aylık fiyat ID (pri_...)
     var PADDLE_PRICE_YEARLY = 'pri_01khyj8vyqh159d29723wzv3tc';           // Paddle → Catalog → Prices → yıllık fiyat ID (pri_...)
-    var PADDLE_ENV = 'sandbox';             // 'sandbox' veya 'production'
+    var PADDLE_ENV = 'production';             // 'sandbox' veya 'production'
 
     // ─── FREE LİMİTLER ──────────────────────────────────────
     var FREE_LIMITS = {
