@@ -168,17 +168,44 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (selectedPackage) {
             loadingEl.innerHTML = '<div class="text-center py-6"><p class="text-white/40 text-sm">Aşağıdaki butona basarak ödemeye geç</p><p class="text-white/20 text-xs mt-1">Stripe güvenli ödeme penceresi açılacak</p></div>';
         } else {
-            loadingEl.innerHTML = '<div class="text-center py-6"><p class="text-white/40 text-sm">Paket bulunamadı</p><p class="text-white/20 text-xs mt-1">Lütfen RevenueCat Dashboard\'da ürünleri yapılandırın</p></div>';
+            loadingEl.innerHTML = '<div class="text-center py-6"><p class="text-white/40 text-sm">Paket bulunamadı</p><p class="text-white/20 text-xs mt-1">Lütfen daha sonra tekrar deneyin.</p></div>';
         }
     } else {
-        // SDK hazır değil — net bilgi ver
+        // SDK hazır değil — yeniden deneme seçeneği sun
         loadingEl.innerHTML = '<div class="text-center py-6">' +
-            '<span class="material-symbols-outlined text-amber-400/50 text-3xl mb-3" style="display:block">construction</span>' +
-            '<p class="text-white/60 text-sm font-bold mb-1">Ödeme sistemi henüz aktif değil</p>' +
-            '<p class="text-white/25 text-xs mb-4">RevenueCat + Stripe bağlantısı kurulunca otomatik çalışacak.</p>' +
-            '<button onclick="if(window.premium){window.premium.simulate(30);}" class="px-5 py-2 rounded-full text-xs font-bold" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)">' +
-            '🧪 Test: 30 Gün Premium Simüle Et</button>' +
+            '<span class="material-symbols-outlined text-amber-400/50 text-3xl mb-3" style="display:block">sync_problem</span>' +
+            '<p class="text-white/60 text-sm font-bold mb-1">Ödeme sistemi yükleniyor...</p>' +
+            '<p class="text-white/25 text-xs mb-4">Bağlantı kurulamadıysa tekrar deneyin.</p>' +
+            '<button id="btn-retry-rc" class="px-5 py-2 rounded-full text-xs font-bold" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.2)">' +
+            'Tekrar Dene</button>' +
             '</div>';
+        // Retry butonu — RC SDK'yı yeniden başlat
+        setTimeout(function() {
+            var retryBtn = document.getElementById('btn-retry-rc');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', async function() {
+                    retryBtn.textContent = 'Yükleniyor...';
+                    retryBtn.disabled = true;
+                    try {
+                        rcReady = await window.premium.init();
+                        if (rcReady) {
+                            selectedPackage = await window.premium.getPackageByPlan(plan);
+                            if (selectedPackage) {
+                                loadingEl.innerHTML = '<div class="text-center py-6"><p class="text-white/40 text-sm">Aşağıdaki butona basarak ödemeye geç</p><p class="text-white/20 text-xs mt-1">Stripe güvenli ödeme penceresi açılacak</p></div>';
+                            } else {
+                                loadingEl.innerHTML = '<div class="text-center py-6"><p class="text-white/40 text-sm">Paket bulunamadı</p><p class="text-white/20 text-xs mt-1">Lütfen daha sonra tekrar deneyin.</p></div>';
+                            }
+                        } else {
+                            retryBtn.textContent = 'Tekrar Dene';
+                            retryBtn.disabled = false;
+                        }
+                    } catch(e) {
+                        retryBtn.textContent = 'Tekrar Dene';
+                        retryBtn.disabled = false;
+                    }
+                });
+            }
+        }, 0);
     }
 
     // ─── Ödeme butonu ────────────────────────────────────────
@@ -192,7 +219,27 @@ document.addEventListener('DOMContentLoaded', async function() {
             var result = await window.premium.purchasePackage(selectedPackage, paymentContainer);
 
             if (result.success) {
-                // Başarı!
+                // Başarılı ödeme — Supabase'e de kaydet
+                try {
+                    var session = await window.auth.getSession();
+                    if (session && session.user) {
+                        var days = plan === 'yearly' ? 365 : 30;
+                        var expires = new Date();
+                        expires.setDate(expires.getDate() + days);
+                        await window.supabaseClient.from('subscriptions').upsert({
+                            user_id: session.user.id,
+                            plan: plan,
+                            status: 'active',
+                            starts_at: new Date().toISOString(),
+                            expires_at: expires.toISOString(),
+                            amount: plan === 'yearly' ? 59999 : 7999,
+                            currency: 'TRY',
+                            payment_provider: 'revenuecat',
+                            updated_at: new Date().toISOString()
+                        });
+                    }
+                } catch(e) { console.warn('[Checkout] Supabase sync error:', e); }
+
                 document.getElementById('sec-checkout').style.display = 'none';
                 document.getElementById('sec-success').style.display = 'flex';
                 return;
@@ -208,38 +255,32 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
 
-        // ─── FALLBACK: SDK yoksa simülasyon (demo mod) ───────
-        await new Promise(function(r) { setTimeout(r, 2000); });
-        var days = plan === 'yearly' ? 365 : 30;
-        var expires = new Date();
-        expires.setDate(expires.getDate() + days + 3);
-        localStorage.setItem('kader_premium', JSON.stringify({
-            active: true,
-            plan: plan,
-            expires_at: expires.toISOString(),
-            cached_at: new Date().toISOString(),
-            source: 'simulated'
-        }));
-        // Supabase'e de kaydet
-        try {
-            var session = await window.auth.getSession();
-            if (session && session.user) {
-                await window.supabaseClient.from('subscriptions').upsert({
-                    user_id: session.user.id,
-                    plan: plan,
-                    status: 'active',
-                    starts_at: new Date().toISOString(),
-                    expires_at: expires.toISOString(),
-                    amount: plan === 'yearly' ? 59999 : 7999,
-                    currency: 'TRY',
-                    payment_provider: 'simulated',
-                    updated_at: new Date().toISOString()
-                });
-            }
-        } catch(e) {}
+        // SDK hazır değil veya paket bulunamadı — RC SDK üzerinden doğrudan satın almayı dene
+        if (!rcReady) {
+            try {
+                rcReady = await window.premium.init();
+                if (rcReady) {
+                    selectedPackage = await window.premium.getPackageByPlan(plan);
+                }
+            } catch(e) {}
+        }
 
-        document.getElementById('sec-checkout').style.display = 'none';
-        document.getElementById('sec-success').style.display = 'flex';
+        if (rcReady && selectedPackage) {
+            // RC yeniden başlatıldı, tekrar ödemeyi dene
+            var result = await window.premium.purchasePackage(selectedPackage, paymentContainer);
+            if (result.success) {
+                document.getElementById('sec-checkout').style.display = 'none';
+                document.getElementById('sec-success').style.display = 'flex';
+                return;
+            }
+        }
+
+        // Hala başarısız — kullanıcıya bilgi ver
+        btn.disabled = false;
+        document.getElementById('btn-pay-label').innerHTML = '<span class="material-symbols-outlined text-sm">error_outline</span> Ödeme sistemi bağlanamadı';
+        setTimeout(function() {
+            document.getElementById('btn-pay-label').textContent = 'Tekrar Dene';
+        }, 3000);
     });
 
     // ─── Keşfe başla ─────────────────────────────────────────

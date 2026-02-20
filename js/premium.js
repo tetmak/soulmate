@@ -51,7 +51,7 @@
         return new Promise(function(resolve) {
             if (window.Purchases) { resolve(); return; }
             var script = document.createElement('script');
-            script.src = 'https://unpkg.com/@revenuecat/purchases-js@latest/dist/index.umd.js';
+            script.src = 'https://unpkg.com/@revenuecat/purchases-js/dist/index.js';
             script.onload = resolve;
             script.onerror = function() {
                 console.warn('[Premium] RevenueCat SDK yüklenemedi, fallback moda geçiliyor');
@@ -62,7 +62,7 @@
     }
 
     async function initRC(appUserId) {
-        if (RC_API_KEY === 'sk_WvjBmSPIwaOUODxTUkiCIxkcRcyyI') {
+        if (!RC_API_KEY) {
             console.info('[Premium] RevenueCat API key ayarlanmamış — localStorage fallback aktif');
             return;
         }
@@ -167,7 +167,7 @@
     function startPurchase(plan) {
         plan = plan || 'yearly';
 
-        // 1. RevenueCat Web Purchase Link
+        // 1. RevenueCat Web Purchase Link (hosted checkout)
         if (RC_PURCHASE_LINK) {
             var url = RC_PURCHASE_LINK;
             var uid = localStorage.getItem('kader_rc_user_id') || '';
@@ -183,16 +183,19 @@
                     var pkg = plan === 'yearly' ? off.current.annual : off.current.monthly;
                     if (pkg) return rcInstance.purchase({ rcPackage: pkg });
                 }
-                window.location.href = 'premium_checkout_summary.html?plan=' + plan;
+                // Paket bulunamadı — checkout sayfasına yönlendir
+                window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
             }).then(function(r) {
                 if (r) { refreshCustomerInfo(); window.location.reload(); }
-            }).catch(function() {
-                window.location.href = 'premium_checkout_summary.html?plan=' + plan;
+            }).catch(function(e) {
+                if (e && e.message === 'cancelled') return;
+                // SDK hatası — checkout sayfasına yönlendir
+                window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
             });
             return;
         }
 
-        // 3. Fallback checkout
+        // 3. SDK hazır değil — checkout sayfasına yönlendir (ödeme RC SDK üzerinden yapılacak)
         window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
     }
 
