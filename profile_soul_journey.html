@@ -370,7 +370,7 @@
     // ─── Logout ───────────────────────────────────────────────
     document.getElementById('btn-logout').addEventListener('click', async function() {
         try {
-            localStorage.removeItem('kader_user_data');
+            // kader_user_data SİLİNMEZ — tekrar login'de form sormasın diye
             localStorage.removeItem('kader_compat_data');
             localStorage.removeItem('kader_active_analysis');
             await window.auth.signOut();
