@@ -67,14 +67,13 @@
             await loadPaddleSDK();
             if (!window.Paddle) return;
 
-            var initConfig = {
+            if (PADDLE_ENV === 'sandbox') {
+                window.Paddle.Environment.set('sandbox');
+            }
+            window.Paddle.Initialize({
                 token: PADDLE_CLIENT_TOKEN,
                 eventCallback: handlePaddleEvent
-            };
-            if (PADDLE_ENV === 'sandbox') {
-                initConfig.environment = 'sandbox';
-            }
-            window.Paddle.Initialize(initConfig);
+            });
             paddleReady = true;
             console.log('[Premium] Paddle başlatıldı (' + PADDLE_ENV + ')');
         } catch(e) { console.warn('[Premium] Paddle init error:', e); }
