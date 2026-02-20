@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <!-- Anti-cache meta tags for daily vibration refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Mystic Numerology Home</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#FAC638", gold: "#D4AF37", "background-light": "#f8f8f5", "background-dark": "#231e0f" }, fontFamily: { display: "Montserrat" }, borderRadius: { DEFAULT: "1rem", lg: "2rem", xl: "3rem", full: "9999px" } } } };
+    </script>
+    <style type="text/tailwindcss">
+        .ethereal-glow{background:radial-gradient(circle at top right,rgba(127,19,236,0.4),transparent),radial-gradient(circle at bottom left,rgba(212,175,55,0.1),transparent)}
+.cosmic-card{background:linear-gradient(135deg,rgba(33,28,39,0.9) 0%,rgba(25,16,34,1) 100%);border:1px solid rgba(127,19,236,0.3)}
+.nebula-bg{background-image:url(https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI);background-size:cover;background-position:center}
+.ay-donumu-bg{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#000 100%);position:relative;overflow:hidden}
+.ay-donumu-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(59,130,246,0.2),transparent 70%);mix-blend-mode:screen}
+.soul-mate-bg{background:linear-gradient(135deg,#be123c 0%,#ec4899 50%,#7f1d1d 100%);position:relative;overflow:hidden}
+.soul-mate-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.15),transparent 60%);mix-blend-mode:overlay}
+.material-symbols-outlined{font-variation-settings:"FILL" 0,"wght" 300,"GRAD" 0,"opsz" 24}
+body{min-height:max(884px,100dvh)}
+</style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen flex flex-col pb-32">
+
+    <header
+        class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 justify-between border-b border-white/5">
+        <div class="flex size-12 shrink-0 items-center">
+            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/40 p-0.5"
+                style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuAGrJaE-cp9eHjefmtHGESdJk9CWy2NFzzhBNOA7LYn2PTmgVFspUs0Q4A9XuhfvIbiTUVk9IMQjxAjthOIMo0fSdYy5zcxXlorNloUJDIYO5kbf2efCxuEoY6Yy28ybvxJGqdR4PKDuHYnE4GUWRdFMG5DhTnOY_MedsKyDMEfo5_jDSU87VufxhOPDczN0sLKtwraKEjs30T_hJ8P9aiEjY9Jlaqg9tvR9zeoARpdz30rs6Z7cUV7rV-JS_bUegSXDp-HhJtxoQlg");'>
+            </div>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+            <h2 class="text-white text-base font-bold leading-tight tracking-[0.05em] uppercase">Mystic</h2>
+            <p class="text-[10px] text-gold font-medium tracking-[0.2em] uppercase">Numerology</p>
+        </div>
+        <div class="flex w-12 items-center justify-end">
+            <button id="btn-notif"
+                class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/5 text-white hover:bg-white/10 transition-colors">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto">
+        <div class="px-6 pt-8 pb-4">
+            <p class="text-gold text-xs font-medium tracking-widest uppercase mb-1">Celestial Guidance</p>
+            <h1 class="text-white tracking-tight text-3xl font-bold leading-tight">The Universe is aligned, <span id="home-user-name">Alex</span></h1>
+        </div>
+        <div class="px-4 py-4">
+            <div class="relative overflow-hidden rounded-xl ethereal-glow shadow-2xl border border-white/10">
+                <div
+                    class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none">
+                </div>
+                <div class="p-8 flex flex-col items-center text-center">
+                    <p class="text-white/60 text-xs font-bold tracking-[0.3em] uppercase mb-6">Personal Vibration</p>
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 blur-3xl bg-primary/40 rounded-full scale-150"></div>
+                        <span
+                            class="relative text-white text-8xl font-black leading-none drop-shadow-[0_0_20px_rgba(127,19,236,0.8)]" id="vib-number">8</span>
+                    </div>
+                    <h3 class="text-gold text-2xl font-bold tracking-widest uppercase mb-2" id="vib-title">Abundance</h3>
+                    <p class="text-white/70 text-sm max-w-[240px] leading-relaxed mb-8" id="vib-desc">Your energy today attracts prosperity and material balance. Focus on manifestation.</p>
+                    <button id="btn-deep-insight"
+                        class="flex min-w-[180px] cursor-pointer items-center justify-center rounded-full h-12 px-8 bg-primary text-white text-sm font-bold tracking-widest uppercase shadow-lg shadow-primary/30 hover:brightness-110 active:scale-95 transition-all">
+                        Deep Insight
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between px-6 pt-6 pb-4">
+            <h3 class="text-white text-lg font-bold leading-tight tracking-tight">Cosmic Daily Forecast</h3>
+            <button id="btn-details" class="text-gold text-xs font-bold uppercase tracking-widest">Details</button>
+        </div>
+
+        <div class="px-4 space-y-4 pb-8">
+            <div id="card-celestial"
+                class="relative overflow-hidden rounded-2xl nebula-bg h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#1a1625] via-[#1a1625]/60 to-transparent"></div>
+                <div class="relative z-10 w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-primary text-sm">energy_savings_leaf</span>
+                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Cosmic Daily Energy
+                        </p>
+                    </div>
+                    <h4 class="text-white text-xl font-bold mb-1">Celestial High Tide</h4>
+                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Intuition is peaking today.
+                        The lunar alignment suggests a breakthrough in personal projects.</p>
+                </div>
+                <div
+                    class="absolute top-4 right-4 bg-primary/20 backdrop-blur-md rounded-full px-3 py-1 border border-primary/30">
+                    <p class="text-primary text-[10px] font-bold uppercase">Active</p>
+                </div>
+            </div>
+
+            <div id="card-lunar"
+                class="relative overflow-hidden rounded-2xl ay-donumu-bg h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80">
+                </div>
+                <div
+                    class="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] pointer-events-none">
+                </div>
+                <div class="relative z-10 w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-blue-300 text-sm">nights_stay</span>
+                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Ay Dönümü</p>
+                    </div>
+                    <h4 class="text-white text-xl font-bold mb-1">Lunar Cycle Return</h4>
+                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Track your emotional cycles
+                        through the lens of the lunar return cycle.</p>
+                </div>
+                <div
+                    class="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20">
+                    <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
+                </div>
+            </div>
+
+            <div id="card-soulmate"
+                class="relative overflow-hidden rounded-2xl soul-mate-bg h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#7f1d1d] via-transparent to-transparent opacity-80">
+                </div>
+                <div
+                    class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] pointer-events-none">
+                </div>
+                <div class="relative z-10 w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-pink-200 text-sm">hub</span>
+                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Soul Mate Analizi</p>
+                    </div>
+                    <h4 class="text-white text-xl font-bold mb-1">Destined Connections</h4>
+                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Discover the numerical
+                        threads connecting you to your destined companion.</p>
+                </div>
+                <div
+                    class="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20">
+                    <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
+                </div>
+            </div>
+
+            <div id="card-cosmic-match"
+                class="relative overflow-hidden rounded-2xl h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer"
+                style="background:linear-gradient(135deg,#4c1d95 0%,#7e22ce 40%,#a855f7 100%);position:relative;overflow:hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#2e1065] via-transparent to-transparent opacity-80">
+                </div>
+                <div
+                    class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] pointer-events-none">
+                </div>
+                <div class="relative z-10 w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-purple-200 text-sm">auto_awesome</span>
+                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Cosmic Match</p>
+                    </div>
+                    <h4 class="text-white text-xl font-bold mb-1">Ruh Eşini Keşfet</h4>
+                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Günlük kozmik eşleşme, streak ödülleri ve uyumluluk radarı.</p>
+                </div>
+                <div
+                    class="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20">
+                    <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
+                </div>
+                <div class="absolute top-4 left-4 bg-purple-500/30 backdrop-blur-md rounded-full px-2.5 py-1 border border-purple-300/20">
+                    <span class="text-purple-100 text-[9px] font-black uppercase tracking-widest">Yeni</span>
+                </div>
+            </div>
+
+            <!-- Quiz Arena Card -->
+            <div id="card-quiz-arena"
+                class="relative overflow-hidden rounded-2xl h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer"
+                style="background:linear-gradient(135deg,#065f46 0%,#059669 40%,#34d399 100%);position:relative;overflow:hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#022c22] via-transparent to-transparent opacity-80"></div>
+                <div class="relative z-10 w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-emerald-200 text-sm">swords</span>
+                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Quiz Arena</p>
+                    </div>
+                    <h4 class="text-white text-xl font-bold mb-1">Bilgini Test Et</h4>
+                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Quiz çöz, düello yap, rütbe kazan, ligde yüksel!</p>
+                </div>
+                <div class="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20">
+                    <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
+                </div>
+                <div id="home-rank-badge" class="absolute top-4 left-4 backdrop-blur-md rounded-full px-2.5 py-1 border" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)">
+                    <span class="text-white/80 text-[9px] font-black uppercase tracking-widest" id="home-rank-text">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Günlük Görevler Mini -->
+        <div class="px-4 pb-4" id="home-quests-section">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest">Günlük Görevler</p>
+                <div id="quest-bonus" class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-amber-400/50 text-xs">redeem</span>
+                    <span class="text-white/20 text-[10px]">3/3 = Kozmik Sandık</span>
+                </div>
+            </div>
+            <div id="home-quests-list" class="space-y-2"></div>
+        </div>
+                <div class="absolute -right-8 -top-8 size-32 bg-gold/5 rounded-full blur-3xl"></div>
+                <span class="material-symbols-outlined text-gold opacity-50 mb-3">auto_awesome</span>
+                <p class="text-white/90 text-lg italic leading-relaxed font-light mb-4">"The soul speaks in the language
+                    of numbers. Today, listen to the silent vibrations of the world around you."</p>
+                <div class="flex items-center gap-2">
+                    <div class="h-px w-8 bg-gold/30"></div>
+                    <p class="text-gold text-[10px] font-bold uppercase tracking-[0.2em]">The Oracle</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Bottom Nav + Bubble Menu -->
+    <script src="js/bottom-nav.js"></script>
+
+    <script>
+        document.getElementById('btn-deep-insight').onclick = function () { window.location.href = 'name_numerology_breakdown_1.html'; };
+        document.getElementById('btn-details').onclick = function () { window.location.href = 'numerology_meaning_chart.html'; };
+        document.getElementById('btn-notif').onclick = function () { window.location.href = 'app_settings_preferences.html'; };
+        document.getElementById('card-celestial').onclick = function () { window.location.href = 'cosmic_energy_calendar_2.html'; };
+        document.getElementById('card-lunar').onclick = function () { window.location.href = 'lunar_phase_energy_tracker.html'; };
+        document.getElementById('card-soulmate').onclick = function () { window.location.href = 'compatibility_input_form.html'; };
+        document.getElementById('card-cosmic-match').onclick = function () { window.location.href = 'cosmic_match.html'; };
+        document.getElementById('card-quiz-arena').onclick = function () { window.location.href = 'numerology_quiz.html'; };
+
+        // Gamification home entegrasyonu
+        if (window.gamification) {
+            var rp = window.gamification.getRankProgress();
+            var rb = document.getElementById('home-rank-text');
+            if (rb) {
+                rb.textContent = rp.current.name;
+                rb.style.color = rp.current.color;
+            }
+            var badge = document.getElementById('home-rank-badge');
+            if (badge) badge.style.borderColor = rp.current.color + '40';
+
+            // Günlük görevler
+            var quests = window.gamification.getQuests();
+            var ql = document.getElementById('home-quests-list');
+            if (ql && quests) {
+                ql.innerHTML = '';
+                quests.forEach(function(q) {
+                    var el = document.createElement('div');
+                    el.className = 'flex items-center gap-3 px-4 py-3 rounded-xl border transition-all';
+                    el.style.cssText = q.completed
+                        ? 'background:rgba(34,197,94,0.05);border-color:rgba(34,197,94,0.15)'
+                        : 'background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05)';
+                    el.innerHTML =
+                        '<span class="material-symbols-outlined text-base" style="color:' + (q.completed ? '#22c55e' : 'rgba(255,255,255,0.2)') + ';font-variation-settings:\'FILL\' ' + (q.completed ? '1' : '0') + '">' + (q.completed ? 'check_circle' : q.icon) + '</span>' +
+                        '<span class="flex-1 text-xs font-medium" style="color:' + (q.completed ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)') + ';' + (q.completed ? 'text-decoration:line-through' : '') + '">' + q.name + '</span>' +
+                        '<span class="text-xs font-bold" style="color:' + (q.completed ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.15)') + '">+' + q.xp + ' XP</span>';
+                    ql.appendChild(el);
+                });
+            }
+        }
+    </script>
+
+    <!-- ═══ GÜNLÜK KİŞİSEL VİBRASYON MOTORU ═══ -->
+    <script>
+    (function() {
+        // ─── Numeroloji Yardımcıları ──────────────────────────
+        function reduce(n) {
+            if (n===11||n===22||n===33) return n;
+            while (n > 9) {
+                n = String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                if (n===11||n===22||n===33) break;
+            }
+            return n;
+        }
+        function calcLP(dateStr) {
+            if (!dateStr) return null;
+            return reduce(dateStr.replace(/\D/g,'').split('').reduce(function(a,d){return a+parseInt(d);},0));
+        }
+
+        // Kişisel Yıl = reduce(doğum_gün + doğum_ay + mevcut_yıl)
+        function calcPersonalYear(birthDate, year) {
+            var parts = birthDate.split('-');
+            if (parts.length < 3) return null;
+            var bDay = parseInt(parts[2]);
+            var bMonth = parseInt(parts[1]);
+            return reduce(bDay + bMonth + parseInt(String(year).split('').reduce(function(a,d){return a+parseInt(d);},0)));
+        }
+        // Kişisel Ay = reduce(kişisel_yıl + mevcut_ay)
+        function calcPersonalMonth(pyear, month) { return reduce(pyear + month); }
+        // Kişisel Gün = reduce(kişisel_ay + mevcut_gün)
+        function calcPersonalDay(pmonth, day) { return reduce(pmonth + day); }
+
+        // ─── Vibrasyon Temaları ───────────────────────────────
+        var VIB_THEMES = {
+            1:  { title: 'NEW BEGINNINGS',    color: '#f2cc0d', glow: 'rgba(242,204,13,0.5)' },
+            2:  { title: 'HARMONY',           color: '#a78bfa', glow: 'rgba(167,139,250,0.5)' },
+            3:  { title: 'CREATIVITY',        color: '#fb923c', glow: 'rgba(251,146,60,0.5)'  },
+            4:  { title: 'FOUNDATION',        color: '#4ade80', glow: 'rgba(74,222,128,0.5)'  },
+            5:  { title: 'FREEDOM',           color: '#38bdf8', glow: 'rgba(56,189,248,0.5)'  },
+            6:  { title: 'LOVE & NURTURE',    color: '#f472b6', glow: 'rgba(244,114,182,0.5)' },
+            7:  { title: 'INNER WISDOM',      color: '#818cf8', glow: 'rgba(129,140,248,0.5)' },
+            8:  { title: 'ABUNDANCE',         color: '#f2cc0d', glow: 'rgba(242,204,13,0.5)'  },
+            9:  { title: 'COMPLETION',        color: '#c084fc', glow: 'rgba(192,132,252,0.5)' },
+            11: { title: 'ILLUMINATION',      color: '#e2e8f0', glow: 'rgba(226,232,240,0.5)' },
+            22: { title: 'MASTER BUILDER',    color: '#fbbf24', glow: 'rgba(251,191,36,0.5)'  },
+            33: { title: 'DIVINE LOVE',       color: '#f9a8d4', glow: 'rgba(249,168,212,0.5)' }
+        };
+
+        // Fallback açıklamalar (AI yoksa kullanılır)
+        var VIB_DESC = {
+            1:  'Bugün yeni bir dönem başlatmak için mükemmel enerji. Harekete geçin.',
+            2:  'Uyum ve işbirliği enerjisi güçlü. Dinleyin ve bağlantı kurun.',
+            3:  'Yaratıcılığınız zirveye ulaşıyor. İfade edin, paylaşın.',
+            4:  'Sağlam temeller atmak için güçlü bir gün. Disiplinli olun.',
+            5:  'Değişim ve özgürlük enerjisi aktif. Yeni deneyimlere açık olun.',
+            6:  'Sevgi ve şefkat titreşimleri yüksek. Yakınlarınıza zaman ayırın.',
+            7:  'İçsel sezgi güçlü bugün. Meditasyon ve yansıma için ideal.',
+            8:  'Bolluk ve başarı enerjisi çekiyorsunuz. Tezahüre odaklanın.',
+            9:  'Tamamlanma ve bırakma zamanı. Kapıları nazikçe kapatın.',
+            11: 'Yüksek sezgi ve ilham günü. Evrensel mesajlara kulak verin.',
+            22: 'Büyük vizyonlar için güçlü enerji. Kalıcı şeyler inşa edin.',
+            33: 'Koşulsuz sevgi ve şifa enerjisi yüksek. Başkalarına ilham verin.'
+        };
+
+        // ─── Bugünün Cache Key'i ─────────────────────────────
+        var today = new Date();
+        var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+        
+        // ─── AGGRESSIVE CACHE BYPASS for Opera ────
+        var lastVisit = localStorage.getItem('kader_last_visit_date');
+        
+        // Eğer daha önce hiç ziyaret edilmediyse veya farklı bir günse
+        if (!lastVisit || lastVisit !== todayStr) {
+            console.log('[AGGRESSIVE CACHE FIX] Clearing old cache...', lastVisit, '→', todayStr);
+            
+            // TÜM günlük vibration cache'lerini sil (eski tarihli olanlar dahil)
+            Object.keys(localStorage).forEach(function(key) {
+                if (key.startsWith('kader_daily_vib__')) {
+                    console.log('[Cache Clear] Removing:', key);
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Tarihi kaydet
+            localStorage.setItem('kader_last_visit_date', todayStr);
+            
+            // Eğer URL'de timestamp yoksa ekle ve reload yap
+            var urlParams = new URLSearchParams(window.location.search);
+            var ts = urlParams.get('_t');
+            if (!ts || ts !== todayStr) {
+                var newUrl = window.location.pathname + '?_t=' + todayStr;
+                console.log('[AGGRESSIVE CACHE FIX] Force reload with timestamp:', newUrl);
+                window.location.replace(newUrl);
+                return;
+            }
+        }
+        
+        // Tarihi her zaman güncel tut
+        localStorage.setItem('kader_last_visit_date', todayStr);
+        
+        // ─── DEBUG FUNCTION (Opera kullanıcıları için) ────────
+        // Console'da "window.clearDailyCache()" yazarak çalıştırabilirsiniz
+        window.clearDailyCache = function() {
+            console.log('[Manual Cache Clear] Clearing all daily vibration cache...');
+            Object.keys(localStorage).forEach(function(key) {
+                if (key.startsWith('kader_daily_vib__') || key === 'kader_last_visit_date') {
+                    localStorage.removeItem(key);
+                    console.log('[Manual Cache Clear] Removed:', key);
+                }
+            });
+            console.log('[Manual Cache Clear] Done! Reloading page...');
+            window.location.reload(true);
+        };
+
+        // ─── Kullanıcı Verisi ─────────────────────────────────
+        var ud = null;
+        try { ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null'); } catch(e) {}
+
+        // İsmi her durumda set et
+        var firstName = 'Alex'; // fallback
+        if (ud && ud.name) firstName = ud.name.split(' ')[0];
+        
+        var nameEl = document.getElementById('home-user-name');
+        if (nameEl) nameEl.textContent = firstName;
+
+        // Veri yoksa vibrayon motorunu durdur
+        if (!ud || !ud.name || !ud.birthDate) return;
+
+        var lp = calcLP(ud.birthDate);
+        var py = calcPersonalYear(ud.birthDate, today.getFullYear());
+        var pm = calcPersonalMonth(py, today.getMonth()+1);
+        var pd = calcPersonalDay(pm, today.getDate());
+        
+        // DEBUG: Tüm hesaplamaları console'a yazdır
+        console.log('[VIBRATION DEBUG]', {
+            date: todayStr,
+            birthDate: ud.birthDate,
+            lifePath: lp,
+            personalYear: py,
+            personalMonth: pm,
+            personalDay: pd,
+            'Personal Day (TODAY\'S VIBRATION)': pd
+        });
+
+        var theme = VIB_THEMES[pd] || VIB_THEMES[8];
+        var cacheKey = 'kader_daily_vib__' + todayStr + '__lp' + lp + '__pd' + pd;
+        
+        console.log('[VIBRATION DEBUG] Cache key:', cacheKey);
+        console.log('[VIBRATION DEBUG] Theme:', theme.title);
+
+        // ─── UI: Vibrasyon sayısı ve tema ────────────────────
+
+        var numEl  = document.getElementById('vib-number');
+        var titEl  = document.getElementById('vib-title');
+        var dscEl  = document.getElementById('vib-desc');
+
+        if (numEl) {
+            numEl.textContent = pd;
+            numEl.style.filter = 'drop-shadow(0 0 20px ' + theme.glow + ')';
+        }
+        if (titEl) {
+            titEl.textContent = theme.title;
+            titEl.style.color = theme.color;
+        }
+
+        // ─── Cache kontrolü ───────────────────────────────────
+        var cached = null;
+        try { cached = localStorage.getItem(cacheKey); } catch(e) {}
+
+        if (cached) {
+            // Bugünkü analiz zaten var — direkt yükle
+            if (dscEl) dscEl.textContent = cached;
+            return;
+        }
+
+        // ─── Fallback açıklamayı hemen göster ────────────────
+        if (dscEl) dscEl.textContent = VIB_DESC[pd] || VIB_DESC[8];
+
+        // ─── AI ile kişiselleştirilmiş içerik ────────────────
+        // API key /api/openai proxy'si tarafından server-side ekleniyor
+
+        var prompt = 'Sen Kader uygulamasının numeroloji yorumcususun. Türkçe yaz, 2 kısa cümle (max 25 kelime), mistik ve kişisel ton.' +
+            ' Kullanıcı: ' + ud.name +
+            '. Life Path: ' + lp +
+            '. Kişisel Yıl: ' + py +
+            '. Bugünkü Kişisel Gün: ' + pd + ' (' + (theme.title) + ')' +
+            '. Doğum tarihi: ' + ud.birthDate +
+            '. Bugünün enerjisini bu kişiye özel anlat. Başlık yok, madde işareti yok.';
+
+        fetch('/api/openai', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.8,
+                max_tokens: 80
+            })
+        }).then(function(r){ return r.json(); })
+        .then(function(data) {
+            var text = data.choices && data.choices[0] ? data.choices[0].message.content.trim() : null;
+            if (text && dscEl) {
+                dscEl.style.animation = 'fadeIn 0.6s ease';
+                dscEl.textContent = text;
+                // Cache'e kaydet — bugün boyunca değişmeyecek
+                try { localStorage.setItem(cacheKey, text); } catch(e) {}
+            }
+        }).catch(function(e){ console.warn('Daily vibration AI error:', e); });
+
+    })();
+    </script>
+    <script src="js/numerology-ai.js"></script>
+</body>
+
+</html>

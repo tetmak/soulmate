@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>KADER - Ethereal Celestial Splash Screen</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400&family=Tenor+Sans&family=Inter:wght@300;400&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#EAC67A", "deep-indigo": "#0B0E23", "celestial-blue": "#161B3D" }, fontFamily: { "serif-thin": ["Tenor Sans", "serif"], display: ["Cinzel", "serif"], sans: ["Inter", "sans-serif"] } } } };
+    </script>
+    <style type="text/tailwindcss">
+        :root{--primary-gold:#EAC67A;--soft-glow:rgba(234,198,122,0.4)}
+.ethereal-gradient{background:radial-gradient(circle at center,#1E224F 0%,#0B0E23 70%,#050714 100%)}
+.milky-way{background-image:radial-gradient(1px 1px at 20px 30px,#fff,rgba(0,0,0,0)),radial-gradient(1.5px 1.5px at 40px 70px,#fff,rgba(0,0,0,0)),radial-gradient(1px 1px at 50px 160px,#fff,rgba(0,0,0,0)),radial-gradient(1.5px 1.5px at 90px 40px,#fff,rgba(0,0,0,0)),radial-gradient(1px 1px at 130px 80px,#fff,rgba(0,0,0,0)),radial-gradient(2px 2px at 160px 120px,rgba(234,198,122,0.5),rgba(0,0,0,0));background-repeat:repeat;background-size:250px 250px}
+.star-glow{filter:drop-shadow(0 0 12px var(--primary-gold))}
+body{min-height:max(884px,100dvh)}
+</style>
+</head>
+
+<body class="bg-deep-indigo font-sans overflow-hidden">
+    <div class="relative flex h-screen w-full flex-col items-center justify-between overflow-hidden ethereal-gradient">
+        <div class="absolute inset-0 pointer-events-none opacity-30 milky-way"></div>
+        <div
+            class="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(ellipse_at_center,_rgba(234,198,122,0.1)_0%,_transparent_70%)]">
+        </div>
+        <div class="h-16 w-full"></div>
+        <div class="flex flex-col items-center justify-center flex-grow z-10">
+            <div class="relative flex items-center justify-center">
+                <div class="absolute w-48 h-48 bg-primary/10 rounded-full blur-[60px]"></div>
+                <div class="relative flex items-center justify-center star-glow">
+                    <div
+                        class="absolute w-[1px] h-32 bg-gradient-to-b from-transparent via-primary to-transparent opacity-60">
+                    </div>
+                    <div
+                        class="absolute h-[1px] w-32 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60">
+                    </div>
+                    <div
+                        class="absolute w-[1px] h-20 bg-gradient-to-b from-transparent via-primary to-transparent opacity-30 rotate-45">
+                    </div>
+                    <div
+                        class="absolute w-[1px] h-20 bg-gradient-to-b from-transparent via-primary to-transparent opacity-30 -rotate-45">
+                    </div>
+                    <div class="relative w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_#EAC67A]"></div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full max-w-md px-10 pb-20 flex flex-col items-center gap-12 z-10">
+            <div class="flex flex-col items-center text-center">
+                <h1 class="text-primary tracking-[0.8em] text-3xl font-light font-serif-thin ml-[0.8em]">KADER</h1>
+                <p class="text-primary/40 text-[10px] tracking-[0.4em] uppercase pt-4 font-light">Heavenly Insights</p>
+            </div>
+            <div class="flex flex-col items-center gap-4 w-full max-w-[220px]">
+                <div class="w-full flex flex-col gap-3">
+                    <div class="relative h-[1px] w-full bg-white/10 overflow-hidden rounded-full">
+                        <div id="splash-bar"
+                            class="absolute h-full bg-primary/80 shadow-[0_0_8px_rgba(234,198,122,0.6)] rounded-full transition-all duration-300 ease-out"
+                            style="width:0%;"></div>
+                    </div>
+                    <p id="splash-text"
+                        class="text-primary/50 text-[9px] font-light text-center uppercase tracking-[0.25em]">Reading
+                        the stars</p>
+                </div>
+            </div>
+        </div>
+        <div class="h-8 w-full flex justify-center pb-2">
+            <div class="w-32 h-1 bg-white/5 rounded-full"></div>
+        </div>
+    </div>
+    <script>
+        var messages = ['Reading the stars', 'Aligning the cosmos', 'Channeling your energy', 'Awakening your destiny'];
+        var progress = 0;
+        var msgIndex = 0;
+        var bar = document.getElementById('splash-bar');
+        var txt = document.getElementById('splash-text');
+
+        var interval = setInterval(function () {
+            progress += Math.random() * 6 + 2;
+            if (progress >= 100) {
+                progress = 100;
+                bar.style.width = '100%';
+                clearInterval(interval);
+                setTimeout(function () {
+                    window.location.href = 'cosmic_onboarding_welcome.html';
+                }, 500);
+                return;
+            }
+            bar.style.width = progress + '%';
+            // Mesajları değiştir
+            var newMsgIndex = Math.floor((progress / 100) * messages.length);
+            if (newMsgIndex !== msgIndex && newMsgIndex < messages.length) {
+                msgIndex = newMsgIndex;
+                txt.textContent = messages[msgIndex];
+            }
+        }, 120);
+    </script>
+</body>
+
+</html>

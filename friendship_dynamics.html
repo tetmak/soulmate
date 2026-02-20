@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Arkadaşlık Dinamiği</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = { darkMode:"class", theme:{ extend:{
+            colors:{
+                primary:"#f2cc0d",
+                "background-dark":"#181711",
+                "surface-dark":"#221f10",
+                "card-dark":"#393628",
+                "friend-teal":"#2dd4bf",
+                "friend-cyan":"#22d3ee",
+                "friend-emerald":"#34d399"
+            },
+            fontFamily:{ display:["Space Grotesk","sans-serif"] },
+            borderRadius:{ DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px" }
+        }}}
+    </script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        body{min-height:max(884px,100dvh);font-family:'Space Grotesk',sans-serif}
+
+        /* Friendship gradient */
+        .friend-gradient { background: linear-gradient(135deg, #2dd4bf 0%, #22d3ee 50%, #34d399 100%); }
+        .friend-gradient-text {
+            background: linear-gradient(135deg, #2dd4bf, #22d3ee, #34d399);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .friend-glow { box-shadow: 0 0 20px rgba(45,212,191,0.3); }
+        .friend-glow-subtle { box-shadow: 0 0 12px rgba(45,212,191,0.15); }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(57,54,40,0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .glass-friend {
+            background: rgba(45,212,191,0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(45,212,191,0.12);
+        }
+
+        /* Animations */
+        @keyframes fade-up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(45,212,191,0.4)} 70%{box-shadow:0 0 0 12px rgba(45,212,191,0)} 100%{box-shadow:0 0 0 0 rgba(45,212,191,0)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        @keyframes orbit { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        @keyframes score-fill { from{width:0} to{width:var(--target-width)} }
+
+        .fade-up { animation: fade-up 0.5s ease forwards; opacity: 0; }
+        .pulse-ring { animation: pulse-ring 2.5s ease-in-out infinite; }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+
+        .shimmer-bar {
+            background: linear-gradient(90deg, rgba(45,212,191,0.1) 25%, rgba(45,212,191,0.25) 50%, rgba(45,212,191,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.8s ease-in-out infinite;
+        }
+
+        /* Orbit connector */
+        .orbit-ring {
+            border: 2px dashed rgba(45,212,191,0.2);
+            animation: orbit 20s linear infinite;
+        }
+
+        /* Score bar animation */
+        .score-bar-fill {
+            animation: score-fill 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            width: 0;
+        }
+
+        /* Section divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(45,212,191,0.2), transparent);
+        }
+
+        /* AI loading */
+        .ai-loading {
+            color: rgba(45,212,191,0.6);
+            font-style: italic;
+            font-size: 13px;
+            animation: compat-pulse 1.5s infinite;
+        }
+        @keyframes compat-pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
+
+        /* Accordion */
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
+        .accordion-content.open { max-height: 2000px; padding-top: 16px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(45,212,191,0.2); border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden pb-10">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div id="btn-back" class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="text-white text-base font-bold leading-tight tracking-tight flex-1 text-center">Arkadaşlık Dinamiği</h2>
+        <div class="flex w-12 items-center justify-end">
+            <button id="btn-share" class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-transparent text-white/50 hover:bg-friend-teal/10 transition-colors">
+                <span class="material-symbols-outlined">share</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Dual Profile Hero -->
+    <div class="px-6 pt-8 pb-4 fade-up" style="animation-delay:0.05s">
+        <div class="flex items-center justify-center gap-4 relative">
+            <!-- Main User Avatar -->
+            <div class="flex flex-col items-center gap-2 z-10">
+                <div class="relative">
+                    <div id="user-avatar" class="size-20 rounded-full border-3 border-friend-teal/50 friend-glow-subtle overflow-hidden bg-surface-dark flex items-center justify-center">
+                        <span class="text-friend-teal text-3xl font-bold">?</span>
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 bg-friend-teal text-background-dark h-7 w-7 rounded-full flex items-center justify-center border-2 border-background-dark font-black text-xs">
+                        <span id="user-lp">—</span>
+                    </div>
+                </div>
+                <p id="user-name" class="text-white text-sm font-bold text-center max-w-[80px] truncate">—</p>
+            </div>
+
+            <!-- Connection Line -->
+            <div class="flex flex-col items-center gap-1 mx-2">
+                <div class="w-16 h-16 rounded-full orbit-ring flex items-center justify-center relative">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-friend-teal text-2xl float-anim">handshake</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friend Avatar -->
+            <div class="flex flex-col items-center gap-2 z-10">
+                <div class="relative">
+                    <div id="friend-avatar" class="size-20 rounded-full border-3 border-friend-cyan/50 friend-glow-subtle overflow-hidden bg-surface-dark flex items-center justify-center">
+                        <span class="text-friend-cyan text-3xl font-bold">?</span>
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 bg-friend-cyan text-background-dark h-7 w-7 rounded-full flex items-center justify-center border-2 border-background-dark font-black text-xs">
+                        <span id="friend-lp">—</span>
+                    </div>
+                </div>
+                <p id="friend-name" class="text-white text-sm font-bold text-center max-w-[80px] truncate">—</p>
+            </div>
+        </div>
+
+        <!-- Bond Title -->
+        <div class="text-center mt-5">
+            <p id="bond-label" class="friend-gradient-text text-lg font-black tracking-tight">—</p>
+            <p id="bond-archetype" class="text-white/40 text-xs mt-1 uppercase tracking-widest">Arkadaşlık Bağı Analizi</p>
+        </div>
+    </div>
+
+    <!-- Overall Score Ring -->
+    <div class="flex justify-center py-4 fade-up" style="animation-delay:0.12s">
+        <div class="relative size-36 flex items-center justify-center">
+            <svg class="absolute inset-0 -rotate-90" viewBox="0 0 144 144">
+                <circle cx="72" cy="72" r="64" fill="none" stroke="rgba(45,212,191,0.08)" stroke-width="6"/>
+                <circle id="score-ring" cx="72" cy="72" r="64" fill="none" stroke="url(#friendGrad)" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="402" stroke-dashoffset="402" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1)"/>
+                <defs>
+                    <linearGradient id="friendGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2dd4bf"/>
+                        <stop offset="50%" stop-color="#22d3ee"/>
+                        <stop offset="100%" stop-color="#34d399"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="flex flex-col items-center">
+                <span id="overall-score" class="text-4xl font-black friend-gradient-text">—</span>
+                <span class="text-white/30 text-[10px] font-bold uppercase tracking-widest">Uyum</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini Score Bars -->
+    <div class="px-5 pb-6 fade-up" style="animation-delay:0.18s">
+        <div class="grid grid-cols-2 gap-3">
+            <div class="glass-friend rounded-2xl p-3.5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Yaşam Yolu</span>
+                    <span id="lp-score" class="text-friend-teal text-sm font-black">—</span>
+                </div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="lp-bar" class="h-full rounded-full friend-gradient score-bar-fill" style="--target-width:0%"></div>
+                </div>
+            </div>
+            <div class="glass-friend rounded-2xl p-3.5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Ruh Güdüsü</span>
+                    <span id="soul-score" class="text-friend-cyan text-sm font-black">—</span>
+                </div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="soul-bar" class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 score-bar-fill" style="--target-width:0%"></div>
+                </div>
+            </div>
+            <div class="glass-friend rounded-2xl p-3.5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Kişilik</span>
+                    <span id="pers-score" class="text-friend-emerald text-sm font-black">—</span>
+                </div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="pers-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 score-bar-fill" style="--target-width:0%"></div>
+                </div>
+            </div>
+            <div class="glass-friend rounded-2xl p-3.5">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/40 text-[10px] font-bold uppercase tracking-widest">İfade</span>
+                    <span id="exp-score" class="text-primary text-sm font-black">—</span>
+                </div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="exp-bar" class="h-full rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 score-bar-fill" style="--target-width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider mx-6"></div>
+
+    <!-- AI Analysis Sections (Accordion) -->
+    <div class="px-4 py-6 space-y-3 fade-up" style="animation-delay:0.25s">
+
+        <!-- 1. Arkadaşlık Enerjisi Özeti -->
+        <div class="glass-friend rounded-2xl overflow-hidden" data-section="friendship_overview">
+            <button class="accordion-trigger w-full flex items-center gap-4 p-4 text-left">
+                <div class="size-11 shrink-0 rounded-full bg-friend-teal/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-friend-teal">diversity_3</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-[15px]">Arkadaşlık Enerjisi</p>
+                    <p class="text-white/35 text-xs mt-0.5">Bağınızın özü ve temel dinamiği</p>
+                </div>
+                <span class="material-symbols-outlined text-white/25 accordion-icon transition-transform duration-300">expand_more</span>
+            </button>
+            <div class="accordion-content px-4 pb-4">
+                <div class="ai-content shimmer-bar rounded-xl p-4 min-h-[80px]">
+                    <p class="ai-loading">✦ Arkadaşlık enerjisi okunuyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. İletişim Dinamiği -->
+        <div class="glass-friend rounded-2xl overflow-hidden" data-section="communication">
+            <button class="accordion-trigger w-full flex items-center gap-4 p-4 text-left">
+                <div class="size-11 shrink-0 rounded-full bg-friend-cyan/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-friend-cyan">forum</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-[15px]">İletişim Dinamiği</p>
+                    <p class="text-white/35 text-xs mt-0.5">Birbirinizi nasıl anlıyorsunuz</p>
+                </div>
+                <span class="material-symbols-outlined text-white/25 accordion-icon transition-transform duration-300">expand_more</span>
+            </button>
+            <div class="accordion-content px-4 pb-4">
+                <div class="ai-content shimmer-bar rounded-xl p-4 min-h-[80px]">
+                    <p class="ai-loading">✦ İletişim uyumu hesaplanıyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Ortak Güç Alanları -->
+        <div class="glass-friend rounded-2xl overflow-hidden" data-section="strengths">
+            <button class="accordion-trigger w-full flex items-center gap-4 p-4 text-left">
+                <div class="size-11 shrink-0 rounded-full bg-friend-emerald/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-friend-emerald">bolt</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-[15px]">Ortak Güç Alanları</p>
+                    <p class="text-white/35 text-xs mt-0.5">Birlikte nerede parlıyorsunuz</p>
+                </div>
+                <span class="material-symbols-outlined text-white/25 accordion-icon transition-transform duration-300">expand_more</span>
+            </button>
+            <div class="accordion-content px-4 pb-4">
+                <div class="ai-content shimmer-bar rounded-xl p-4 min-h-[80px]">
+                    <p class="ai-loading">✦ Güç alanları analiz ediliyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Dikkat Noktaları -->
+        <div class="glass-friend rounded-2xl overflow-hidden" data-section="challenges">
+            <button class="accordion-trigger w-full flex items-center gap-4 p-4 text-left">
+                <div class="size-11 shrink-0 rounded-full bg-amber-500/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-amber-400">warning</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-[15px]">Dikkat Noktaları</p>
+                    <p class="text-white/35 text-xs mt-0.5">Sürtüşme ve denge gereken alanlar</p>
+                </div>
+                <span class="material-symbols-outlined text-white/25 accordion-icon transition-transform duration-300">expand_more</span>
+            </button>
+            <div class="accordion-content px-4 pb-4">
+                <div class="ai-content shimmer-bar rounded-xl p-4 min-h-[80px]">
+                    <p class="ai-loading">✦ Dikkat noktaları belirleniyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Arkadaşlık Yol Haritası -->
+        <div class="glass-friend rounded-2xl overflow-hidden" data-section="roadmap">
+            <button class="accordion-trigger w-full flex items-center gap-4 p-4 text-left">
+                <div class="size-11 shrink-0 rounded-full bg-primary/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">map</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-[15px]">Yol Haritası</p>
+                    <p class="text-white/35 text-xs mt-0.5">Bu arkadaşlığı güçlendirmek için rehber</p>
+                </div>
+                <span class="material-symbols-outlined text-white/25 accordion-icon transition-transform duration-300">expand_more</span>
+            </button>
+            <div class="accordion-content px-4 pb-4">
+                <div class="ai-content shimmer-bar rounded-xl p-4 min-h-[80px]">
+                    <p class="ai-loading">✦ Yol haritası çiziliyor...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Numerology Summary Table -->
+    <div class="px-4 pb-6 fade-up" style="animation-delay:0.32s">
+        <div class="glass-card rounded-2xl p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-primary text-lg">analytics</span>
+                <p class="text-white font-bold text-sm">Numerolojik Karşılaştırma</p>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-white/30 font-bold uppercase tracking-wider w-28"></span>
+                    <span id="tbl-user-name" class="text-friend-teal font-bold w-16 text-center">—</span>
+                    <span id="tbl-friend-name" class="text-friend-cyan font-bold w-16 text-center">—</span>
+                </div>
+                <div class="h-px bg-white/5"></div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-white/50 w-28">Yaşam Yolu</span>
+                    <span id="tbl-user-lp" class="text-white font-black w-16 text-center">—</span>
+                    <span id="tbl-friend-lp" class="text-white font-black w-16 text-center">—</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-white/50 w-28">İfade</span>
+                    <span id="tbl-user-exp" class="text-white font-black w-16 text-center">—</span>
+                    <span id="tbl-friend-exp" class="text-white font-black w-16 text-center">—</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-white/50 w-28">Ruh Güdüsü</span>
+                    <span id="tbl-user-soul" class="text-white font-black w-16 text-center">—</span>
+                    <span id="tbl-friend-soul" class="text-white font-black w-16 text-center">—</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-white/50 w-28">Kişilik</span>
+                    <span id="tbl-user-pers" class="text-white font-black w-16 text-center">—</span>
+                    <span id="tbl-friend-pers" class="text-white font-black w-16 text-center">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-6"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+
+    // ─── PISAGOR HESAPLAMA ─────────────────────────────────────
+    var TABLE = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8,'Ş':1,'Ç':3,'Ü':3,'Ö':6,'Ğ':7,'İ':9};
+    var VOWELS = 'AEIOUİIÖÜ';
+
+    function reduce(n) {
+        if (n===11||n===22||n===33) return n;
+        while(n>9){ n=String(n).split('').reduce(function(a,d){return a+parseInt(d);},0); if(n===11||n===22||n===33)break; }
+        return n;
+    }
+    function calcExp(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++) s+=(TABLE[c[i]]||0); return reduce(s); }
+    function calcSoul(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++){ if(VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0); } return reduce(s); }
+    function calcPers(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++){ if(!VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0); } return reduce(s); }
+    function calcLP(d) { if(!d) return 7; return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0)); }
+
+    // ─── UYUM MATRİSİ ─────────────────────────────────────────
+    var COMPAT_MATRIX = {
+        '1-1':75,'1-2':85,'1-3':90,'1-4':65,'1-5':80,'1-6':70,'1-7':75,'1-8':85,'1-9':80,
+        '2-2':80,'2-3':85,'2-4':90,'2-5':65,'2-6':95,'2-7':70,'2-8':60,'2-9':90,
+        '3-3':75,'3-4':65,'3-5':90,'3-6':80,'3-7':70,'3-8':75,'3-9':85,
+        '4-4':85,'4-5':60,'4-6':90,'4-7':80,'4-8':95,'4-9':70,
+        '5-5':70,'5-6':75,'5-7':80,'5-8':65,'5-9':85,
+        '6-6':85,'6-7':75,'6-8':80,'6-9':95,
+        '7-7':75,'7-8':70,'7-9':85,
+        '8-8':70,'8-9':75,
+        '9-9':95,
+        '11-11':95,'11-22':90,'11-33':92,'22-22':92,'22-33':95,'33-33':98,
+        '1-11':85,'2-11':90,'3-11':88,'4-22':92,'6-33':95,'9-11':90,'9-33':95
+    };
+
+    function getCompatScore(n1, n2) {
+        var key = n1 <= n2 ? n1+'-'+n2 : n2+'-'+n1;
+        return COMPAT_MATRIX[key] || 70;
+    }
+
+    // ─── ARKETIP ETİKETLERİ (Arkadaşlık) ──────────────────────
+    var FRIEND_BONDS = {
+        95: 'Ruh İkizi Dostluk', 90: 'Kozmik Yol Arkadaşı', 85: 'Karmik Dost Bağı',
+        80: 'Güçlü Enerji Ortaklığı', 75: 'Dengeli Dostluk', 70: 'Büyüme Yoldaşı',
+        65: 'Karşıt Enerji Dengesi', 0: 'Keşfedilecek Bağ'
+    };
+    function friendBondLabel(score) {
+        var keys = Object.keys(FRIEND_BONDS).map(Number).sort(function(a,b){return b-a;});
+        for (var i = 0; i < keys.length; i++) { if (score >= keys[i]) return FRIEND_BONDS[keys[i]]; }
+        return 'Keşfedilecek Bağ';
+    }
+
+    // ─── FOTOĞRAFlar ──────────────────────────────────────────
+    var FEMALE_NAMES = ['şevval','ayşe','leyla','fatma','zeynep','elif','meryem','selin','buse','esra','merve','büşra','naz','nur','ece','derya','gül','pınar'];
+    var MALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuCuOsAz49QL47Y42kzevX6C-TTqnQcn-fKw9bm9U03OA6_buy44Ic8bt_wBUtcV1MJ5sSb6R8X_DJ-8lXNkSzsIERq3NcoxgBJpX1j8AHhsCx98dsslHkQKdYdaF2cK9NTMVQ_OIb_O9MJ9U-ow3guDO7mGY7CZqxCnsEYsQtxoblSjPmW1y00tP0EZpQ-aEvg3xi3jiQQYomz46nlrrOFmED0f3iCzkJ1soKbGh7PjJ9Gt3wTvCduVO9zVt_o3gQ0nIpmOLHD736c";
+    var FEMALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuAwVIwPfxW7vQTdT6_K5paisRbNWYqgoOiwgoxaVjFXEkx2Hocf55LzYmz1rXyDXknrbMiB8X59nhq-ptzZsewBCHh9Bi4547zbTT3ZGBQPNn6awMcDKio5VTuc-gUc0V9YR2bAFRCjLTR5wqzwERZcGYXOLcXEN3lp4szkNmpf1Pd1-9lj37_4nq74Sfu5spZUv6QDfvpVwS7fZTl7cHKYVI8htJIgEwQ7EgFwZuHn8KfRUOgWtjHWZ3pu_qj4AgsK0fYYsgjY2_g";
+
+    function isFemale(name, gender) {
+        if (gender === 'female') return true;
+        var low = (name || '').toLowerCase();
+        return FEMALE_NAMES.some(function(fn) { return low.startsWith(fn); });
+    }
+
+    // ─── URL PARAM → Arkadaş verisi ───────────────────────────
+    var params = new URLSearchParams(window.location.search);
+    var kisiName = params.get('kisi');
+    if (!kisiName) { window.location.href = 'connections_shared_readings.html'; return; }
+
+    // Premium gate — arkadaşlık dinamiği sadece premium
+    if (window.premium && !window.premium.isPremium()) {
+        window.premium.showPaywall('Arkadaşlık Dinamiği analizi Premium özelliğidir.', 'friendship_dynamics');
+        return;
+    }
+
+    // ─── VERİLERİ YÜKLE ───────────────────────────────────────
+    // 1. Arkadaş verisi
+    var friend = null;
+    try { friend = await window.profile.getConnectionDetail(kisiName); } catch(e) {}
+    if (!friend) {
+        // Temp data from kisi_profil
+        try { friend = JSON.parse(localStorage.getItem('kader_kisi_temp')); } catch(e) {}
+    }
+
+    var friendName = friend ? (friend.fullName || kisiName) : decodeURIComponent(kisiName);
+    var friendBD = friend ? (friend.birthDate || '') : '';
+
+    // 2. Ana kullanıcı verisi
+    var mainUser = null;
+    try {
+        var session = await window.auth.getSession();
+        if (session && session.user) {
+            mainUser = await window.profile.getProfile(session.user.id);
+        }
+    } catch(e) {}
+
+    // localStorage fallback
+    if (!mainUser) {
+        try {
+            var stored = localStorage.getItem('kader_user_profile');
+            if (stored) mainUser = JSON.parse(stored);
+        } catch(e) {}
+    }
+
+    var userName = mainUser ? (mainUser.full_name || 'Sen') : 'Sen';
+    var userBD = mainUser ? (mainUser.birth_date || '') : '';
+
+    // ─── HESAPLAMALAR ─────────────────────────────────────────
+    var user = {
+        name: userName,
+        lifePath: calcLP(userBD),
+        expression: calcExp(userName),
+        soulUrge: calcSoul(userName),
+        personality: calcPers(userName)
+    };
+
+    var fri = {
+        name: friendName,
+        lifePath: calcLP(friendBD),
+        expression: calcExp(friendName),
+        soulUrge: calcSoul(friendName),
+        personality: calcPers(friendName)
+    };
+
+    var lpScore = getCompatScore(user.lifePath, fri.lifePath);
+    var soulScore = getCompatScore(user.soulUrge, fri.soulUrge);
+    var persScore = getCompatScore(user.personality, fri.personality);
+    var expScore = getCompatScore(user.expression, fri.expression);
+    var overall = Math.round(lpScore * 0.35 + soulScore * 0.30 + persScore * 0.20 + expScore * 0.15);
+    var bondText = friendBondLabel(overall);
+
+    // ─── UI GÜNCELLE ──────────────────────────────────────────
+    // Back button
+    document.getElementById('btn-back').addEventListener('click', function() {
+        window.location.href = 'kisi_profil.html?kisi=' + encodeURIComponent(kisiName);
+    });
+
+    // Names
+    document.getElementById('user-name').textContent = userName.split(' ')[0];
+    document.getElementById('friend-name').textContent = friendName.split(' ')[0];
+
+    // Life Paths
+    document.getElementById('user-lp').textContent = user.lifePath;
+    document.getElementById('friend-lp').textContent = fri.lifePath;
+
+    // Avatars
+    var userFemale = isFemale(userName, mainUser ? mainUser.gender : null);
+    var friendFemale = isFemale(friendName, friend ? friend.gender : null);
+    document.getElementById('user-avatar').innerHTML = '<img src="' + (userFemale ? FEMALE_PHOTO : MALE_PHOTO) + '" class="w-full h-full object-cover" alt="' + userName + '">';
+    document.getElementById('friend-avatar').innerHTML = '<img src="' + (friendFemale ? FEMALE_PHOTO : MALE_PHOTO) + '" class="w-full h-full object-cover" alt="' + friendName + '">';
+
+    // Bond
+    document.getElementById('bond-label').textContent = bondText;
+
+    // Overall score ring
+    document.getElementById('overall-score').textContent = overall + '%';
+    var circumference = 2 * Math.PI * 64; // ~402
+    var offset = circumference - (circumference * overall / 100);
+    setTimeout(function() {
+        document.getElementById('score-ring').style.strokeDashoffset = offset;
+    }, 300);
+
+    // Mini score bars
+    function setBar(id, scoreId, score) {
+        document.getElementById(scoreId).textContent = score + '%';
+        var bar = document.getElementById(id);
+        bar.style.setProperty('--target-width', score + '%');
+    }
+    setTimeout(function() {
+        setBar('lp-bar', 'lp-score', lpScore);
+        setBar('soul-bar', 'soul-score', soulScore);
+        setBar('pers-bar', 'pers-score', persScore);
+        setBar('exp-bar', 'exp-score', expScore);
+    }, 400);
+
+    // Comparison table
+    document.getElementById('tbl-user-name').textContent = userName.split(' ')[0];
+    document.getElementById('tbl-friend-name').textContent = friendName.split(' ')[0];
+    document.getElementById('tbl-user-lp').textContent = user.lifePath;
+    document.getElementById('tbl-friend-lp').textContent = fri.lifePath;
+    document.getElementById('tbl-user-exp').textContent = user.expression;
+    document.getElementById('tbl-friend-exp').textContent = fri.expression;
+    document.getElementById('tbl-user-soul').textContent = user.soulUrge;
+    document.getElementById('tbl-friend-soul').textContent = fri.soulUrge;
+    document.getElementById('tbl-user-pers').textContent = user.personality;
+    document.getElementById('tbl-friend-pers').textContent = fri.personality;
+
+    // ─── ACCORDION SİSTEMİ ────────────────────────────────────
+    var triggers = document.querySelectorAll('.accordion-trigger');
+    triggers.forEach(function(trigger) {
+        trigger.addEventListener('click', function() {
+            var parent = trigger.closest('[data-section]');
+            var content = parent.querySelector('.accordion-content');
+            var icon = trigger.querySelector('.accordion-icon');
+            var isOpen = content.classList.contains('open');
+
+            if (isOpen) {
+                content.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+
+                // AI içerik yükle (ilk açılışta)
+                var aiContent = content.querySelector('.ai-content');
+                if (aiContent && aiContent.dataset.loaded !== 'true') {
+                    aiContent.dataset.loaded = 'true';
+                    var sectionType = parent.dataset.section;
+                    loadAIContent(sectionType, aiContent);
+                }
+            }
+        });
+    });
+
+    // ─── AI İÇERİK SİSTEMİ ───────────────────────────────────
+    // API key /api/openai proxy'si tarafından server-side ekleniyor
+
+    var FRIENDSHIP_SYSTEM = 'Sen bir Numeroloji Arkadaşlık Uzmanısın. Pisagor sistemini kullanarak iki kişinin arkadaşlık dinamiğini, uyumunu ve büyüme potansiyelini analiz edersin.\n\n' +
+        'KURAL:\n- Türkçe yaz.\n- Doğrudan çifte hitap et (siz/ikiniz/aranızdaki).\n- Romantik ilişki analizi YAPMA — bu sadece ARKADASLIK.\n- Vaaz yok. Başlık yok. Sadece düz paragraflar.\n- Somut, keskin, gerçekçi.\n- Her zaman İKİ KİŞİNİN ARASINDAKİ arkadaşlık dinamiğini analiz et.';
+
+    var FRIENDSHIP_PROMPTS = {
+        friendship_overview: function() {
+            return user.name + ' ve ' + fri.name + ' arasındaki arkadaşlık enerjisi.\n\n' +
+                user.name + ': Yaşam Yolu=' + user.lifePath + ', Ruh Güdüsü=' + user.soulUrge + '\n' +
+                fri.name + ': Yaşam Yolu=' + fri.lifePath + ', Ruh Güdüsü=' + fri.soulUrge + '\n' +
+                'Genel uyum: ' + overall + '%\n\n' +
+                'Bu iki insanın arkadaşlık bağının özünü, enerjilerinin birbirini nasıl etkilediğini ve bu dostluğun temel dinamiğini anlat.\n' +
+                '2 paragraf, 80-100 kelime.';
+        },
+        communication: function() {
+            return user.name + ' ve ' + fri.name + ' arasındaki iletişim dinamiği.\n\n' +
+                'İfade Sayıları: ' + user.expression + ' & ' + fri.expression + '\n' +
+                'Kişilik Sayıları: ' + user.personality + ' & ' + fri.personality + '\n\n' +
+                'Bu iki arkadaşın iletişim tarzları nasıl? Birbirlerini nasıl anlıyorlar? Yanlış anlaşılmalar nereden kaynaklanıyor? Daha iyi iletişim için ne yapmalılar?\n' +
+                '2-3 paragraf, 100-120 kelime, arkadaşlık bağlamında yaz.';
+        },
+        strengths: function() {
+            return user.name + ' ve ' + fri.name + ' arkadaşlığının güç alanları.\n\n' +
+                user.name + ': Kader=' + user.lifePath + ', İfade=' + user.expression + ', Ruh=' + user.soulUrge + ', Kişilik=' + user.personality + '\n' +
+                fri.name + ': Kader=' + fri.lifePath + ', İfade=' + fri.expression + ', Ruh=' + fri.soulUrge + ', Kişilik=' + fri.personality + '\n\n' +
+                'Bu iki arkadaş birlikte olduğunda hangi alanlarda parlıyorlar? Birbirlerinin hangi yönlerini güçlendiriyorlar? Ortak enerjileri nereye akıyor?\n' +
+                '2-3 paragraf, 100-130 kelime.';
+        },
+        challenges: function() {
+            return user.name + ' ve ' + fri.name + ' arkadaşlığında dikkat noktaları.\n\n' +
+                user.name + ': Kader=' + user.lifePath + ', Ruh=' + user.soulUrge + '\n' +
+                fri.name + ': Kader=' + fri.lifePath + ', Ruh=' + fri.soulUrge + '\n' +
+                'Uyum: ' + overall + '%\n\n' +
+                'Bu arkadaşlıkta hangi konularda sürtüşme veya gerilim yaşanabilir? Dengeyi bozan faktörler neler? Bu zorlukları nasıl aşabilirler?\n' +
+                'Acımasızca dürüst ol ama yapıcı kal.\n' +
+                '2-3 paragraf, 100-130 kelime.';
+        },
+        roadmap: function() {
+            return user.name + ' ve ' + fri.name + ' arkadaşlığı için yol haritası.\n\n' +
+                'Tüm sayılar:\n' +
+                user.name + ': Kader=' + user.lifePath + ', Ruh=' + user.soulUrge + ', Kişilik=' + user.personality + ', İfade=' + user.expression + '\n' +
+                fri.name + ': Kader=' + fri.lifePath + ', Ruh=' + fri.soulUrge + ', Kişilik=' + fri.personality + ', İfade=' + fri.expression + '\n' +
+                'Genel uyum: ' + overall + '%\n\n' +
+                'Bu arkadaşlığı daha derin ve güçlü kılmak için somut bir yol haritası çiz. Birlikte yapabilecekleri aktiviteler, güçlendirecek ritüeller ve bu dostluğun evrilme potansiyeli.\n' +
+                '3 paragraf, 130-160 kelime, ilham verici ve pratik ton.';
+        }
+    };
+
+    function friendCacheKey(type) {
+        var names = [user.name, fri.name].map(function(n) { return n.toLowerCase().trim().replace(/\s+/g,'_'); }).sort();
+        return 'kader_friend_ai__' + names[0] + '__' + names[1] + '__' + type;
+    }
+
+    function renderText(text) {
+        return text.split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){
+            return '<p style="margin-bottom:12px;font-size:14px;line-height:1.85;color:rgba(255,255,255,0.82);">' + p.trim() + '</p>';
+        }).join('');
+    }
+
+    async function loadAIContent(sectionType, container) {
+        // 1. Cache kontrol
+        var cKey = friendCacheKey(sectionType);
+        try {
+            var cached = localStorage.getItem(cKey);
+            if (cached) {
+                container.innerHTML = renderText(cached);
+                container.classList.remove('shimmer-bar');
+                return;
+            }
+        } catch(e) {}
+
+        // 2. API çağrısı
+        var promptFn = FRIENDSHIP_PROMPTS[sectionType];
+        if (!promptFn) return;
+
+        try {
+            var res = await fetch('/api/openai', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        { role: 'system', content: FRIENDSHIP_SYSTEM },
+                        { role: 'user', content: promptFn() }
+                    ],
+                    temperature: 0.85,
+                    max_tokens: 400
+                })
+            });
+            var data = await res.json();
+            var text = data.choices && data.choices[0] ? data.choices[0].message.content.trim() : null;
+
+            if (text) {
+                try { localStorage.setItem(cKey, text); } catch(e) {}
+                container.innerHTML = renderText(text);
+            } else {
+                container.innerHTML = renderStaticContent(sectionType);
+            }
+        } catch(e) {
+            console.error('Friendship AI Error:', e);
+            container.innerHTML = renderStaticContent(sectionType);
+        }
+        container.classList.remove('shimmer-bar');
+    }
+
+    // ─── FALLBACK STATİK İÇERİK ──────────────────────────────
+    function renderStaticContent(type) {
+        var LP_TRAITS = {
+            1:'liderlik ve bağımsızlık', 2:'diplomasi ve uyum', 3:'yaratıcılık ve ifade',
+            4:'disiplin ve istikrar', 5:'macera ve özgürlük', 6:'sevgi ve sorumluluk',
+            7:'analiz ve içsel arayış', 8:'güç ve başarı', 9:'insancıllık ve bilgelik',
+            11:'sezgisel ilham', 22:'vizyon ve inşa', 33:'öğretmenlik ve şefkat'
+        };
+
+        var uTrait = LP_TRAITS[user.lifePath] || 'benzersiz enerji';
+        var fTrait = LP_TRAITS[fri.lifePath] || 'kendine özgü titreşim';
+
+        var content = {
+            friendship_overview: '<p>' + user.name + ' ile ' + fri.name + ' arasındaki arkadaşlık, ' + user.lifePath + ' ve ' + fri.lifePath + ' Yaşam Yollarının birleşiminden doğan güçlü bir bağ taşıyor. ' + user.name + '\'in ' + uTrait + ' enerjisi, ' + fri.name + '\'in ' + fTrait + ' titreşimiyle bir araya geldiğinde ilginç bir sinerji oluşuyor.</p><p>Bu dostlukta her iki taraf da birbirinden öğreneceği çok şey bulabilir. Genel uyum oranınız %' + overall + ' — bu da aranızdaki enerjinin karşılıklı beslenme potansiyeline sahip olduğunu gösteriyor.</p>',
+
+            communication: '<p>' + user.name + ' İfade Sayısı ' + user.expression + ' ile kendini dışarıya ' + (user.expression <= 5 ? 'dinamik ve aksiyona dönük' : 'derin ve düşünceli') + ' bir şekilde ifade ederken, ' + fri.name + ' İfade Sayısı ' + fri.expression + ' ile ' + (fri.expression <= 5 ? 'enerjik ve spontan' : 'dengeli ve stratejik') + ' bir iletişim tarzı benimsiyor.</p><p>Kişilik sayılarınız (' + user.personality + ' & ' + fri.personality + ') dış dünyaya farklı maskeler takabilir — bu bazen yanlış anlaşılmalara yol açsa da, derinleştikçe birbirinizi gerçekten anlamaya başlarsınız.</p>',
+
+            strengths: '<p>Yaşam Yolu ' + user.lifePath + ' ve ' + fri.lifePath + ' birlikte olduğunda, ' + uTrait + ' ile ' + fTrait + ' birbirini tamamlayan bir güç alanı yaratıyor. Birlikte yaptığınız aktivitelerde bu enerji belirgin şekilde hissedilir.</p><p>Ruh Güdüsü sayılarınız (' + user.soulUrge + ' & ' + fri.soulUrge + ') içsel motivasyonlarınızın kesiştiği noktaları gösteriyor — burası aranızdaki gerçek bağın en derin katmanı.</p>',
+
+            challenges: '<p>Her güçlü arkadaşlıkta olduğu gibi, ' + user.lifePath + ' ve ' + fri.lifePath + ' Yaşam Yollarının bir arada yürümesi bazı sürtüşmeleri de beraberinde getirebilir. ' + (user.lifePath === fri.lifePath ? 'Aynı enerjiyi taşıdığınız için rekabet veya ego çatışması yaşanabilir.' : 'Farklı enerjileriniz bazen farklı önceliklere yol açabilir.') + '</p><p>Önemli olan bu farklılıkları birer zenginlik olarak görmek ve birbirinizin sınırlarına saygı duymaktır.</p>',
+
+            roadmap: '<p>Bu arkadaşlığı güçlendirmek için düzenli zaman geçirmeyi bir öncelik haline getirin. ' + user.lifePath + ' enerjisi ' + (user.lifePath % 2 === 1 ? 'aksiyona' : 'derinleşmeye') + ' ihtiyaç duyarken, ' + fri.lifePath + ' enerjisi ' + (fri.lifePath % 2 === 1 ? 'yeniliğe' : 'istikrara') + ' yöneliyor.</p><p>Birlikte yapabileceğiniz en güçlendirici aktiviteler: ortak hedefler belirlemek, birbirinizin güçlü yönlerini desteklemek ve zor zamanlarda dürüst iletişimi korumaktır.</p><p>Bu dostluk %' + overall + ' uyum enerjisiyle evrilme ve büyüme potansiyelini taşıyor — yeter ki birbirinize alan tanıyın.</p>'
+        };
+
+        return '<div style="animation:fade-up 0.4s ease;">' + (content[type] || '<p>Analiz hazırlanamadı.</p>') + '</div>';
+    }
+
+    // ─── İlk section'ı otomatik aç ───────────────────────────
+    setTimeout(function() {
+        var first = document.querySelector('[data-section="friendship_overview"] .accordion-trigger');
+        if (first) first.click();
+    }, 800);
+
+});
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

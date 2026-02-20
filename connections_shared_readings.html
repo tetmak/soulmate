@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Connections</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: {
+            colors: { primary:"#f2cc0d","background-dark":"#181711","surface-dark":"#221f10","card-dark":"#393628" },
+            fontFamily: { display:["Space Grotesk","sans-serif"] },
+            borderRadius: { DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px" }
+        }}}
+    </script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        .glow-border{box-shadow:0 0 12px rgba(242,204,13,0.35)}
+        body{min-height:max(884px,100dvh);font-family:'Space Grotesk',sans-serif}
+        .hide-scrollbar::-webkit-scrollbar{display:none}
+        .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+        @keyframes fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        .fade-in{animation:fade-in 0.35s ease forwards}
+        .card-hover{transition:transform 0.15s ease}
+        .card-hover:active{transform:scale(0.97)}
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden pb-10">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div onclick="window.location.href='mystic_numerology_home_1.html'"
+            class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Connections</h2>
+        <button onclick="window.location.href='data-ready_birth_form.html'"
+            class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-white/10 transition-colors text-white/60">
+            <span class="material-symbols-outlined">person_add</span>
+        </button>
+    </header>
+
+    <!-- Soul Connections Yatay Scroll -->
+    <div class="flex flex-col gap-2 pt-6 pb-2">
+        <div class="flex items-center justify-between px-5">
+            <h3 class="text-white text-base font-bold tracking-tight">Soul Connections</h3>
+            <p class="text-white/30 text-xs" id="connections-count"></p>
+        </div>
+        <div id="connections-row" class="flex gap-4 overflow-x-auto px-5 hide-scrollbar pb-2">
+            <!-- Ekle butonu her zaman -->
+            <div class="flex flex-col items-center gap-2 shrink-0">
+                <button onclick="window.location.href='data-ready_birth_form.html'"
+                    class="size-16 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center text-primary/60 hover:border-primary/60 transition-colors">
+                    <span class="material-symbols-outlined text-3xl">add</span>
+                </button>
+                <span class="text-white/40 text-xs font-medium">Ekle</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Analyses Liste -->
+    <div class="flex-1 px-4">
+        <div class="flex items-center justify-between py-4">
+            <h3 class="text-white text-base font-bold tracking-tight">Recent Analyses</h3>
+            <span id="analyses-count" class="text-white/30 text-xs"></span>
+        </div>
+        <div id="analyses-list" class="flex flex-col gap-3"></div>
+
+        <!-- Boş durum -->
+        <div id="empty-state" style="display:none"
+            class="text-center py-16 text-white/25 text-sm italic">
+            Henüz analiz yapılmadı.<br/>
+            <button onclick="window.location.href='data-ready_birth_form.html'"
+                class="mt-4 text-primary font-bold text-sm">+ Yeni Analiz Başlat</button>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="px-4 pt-4">
+        <button onclick="window.location.href='data-ready_birth_form.html'"
+            class="w-full bg-primary text-[#181711] py-4 rounded-full font-bold text-base shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
+            <span class="material-symbols-outlined">person_add</span>
+            New Analysis for Someone
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    // ─── Pisagor ──────────────────────────────────────────────
+    var TABLE = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8,'Ş':1,'Ç':3,'Ü':3,'Ö':6,'Ğ':7,'İ':9};
+    function reduce(n){if(n===11||n===22||n===33)return n;while(n>9){n=String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);if(n===11||n===22||n===33)break;}return n;}
+    function calcLP(d){if(!d)return null;return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0));}
+    function calcExp(name){var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,'');for(var i=0;i<c.length;i++)s+=(TABLE[c[i]]||0);return reduce(s);}
+
+    var ARCH = {1:'The Leader',2:'The Diplomat',3:'The Creator',4:'The Builder',5:'The Adventurer',6:'The Nurturer',7:'The Seeker',8:'The Achiever',9:'The Humanitarian',11:'The Illuminator',22:'The Master Builder',33:'The Teacher'};
+    var MALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuCuOsAz49QL47Y42kzevX6C-TTqnQcn-fKw9bm9U03OA6_buy44Ic8bt_wBUtcV1MJ5sSb6R8X_DJ-8lXNkSzsIERq3NcoxgBJpX1j8AHhsCx98dsslHkQKdYdaF2cK9NTMVQ_OIb_O9MJ9U-ow3guDO7mGY7CZqxCnsEYsQtxoblSjPmW1y00tP0EZpQ-aEvg3xi3jiQQYomz46nlrrOFmED0f3iCzkJ1soKbGh7PjJ9Gt3wTvCduVO9zVt_o3gQ0nIpmOLHD736c";
+    var FEMALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuAwVIwPfxW7vQTdT6_K5paisRbNWYqgoOiwgoxaVjFXEkx2Hocf55LzYmz1rXyDXknrbMiB8X59nhq-ptzZsewBCHh9Bi4547zbTT3ZGBQPNn6awMcDKio5VTuc-gUc0V9YR2bAFRCjLTR5wqzwERZcGYXOLcXEN3lp4szkNmpf1Pd1-9lj37_4nq74Sfu5spZUv6QDfvpVwS7fZTl7cHKYVI8htJIgEwQ7EgFwZuHn8KfRUOgWtjHWZ3pu_qj4AgsK0fYYsgjY2_g";
+    var FEMALE_NAMES = ['şevval','ayşe','leyla','fatma','zeynep','elif','meryem','selin','buse','esra','merve','büşra','naz','nur','ece','derya','gül','pınar'];
+
+    function isFemale(conn) {
+        if (conn.gender === 'female') return true;
+        var low = (conn.fullName||'').toLowerCase();
+        return FEMALE_NAMES.some(function(fn){return low.startsWith(fn);});
+    }
+    function shortDate(s){try{return new Date(s).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});}catch(e){return '';}}
+
+    // ─── Bağlantıları yükle + deduplicate ────────────────────
+    var rawConns = [];
+    try { rawConns = await window.profile.getConnections(); } catch(e) {}
+
+    // İsme göre deduplicate — aynı isim varsa en son kaydı tut
+    var seen = {};
+    rawConns.forEach(function(c) {
+        var key = (c.fullName||'').trim().toLowerCase();
+        if (!seen[key] || new Date(c.createdAt) > new Date(seen[key].createdAt)) {
+            seen[key] = c;
+        }
+    });
+    var connections = Object.values(seen);
+    // En yeniden eskiye sırala
+    connections.sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt);});
+
+    var rowEl = document.getElementById('connections-row');
+    var listEl = document.getElementById('analyses-list');
+    var emptyEl = document.getElementById('empty-state');
+    var countEl = document.getElementById('connections-count');
+    var aCountEl = document.getElementById('analyses-count');
+
+    if (connections.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    countEl.textContent = connections.length + ' kişi';
+    aCountEl.textContent = connections.length + ' analiz';
+
+    connections.forEach(function(conn, idx) {
+        var lp = conn.lifePath || calcLP(conn.birthDate) || '?';
+        var exp = calcExp(conn.fullName);
+        var female = isFemale(conn);
+        var photo = female ? FEMALE_PHOTO : MALE_PHOTO;
+        var firstName = (conn.fullName||'').split(' ')[0];
+        var arch = ARCH[lp] || 'Soul';
+
+        // ── Avatar satırı ──────────────────────────────────────
+        var avatarDiv = document.createElement('div');
+        avatarDiv.className = 'flex flex-col items-center gap-2 shrink-0 cursor-pointer fade-in';
+        avatarDiv.style.animationDelay = (idx * 0.05) + 's';
+        avatarDiv.innerHTML =
+            '<div class="relative">' +
+                '<div class="size-16 rounded-full border-2 border-primary/60 glow-border overflow-hidden bg-surface-dark">' +
+                    '<img src="' + photo + '" alt="' + conn.fullName + '" class="w-full h-full object-cover">' +
+                '</div>' +
+                '<div class="absolute -bottom-1 -right-1 bg-primary text-[#181711] text-[10px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-[#181711]">' + lp + '</div>' +
+            '</div>' +
+            '<span class="text-white/70 text-xs font-medium max-w-[60px] text-center truncate">' + firstName + '</span>';
+        avatarDiv.addEventListener('click', function() {
+            window.location.href = 'kisi_profil.html?kisi=' + encodeURIComponent(conn.fullName);
+        });
+        // Ekle butonundan önce ekle
+        rowEl.insertBefore(avatarDiv, rowEl.lastElementChild);
+
+        // ── Analiz kartı ───────────────────────────────────────
+        var card = document.createElement('div');
+        card.className = 'card-hover flex items-center gap-4 p-4 bg-card-dark rounded-2xl border border-white/5 fade-in';
+        card.style.animationDelay = (0.05 + idx * 0.07) + 's';
+        card.innerHTML =
+            '<div class="relative shrink-0 cursor-pointer" data-action="view">' +
+                '<div class="size-14 rounded-full overflow-hidden border-2 border-primary/30">' +
+                    '<img src="' + photo + '" alt="' + conn.fullName + '" class="w-full h-full object-cover">' +
+                '</div>' +
+                '<div class="absolute -bottom-1 -right-1 bg-primary text-[#181711] text-[9px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-[#181711]">' + lp + '</div>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0 cursor-pointer" data-action="view">' +
+                '<p class="text-white font-bold truncate">' + conn.fullName + '</p>' +
+                '<p class="text-white/40 text-xs mt-0.5">' + arch + ' · Exp: ' + exp + '</p>' +
+                '<p class="text-white/25 text-xs">' + shortDate(conn.createdAt) + '</p>' +
+            '</div>' +
+            '<button class="flex items-center justify-center size-10 rounded-full hover:bg-red-500/20 transition-colors shrink-0 group" data-action="delete" data-name="' + conn.fullName + '">' +
+                '<span class="material-symbols-outlined text-white/30 group-hover:text-red-500 transition-colors">delete</span>' +
+            '</button>' +
+            '<span class="material-symbols-outlined text-white/20 shrink-0 cursor-pointer" data-action="view">chevron_right</span>';
+        
+        // Event delegation - click handler
+        card.addEventListener('click', function(e) {
+            var target = e.target.closest('[data-action]');
+            if (!target) return;
+            
+            var action = target.getAttribute('data-action');
+            
+            if (action === 'view') {
+                window.location.href = 'kisi_profil.html?kisi=' + encodeURIComponent(conn.fullName);
+            } else if (action === 'delete') {
+                e.stopPropagation();
+                var name = target.getAttribute('data-name');
+                
+                // Confirm dialog
+                if (confirm('⚠️ "' + name + '" profilini silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz.')) {
+                    deleteConnection(name);
+                }
+            }
+        });
+        
+        listEl.appendChild(card);
+    });
+    
+    // ─── Silme fonksiyonu ──────────────────────────────────
+    async function deleteConnection(fullName) {
+        try {
+            // profile.js'deki deleteConnection fonksiyonunu çağır
+            if (window.profile && window.profile.deleteConnection) {
+                await window.profile.deleteConnection(fullName);
+            } else {
+                // Fallback: localStorage'dan sil
+                var userData = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+                var userId = userData.userId || 'default';
+                var key = 'kader_connections_' + userId;
+                var conns = JSON.parse(localStorage.getItem(key) || '[]');
+                conns = conns.filter(function(c) {
+                    return c.fullName !== fullName;
+                });
+                localStorage.setItem(key, JSON.stringify(conns));
+            }
+            
+            // Başarılı - sayfayı yenile
+            window.location.reload();
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('❌ Silme işlemi başarısız oldu.');
+        }
+    }
+});
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

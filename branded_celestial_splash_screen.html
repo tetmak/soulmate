@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KADER - Celestial Splash Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0d0c1d", // Deep indigo-black for celestial feel
+                    },
+                    fontFamily: {
+                        "display": ["Noto Serif", "serif"],
+                        "sans": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .nebula-glow {
+            background: radial-gradient(circle at center, rgba(244, 192, 37, 0.15) 0%, rgba(13, 12, 29, 0) 70%);
+        }
+        .logo-glow {
+            filter: drop-shadow(0 0 15px rgba(244, 192, 37, 0.4));
+        }
+        .letter-spacing-extra {
+            letter-spacing: 0.5em;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col items-center justify-between py-16 px-8 overflow-hidden">
+<!-- Background Atmospheric Glow -->
+<div class="absolute inset-0 nebula-glow pointer-events-none"></div>
+<!-- Top spacing for layout balance -->
+<div class="h-12 w-full"></div>
+<!-- Central Branding Section -->
+<div class="relative z-10 flex flex-col items-center">
+<!-- Stylized Logo Logo -->
+<div class="relative flex items-center justify-center mb-8 logo-glow">
+<!-- Star Symbol -->
+<div class="absolute -top-10 text-primary">
+<span class="material-symbols-outlined !text-4xl" style="font-variation-settings: 'FILL' 1, 'wght' 400;">
+                        star
+                    </span>
+</div>
+<!-- K and Crescent Moon Composition -->
+<div class="relative flex items-center justify-center">
+<!-- Crescent Moon SVG (Stylized) -->
+<svg class="text-primary/40 absolute" fill="none" height="140" viewbox="0 0 24 24" width="140" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"></path>
+</svg>
+<!-- Stylized 'K' -->
+<h1 class="text-primary text-8xl font-light tracking-tighter relative z-10">
+                        K
+                    </h1>
+</div>
+</div>
+<!-- Brand Name -->
+<h2 class="text-primary text-3xl font-medium leading-none letter-spacing-extra mr-[-0.5em] text-center uppercase">
+                Kader
+            </h2>
+<p class="text-primary/60 text-xs mt-4 tracking-[0.2em] font-sans uppercase">
+                Celestial Guidance
+            </p>
+</div>
+<!-- Bottom Loading Section -->
+<div class="w-full max-w-xs space-y-4 relative z-10">
+<!-- Loading Subtext -->
+<div class="flex justify-center">
+<p class="text-primary/70 text-sm font-sans italic animate-pulse">
+                    Syncing with the cosmos...
+                </p>
+</div>
+<!-- Elegant Progress Bar -->
+<div class="w-full h-[2px] bg-primary/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary shadow-[0_0_8px_rgba(244,192,37,0.8)]" style="width: 65%;"></div>
+</div>
+<!-- Safe Area Bottom Spacing -->
+<div class="h-4"></div>
+</div>
+</div>
+<!-- Hidden decorative elements to enhance the celestial feel -->
+<div class="fixed top-20 left-10 text-primary/10 select-none pointer-events-none">
+<span class="material-symbols-outlined !text-xl">auto_awesome</span>
+</div>
+<div class="fixed bottom-40 right-12 text-primary/10 select-none pointer-events-none">
+<span class="material-symbols-outlined !text-lg">flare</span>
+</div>
+<div class="fixed top-1/2 right-10 text-primary/5 select-none pointer-events-none">
+<span class="material-symbols-outlined !text-4xl">bedtime</span>
+</div>
+</body></html>

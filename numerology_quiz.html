@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Numeroloji Quiz</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{primary:"#f2cc0d","background-dark":"#181711","surface-dark":"#221f10","card-dark":"#393628"},fontFamily:{display:["Space Grotesk","sans-serif"]}}}}</script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        body{min-height:100dvh;font-family:'Space Grotesk',sans-serif}
+        .glass{background:rgba(57,54,40,0.3);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05)}
+        @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+        @keyframes pulse-glow{0%,100%{box-shadow:0 0 10px rgba(34,197,94,0.3)}50%{box-shadow:0 0 25px rgba(34,197,94,0.6)}}
+        @keyframes slide-in{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes countdown{from{transform:scale(1.5);opacity:0}to{transform:scale(1);opacity:1}}
+        .fade-up{animation:fade-up 0.4s ease forwards;opacity:0}
+        .opt-btn{padding:14px 16px;border-radius:16px;border:2px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);text-align:left;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:12px;width:100%}
+        .opt-btn:active{transform:scale(0.97)}
+        .opt-btn.correct{border-color:rgba(34,197,94,0.6);background:rgba(34,197,94,0.12);animation:pulse-glow 0.6s}
+        .opt-btn.wrong{border-color:rgba(239,68,68,0.6);background:rgba(239,68,68,0.1);animation:shake 0.4s}
+        .opt-letter{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:rgba(255,255,255,0.4);flex-shrink:0;transition:all 0.25s}
+        .correct .opt-letter{background:rgba(34,197,94,0.25);color:#22c55e}
+        .wrong .opt-letter{background:rgba(239,68,68,0.2);color:#ef4444}
+        .progress-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.1);transition:all 0.3s}
+        .progress-dot.answered{background:#22c55e}
+        .progress-dot.wrong-dot{background:#ef4444}
+        .progress-dot.current{background:rgba(255,255,255,0.4);transform:scale(1.3)}
+        .timer-ring{stroke-dasharray:283;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+        .vs-badge{background:linear-gradient(135deg,#ef4444,#f59e0b);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white;box-shadow:0 0 20px rgba(239,68,68,0.4)}
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div onclick="history.back()" class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 id="page-title" class="text-white text-lg font-black flex-1 text-center">Numeroloji Quiz</h2>
+        <div id="header-rank" class="w-12 flex items-center justify-end"></div>
+    </header>
+
+    <!-- ═══ MOD SEÇİM EKRANI ═══ -->
+    <div id="sec-menu" class="flex-1 flex flex-col px-5 pt-8 pb-10">
+
+        <!-- Rütbe Kartı -->
+        <div id="rank-card" class="glass rounded-2xl p-5 mb-6 fade-up"></div>
+
+        <!-- Günlük İstatistik -->
+        <div class="flex gap-3 mb-6 fade-up" style="animation-delay:0.06s">
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="stat-correct" class="text-white text-2xl font-black">0</p>
+                <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest">Doğru</p>
+            </div>
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="stat-streak" class="text-white text-2xl font-black">0</p>
+                <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest">Win Streak</p>
+            </div>
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="stat-nbp" class="text-white text-2xl font-black">0</p>
+                <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest">NBP</p>
+            </div>
+        </div>
+
+        <!-- Solo Quiz -->
+        <div onclick="startSoloQuiz()" class="glass rounded-2xl p-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform mb-3 fade-up" style="animation-delay:0.1s;border-color:rgba(34,197,94,0.15)">
+            <div class="size-14 shrink-0 rounded-2xl flex items-center justify-center" style="background:rgba(34,197,94,0.12)">
+                <span class="material-symbols-outlined text-green-400 text-2xl">quiz</span>
+            </div>
+            <div class="flex-1">
+                <p class="text-white font-bold text-base">Hızlı Quiz</p>
+                <p class="text-white/35 text-xs mt-0.5">10 soru · Bilgini test et · XP kazan</p>
+            </div>
+            <span class="material-symbols-outlined text-white/20">chevron_right</span>
+        </div>
+
+        <!-- Düello -->
+        <div onclick="startDuelMode()" class="glass rounded-2xl p-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform mb-3 fade-up" style="animation-delay:0.14s;border-color:rgba(239,68,68,0.15)">
+            <div class="size-14 shrink-0 rounded-2xl flex items-center justify-center" style="background:rgba(239,68,68,0.12)">
+                <span class="material-symbols-outlined text-red-400 text-2xl">swords</span>
+            </div>
+            <div class="flex-1">
+                <p class="text-white font-bold text-base">Düello <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="color:#ef4444;background:rgba(239,68,68,0.15)">VS</span></p>
+                <p class="text-white/35 text-xs mt-0.5">5 soru · Rakibe karşı · 2x XP ödülü</p>
+            </div>
+            <span class="material-symbols-outlined text-white/20">chevron_right</span>
+        </div>
+
+        <!-- Leaderboard Link -->
+        <div onclick="window.location.href='leaderboard.html'" class="glass rounded-2xl p-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform mb-3 fade-up" style="animation-delay:0.18s;border-color:rgba(245,158,11,0.15)">
+            <div class="size-14 shrink-0 rounded-2xl flex items-center justify-center" style="background:rgba(245,158,11,0.12)">
+                <span class="material-symbols-outlined text-amber-400 text-2xl">leaderboard</span>
+            </div>
+            <div class="flex-1">
+                <p class="text-white font-bold text-base">Kozmik Lig</p>
+                <p class="text-white/35 text-xs mt-0.5">Haftalık sıralama · Lig sistemi · Ödüller</p>
+            </div>
+            <span class="material-symbols-outlined text-white/20">chevron_right</span>
+        </div>
+
+        <!-- Rozetler -->
+        <div class="mt-6 fade-up" style="animation-delay:0.22s">
+            <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest mb-3">Rozetlerin</p>
+            <div id="badge-grid" class="flex flex-wrap gap-2"></div>
+        </div>
+    </div>
+
+    <!-- ═══ QUIZ EKRANI ═══ -->
+    <div id="sec-quiz" style="display:none" class="flex-1 flex flex-col px-5 pt-6 pb-10">
+        <!-- İlerleme -->
+        <div class="flex items-center justify-center gap-2 mb-6" id="quiz-progress"></div>
+
+        <!-- Skor (düello) -->
+        <div id="duel-scores" style="display:none" class="flex items-center justify-center gap-4 mb-4">
+            <div class="text-center">
+                <p class="text-green-400 text-2xl font-black" id="player-score">0</p>
+                <p class="text-white/30 text-xs">Sen</p>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="text-center">
+                <p class="text-red-400 text-2xl font-black" id="opp-score">0</p>
+                <p class="text-white/30 text-xs">Rakip</p>
+            </div>
+        </div>
+
+        <!-- Soru -->
+        <div id="question-container" class="mb-4">
+            <div class="glass rounded-2xl p-5 mb-1">
+                <p class="text-white/30 text-xs font-bold mb-2">Soru <span id="q-num">1</span>/<span id="q-total">10</span></p>
+                <p id="q-text" class="text-white font-bold text-base leading-relaxed">—</p>
+            </div>
+            <div class="flex items-center gap-2 px-2 mt-2">
+                <span class="material-symbols-outlined text-white/15 text-xs">timer</span>
+                <div class="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div id="timer-bar" class="h-full bg-green-400 rounded-full transition-all" style="width:100%"></div>
+                </div>
+                <span id="timer-text" class="text-white/20 text-xs font-bold">15s</span>
+            </div>
+        </div>
+
+        <!-- Seçenekler -->
+        <div id="opts-container" class="space-y-3"></div>
+
+        <!-- Açıklama (cevap sonrası) -->
+        <div id="answer-feedback" style="display:none" class="mt-4 glass rounded-xl p-4 text-center">
+            <p id="feedback-text" class="text-sm font-bold">—</p>
+            <button id="btn-next" class="mt-3 px-6 py-2 rounded-full bg-white/10 text-white text-sm font-bold active:scale-95 transition-transform">Sonraki →</button>
+        </div>
+    </div>
+
+    <!-- ═══ SONUÇ EKRANI ═══ -->
+    <div id="sec-result" style="display:none" class="flex-1 flex flex-col items-center justify-center px-6 text-center pb-10">
+        <div id="result-icon" class="size-24 rounded-full flex items-center justify-center mb-6" style="background:rgba(34,197,94,0.15)">
+            <span class="material-symbols-outlined text-green-400 text-5xl" style="font-variation-settings:'FILL' 1">emoji_events</span>
+        </div>
+        <h2 id="result-title" class="text-white text-2xl font-black mb-2">—</h2>
+        <p id="result-subtitle" class="text-white/40 text-sm mb-6">—</p>
+
+        <div class="flex gap-3 mb-6 w-full max-w-[300px]">
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="res-correct" class="text-green-400 text-2xl font-black">0</p>
+                <p class="text-white/30 text-xs">Doğru</p>
+            </div>
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="res-xp" class="text-amber-400 text-2xl font-black">+0</p>
+                <p class="text-white/30 text-xs">XP</p>
+            </div>
+            <div class="glass rounded-xl p-3 flex-1 text-center">
+                <p id="res-nbp" class="text-purple-400 text-2xl font-black">+0</p>
+                <p class="text-white/30 text-xs">NBP</p>
+            </div>
+        </div>
+
+        <!-- Düello sonucu -->
+        <div id="duel-result" style="display:none" class="glass rounded-2xl p-4 mb-6 w-full max-w-[300px]">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <span class="text-green-400 font-black text-lg" id="dr-player">0</span>
+                <span class="text-white/20 text-xs">vs</span>
+                <span class="text-red-400 font-black text-lg" id="dr-opp">0</span>
+            </div>
+            <p id="dr-streak" class="text-white/40 text-xs">—</p>
+        </div>
+
+        <!-- Ödüller -->
+        <div id="result-rewards" class="w-full max-w-[300px] space-y-2 mb-6"></div>
+
+        <div class="flex gap-3 w-full max-w-[300px]">
+            <button onclick="showMenu()" class="flex-1 py-3 rounded-full glass text-white font-bold text-sm active:scale-95 transition-transform">← Menü</button>
+            <button id="btn-retry" class="flex-1 py-3 rounded-full text-white font-bold text-sm active:scale-95 transition-transform" style="background:linear-gradient(135deg,#22c55e,#16a34a)">Tekrar Oyna</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ═══ GLOBAL STATE ═══
+var mode = 'solo'; // 'solo' | 'duel'
+var questions = [];
+var currentQ = 0;
+var correctCount = 0;
+var xpEarned = 0;
+var timerInterval = null;
+var timeLeft = 15;
+var answered = false;
+
+// ═══ MENÜ ═══
+function showMenu() {
+    document.getElementById('sec-menu').style.display = 'flex';
+    document.getElementById('sec-quiz').style.display = 'none';
+    document.getElementById('sec-result').style.display = 'none';
+    renderMenu();
+}
+
+function renderMenu() {
+    var s = window.gamification.getState();
+    var rp = window.gamification.getRankProgress();
+    var rank = rp.current;
+
+    // Rütbe kartı
+    document.getElementById('rank-card').innerHTML =
+        '<div class="flex items-center gap-4">' +
+            '<div class="size-14 shrink-0 rounded-2xl flex items-center justify-center" style="background:' + rank.color + '20">' +
+                '<span class="material-symbols-outlined text-2xl" style="color:' + rank.color + ';font-variation-settings:\'FILL\' 1">' + rank.icon + '</span>' +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+                '<p class="text-white font-bold">' + rank.name + '</p>' +
+                '<p class="text-white/30 text-xs mt-0.5">' + s.nbp + ' NBP' + (rp.next ? ' · ' + rp.remaining + ' kaldı' : ' · MAX') + '</p>' +
+                '<div class="mt-2 h-2 bg-white/5 rounded-full overflow-hidden">' +
+                    '<div class="h-full rounded-full transition-all" style="width:' + rp.progress + '%;background:' + rank.color + '"></div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+        (rp.next ? '<p class="text-white/15 text-[10px] mt-3 text-right">Sonraki: ' + rp.next.name + ' (' + rp.next.minNBP + ' NBP)</p>' : '');
+
+    // İstatistikler
+    document.getElementById('stat-correct').textContent = s.quiz_correct;
+    document.getElementById('stat-streak').textContent = s.duel_win_streak;
+    document.getElementById('stat-nbp').textContent = s.nbp;
+
+    // Rozetler
+    var badgeGrid = document.getElementById('badge-grid');
+    badgeGrid.innerHTML = '';
+    var unlocked = window.gamification.getUnlockedBadges();
+    var locked = window.gamification.getLockedBadges();
+
+    unlocked.forEach(function(b) {
+        var el = document.createElement('div');
+        el.className = 'flex items-center justify-center size-11 rounded-xl';
+        el.style.cssText = 'background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.2)';
+        el.title = b.name + ': ' + b.desc;
+        el.innerHTML = '<span class="material-symbols-outlined text-purple-400 text-lg" style="font-variation-settings:\'FILL\' 1">' + b.icon + '</span>';
+        badgeGrid.appendChild(el);
+    });
+    locked.slice(0, 8).forEach(function(b) {
+        var el = document.createElement('div');
+        el.className = 'flex items-center justify-center size-11 rounded-xl';
+        el.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)';
+        el.title = '??? — ' + b.desc;
+        el.innerHTML = '<span class="material-symbols-outlined text-white/10 text-lg">lock</span>';
+        badgeGrid.appendChild(el);
+    });
+}
+
+// ═══ SOLO QUIZ ═══
+function startSoloQuiz() {
+    mode = 'solo';
+    questions = [];
+    for (var i = 0; i < 10; i++) questions.push(window.gamification.getQuestion());
+    currentQ = 0; correctCount = 0; xpEarned = 0;
+    document.getElementById('duel-scores').style.display = 'none';
+    document.getElementById('page-title').textContent = 'Hızlı Quiz';
+    showQuiz();
+}
+
+// ═══ DÜELLO ═══
+function startDuelMode() {
+    mode = 'duel';
+    var duel = window.gamification.startDuel();
+    questions = duel.questions;
+    currentQ = 0; correctCount = 0; xpEarned = 0;
+    document.getElementById('duel-scores').style.display = 'flex';
+    document.getElementById('player-score').textContent = '0';
+    document.getElementById('opp-score').textContent = '0';
+    document.getElementById('page-title').textContent = 'Düello';
+    showQuiz();
+}
+
+// ═══ QUIZ UI ═══
+function showQuiz() {
+    document.getElementById('sec-menu').style.display = 'none';
+    document.getElementById('sec-result').style.display = 'none';
+    document.getElementById('sec-quiz').style.display = 'flex';
+    renderQuestion();
+}
+
+function renderQuestion() {
+    if (currentQ >= questions.length) { showResult(); return; }
+    answered = false;
+    var q = questions[currentQ];
+
+    // Progress dots
+    var prog = document.getElementById('quiz-progress');
+    prog.innerHTML = '';
+    for (var i = 0; i < questions.length; i++) {
+        var dot = document.createElement('div');
+        dot.className = 'progress-dot' + (i < currentQ ? (questions[i]._correct ? ' answered' : ' wrong-dot') : '') + (i === currentQ ? ' current' : '');
+        prog.appendChild(dot);
+    }
+
+    // Soru
+    document.getElementById('q-num').textContent = currentQ + 1;
+    document.getElementById('q-total').textContent = questions.length;
+    document.getElementById('q-text').textContent = q.q;
+
+    // Seçenekler
+    var letters = ['A', 'B', 'C', 'D'];
+    var opts = document.getElementById('opts-container');
+    opts.innerHTML = '';
+    q.opts.forEach(function(opt, idx) {
+        var btn = document.createElement('button');
+        btn.className = 'opt-btn fade-up';
+        btn.style.animationDelay = (idx * 0.06) + 's';
+        btn.innerHTML = '<div class="opt-letter">' + letters[idx] + '</div><span class="text-white/70 text-sm flex-1">' + opt + '</span>';
+        btn.addEventListener('click', function() { handleAnswer(idx); });
+        opts.appendChild(btn);
+    });
+
+    // Feedback gizle
+    document.getElementById('answer-feedback').style.display = 'none';
+
+    // Timer
+    timeLeft = 15;
+    document.getElementById('timer-text').textContent = '15s';
+    document.getElementById('timer-bar').style.width = '100%';
+    document.getElementById('timer-bar').style.background = '#22c55e';
+    clearInterval(timerInterval);
+    timerInterval = setInterval(function() {
+        timeLeft--;
+        document.getElementById('timer-text').textContent = timeLeft + 's';
+        document.getElementById('timer-bar').style.width = ((timeLeft / 15) * 100) + '%';
+        if (timeLeft <= 5) document.getElementById('timer-bar').style.background = '#ef4444';
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            if (!answered) handleAnswer(-1); // süre doldu
+        }
+    }, 1000);
+}
+
+function handleAnswer(selectedIdx) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    var q = questions[currentQ];
+    var isCorrect = selectedIdx === q.correct;
+    q._correct = isCorrect;
+
+    // Seçenekleri güncelle
+    var btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(function(btn, idx) {
+        btn.style.pointerEvents = 'none';
+        if (idx === q.correct) btn.classList.add('correct');
+        if (idx === selectedIdx && !isCorrect) btn.classList.add('wrong');
+    });
+
+    if (isCorrect) {
+        correctCount++;
+        var bonus = (q.diff - 1) * 5;
+        var earned = (window.gamification.XP_ACTIONS.quiz_correct || 15) + bonus;
+        xpEarned += earned;
+        window.gamification.answerQuiz(currentQ, selectedIdx, q);
+    } else {
+        xpEarned += (window.gamification.XP_ACTIONS.quiz_wrong || 3);
+        if (selectedIdx >= 0) window.gamification.answerQuiz(currentQ, selectedIdx, q);
+    }
+
+    // Düello skor
+    if (mode === 'duel') {
+        document.getElementById('player-score').textContent = correctCount;
+    }
+
+    // Feedback
+    var fb = document.getElementById('answer-feedback');
+    fb.style.display = 'block';
+    document.getElementById('feedback-text').innerHTML = isCorrect
+        ? '<span style="color:#22c55e">✦ Doğru! +' + ((window.gamification.XP_ACTIONS.quiz_correct||15) + (q.diff-1)*5) + ' XP</span>'
+        : (selectedIdx < 0
+            ? '<span style="color:#ef4444">⏰ Süre doldu!</span>'
+            : '<span style="color:#ef4444">✗ Yanlış! Doğru cevap: ' + q.opts[q.correct] + '</span>');
+
+    document.getElementById('btn-next').onclick = function() {
+        currentQ++;
+        renderQuestion();
+    };
+
+    // Auto next after 2s
+    setTimeout(function() { if (currentQ < questions.length - 1 || !answered) {} }, 2500);
+}
+
+// ═══ SONUÇ ═══
+function showResult() {
+    clearInterval(timerInterval);
+    document.getElementById('sec-quiz').style.display = 'none';
+    document.getElementById('sec-result').style.display = 'flex';
+
+    var total = questions.length;
+    var pct = Math.round((correctCount / total) * 100);
+    var nbpEarned = Math.round(xpEarned * 0.7);
+
+    // Sonuç başlığı
+    var icon = document.getElementById('result-icon');
+    if (pct >= 80) {
+        document.getElementById('result-title').textContent = '🌟 Muhteşem!';
+        document.getElementById('result-subtitle').textContent = correctCount + '/' + total + ' doğru — Harika bilgi!';
+        icon.style.background = 'rgba(34,197,94,0.15)';
+        icon.innerHTML = '<span class="material-symbols-outlined text-green-400 text-5xl" style="font-variation-settings:\'FILL\' 1">emoji_events</span>';
+    } else if (pct >= 50) {
+        document.getElementById('result-title').textContent = '⚡ İyi Gidiyorsun!';
+        document.getElementById('result-subtitle').textContent = correctCount + '/' + total + ' doğru — Gelişmeye devam!';
+        icon.style.background = 'rgba(245,158,11,0.15)';
+        icon.innerHTML = '<span class="material-symbols-outlined text-amber-400 text-5xl" style="font-variation-settings:\'FILL\' 1">bolt</span>';
+    } else {
+        document.getElementById('result-title').textContent = '📚 Öğrenmeye Devam!';
+        document.getElementById('result-subtitle').textContent = correctCount + '/' + total + ' doğru — Her quiz seni güçlendirir';
+        icon.style.background = 'rgba(139,92,246,0.15)';
+        icon.innerHTML = '<span class="material-symbols-outlined text-purple-400 text-5xl" style="font-variation-settings:\'FILL\' 1">school</span>';
+    }
+
+    document.getElementById('res-correct').textContent = correctCount;
+    document.getElementById('res-xp').textContent = '+' + xpEarned;
+    document.getElementById('res-nbp').textContent = '+' + nbpEarned;
+
+    // Supabase'e quiz sonucu kaydet
+    if (window.gamification && window.gamification.saveQuizResult) {
+        window.gamification.saveQuizResult(mode, correctCount, total, xpEarned, null);
+    }
+
+    // Düello sonucu
+    if (mode === 'duel') {
+        var duelResult = window.gamification.finishDuel(correctCount, total);
+        document.getElementById('duel-result').style.display = 'block';
+        document.getElementById('dr-player').textContent = duelResult.playerScore;
+        document.getElementById('dr-opp').textContent = duelResult.opponentScore;
+
+        if (duelResult.won) {
+            document.getElementById('result-title').textContent = '🏆 Kazandın!';
+            document.getElementById('dr-streak').textContent = 'Kazanma Serisi: ' + duelResult.winStreak;
+        } else if (duelResult.tied) {
+            document.getElementById('result-title').textContent = '🤝 Berabere!';
+            document.getElementById('dr-streak').textContent = 'İyi mücadele!';
+        } else {
+            document.getElementById('result-title').textContent = '😤 Kaybettin!';
+            document.getElementById('result-subtitle').textContent = 'Pes etme, tekrar dene!';
+            document.getElementById('dr-streak').textContent = 'Seri sıfırlandı';
+        }
+
+        // Supabase'e düello sonucu kaydet
+        if (window.gamification && window.gamification.saveQuizResult) {
+            window.gamification.saveQuizResult('duel', correctCount, total, xpEarned, duelResult.won);
+        }
+
+        // Ödüller
+        var rewardsDiv = document.getElementById('result-rewards');
+        rewardsDiv.innerHTML = '';
+        duelResult.rewards.forEach(function(r) {
+            var el = document.createElement('div');
+            el.className = 'glass rounded-xl p-3 flex items-center gap-3';
+            el.innerHTML = '<span class="material-symbols-outlined text-amber-400" style="font-variation-settings:\'FILL\' 1">redeem</span><span class="text-white/70 text-sm">' + r.name + '</span>';
+            rewardsDiv.appendChild(el);
+        });
+    } else {
+        document.getElementById('duel-result').style.display = 'none';
+        document.getElementById('result-rewards').innerHTML = '';
+    }
+
+    // Retry butonu
+    document.getElementById('btn-retry').onclick = function() {
+        if (mode === 'duel') startDuelMode(); else startSoloQuiz();
+    };
+}
+
+// ═══ INIT ═══
+showMenu();
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

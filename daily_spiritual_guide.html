@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Daily Spiritual Guide</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Material Symbols -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Theme Configuration -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#7f0df2",
+            "background-light": "#f7f5f8",
+            "background-dark": "#191022",
+            "surface-dark": "#261834",
+          },
+          fontFamily: {
+            "display": ["Spline Sans", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Custom scrollbar hiding for cleaner mobile look */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-white selection:bg-primary selection:text-white">
+  <div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl">
+    <!-- Top App Bar -->
+    <div
+      class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+      <div onclick="window.location.href='mystic_numerology_home_1.html'"
+        class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer transition-opacity hover:opacity-70">
+        <span class="material-symbols-outlined text-2xl">arrow_back</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-center">Daily
+          Guide</h2>
+        <span id="current-date" class="text-xs font-medium text-slate-500 dark:text-slate-400">October 24</span>
+      </div>
+      <div class="flex w-12 items-center justify-end">
+        <!-- Settings button removed -->
+      </div>
+    </div>
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col items-center justify-center px-6 py-2 pb-8 w-full">
+      <!-- Headline -->
+      <div class="w-full text-center mb-6">
+        <h2 class="text-slate-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight">Your Affirmation
+        </h2>
+        <p class="text-slate-500 dark:text-purple-300 mt-1 text-sm">Swipe for daily guidance</p>
+      </div>
+      
+      <!-- Daily Affirmation Card -->
+      <div id="affirmation-card"
+        class="w-full aspect-[3/4] max-h-[500px] relative rounded-xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(127,13,242,0.5)] group transform transition-transform duration-300 hover:scale-[1.02]">
+          <!-- Background Image -->
+          <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+            data-alt="Abstract holographic iridescent gradient texture with purple and blue hues"
+            id="card-bg"
+            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA");'>
+          </div>
+          <!-- Overlay Gradient -->
+          <div class="absolute inset-0 bg-gradient-to-t from-[#191022] via-[#191022]/40 to-transparent opacity-90"></div>
+          <!-- Card Content -->
+          <div class="absolute inset-0 p-8 flex flex-col justify-between">
+            <!-- Top Badge -->
+            <div class="flex justify-between items-start">
+              <div
+                class="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 flex items-center gap-2">
+                <span class="material-symbols-outlined text-white text-sm">auto_awesome</span>
+                <span id="vibration-badge" class="text-white text-xs font-bold tracking-wider uppercase">Vibration 7</span>
+              </div>
+              <button class="text-white/70 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">favorite</span>
+              </button>
+            </div>
+            <!-- Main Text -->
+            <div class="flex flex-col gap-4">
+              <h3 id="affirmation-text" class="text-white text-3xl font-bold leading-tight tracking-tight drop-shadow-lg">
+                "I trust the timing of my life."
+              </h3>
+              <p id="guidance-text"
+                class="text-white/90 text-base font-medium leading-relaxed drop-shadow-md border-l-2 border-primary pl-4">
+                Every step you take is guiding you toward your true purpose. Embrace the unknown with an open heart and
+                let the universe lead the way.
+              </p>
+            </div>
+          </div>
+          <!-- Shiny Overlay Effect -->
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+          </div>
+        </div>
+      </div>
+      <!-- Action Buttons -->
+      <div class="w-full mt-8 flex justify-center">
+        <button onclick="openShare()"
+          class="cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 px-8 bg-primary hover:bg-primary/90 transition-colors text-white text-sm font-bold leading-normal tracking-wide flex gap-2 shadow-[0_0_15px_rgba(127,13,242,0.4)]">
+          <span class="material-symbols-outlined text-[20px]" style="pointer-events:none">ios_share</span>
+          <span style="pointer-events:none">Share</span>
+        </button>
+      </div>
+      <!-- Pagination removed - Daily single affirmation -->
+    </div>
+  </div>
+
+
+  <!-- ═══ SHARE OVERLAY ═══ -->
+  <div id="share-overlay"
+    style="display:none;position:fixed;inset:0;z-index:300;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);background:rgba(13,11,31,0.7)"
+    onclick="if(event.target===this)closeShare()">
+    <div id="share-sheet"
+      style="width:100%;max-width:480px;background:#0d0b1f;border-radius:28px 28px 0 0;padding:20px 24px 44px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);overflow-y:auto;max-height:92vh">
+
+      <!-- Handle + Header -->
+      <div style="width:40px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 16px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h3 style="font-size:17px;font-weight:800;color:white">Share Affirmation</h3>
+        <button onclick="closeShare()"
+          style="width:32px;height:32px;background:rgba(255,255,255,0.08);border:none;border-radius:50%;color:rgba(255,255,255,0.5);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+
+      <!-- Holographic Card -->
+      <div
+        style="width:100%;max-width:300px;margin:0 auto 20px;aspect-ratio:1/1;border-radius:2.5rem;position:relative;overflow:hidden;background:linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 20%,#fbc2eb 40%,#a6c1ee 60%,#f6d365 80%,#fda085 100%);box-shadow:0 20px 60px rgba(168,85,247,0.35);border:1px solid rgba(255,255,255,0.2)">
+        <!-- Overlay shine -->
+        <div
+          style="position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,0.22),rgba(255,255,255,0));pointer-events:none">
+        </div>
+        <!-- Content -->
+        <div
+          style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center">
+          <span class="material-symbols-outlined"
+            style="font-size:36px;color:rgba(0,0,0,0.18);margin-bottom:16px">format_quote</span>
+          <h2
+            style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#1a1035;line-height:1.4;margin-bottom:20px;text-shadow:0 0 20px rgba(255,255,255,0.4)">
+            "I trust the timing of my life."</h2>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div
+              style="padding:5px 14px;border-radius:999px;background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.1)">
+              <span
+                style="font-size:9px;text-transform:uppercase;letter-spacing:0.2em;font-weight:800;color:#2d2050">Daily
+                Insight</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+              <div
+                style="width:20px;height:20px;background:#1a1035;border-radius:5px;display:flex;align-items:center;justify-content:center">
+                <span class="material-symbols-outlined" style="font-size:12px;color:white">star</span>
+              </div>
+              <span
+                style="font-size:9px;text-transform:uppercase;letter-spacing:0.18em;font-weight:800;color:#1a1035">Kader</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="text-align:center;color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:24px">Pozitif enerjini
+        dünyayla paylaş ✨</p>
+
+      <!-- Share Buttons -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px">
+        <button onclick="shareAction('instagram')"
+          style="width:100%;height:52px;background:#E1306C;border:none;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:white">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="font-size:22px;pointer-events:none">photo_camera</span>
+            <span style="font-weight:700;font-size:15px">Instagram Stories</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+        <button onclick="shareAction('whatsapp')"
+          style="width:100%;height:52px;background:#25D366;border:none;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:white">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="font-size:22px;pointer-events:none">chat_bubble</span>
+            <span style="font-weight:700;font-size:15px">WhatsApp Status</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+        <button onclick="shareAction('save')"
+          style="width:100%;height:52px;background:#2a2a2e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:white">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined"
+              style="font-size:22px;opacity:0.7;pointer-events:none">download</span>
+            <span style="font-weight:700;font-size:15px">Save to Gallery</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+      </div>
+
+      <!-- Copy + Other -->
+      <div style="display:flex;justify-content:center;gap:40px">
+        <button onclick="shareAction('copy')"
+          style="display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:white">
+          <div
+            style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">
+            <span class="material-symbols-outlined"
+              style="font-size:20px;color:rgba(255,255,255,0.6)">content_copy</span>
+          </div>
+          <span
+            style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em">Copy
+            Link</span>
+        </button>
+        <button onclick="shareAction('other')"
+          style="display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:white">
+          <div
+            style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">
+            <span class="material-symbols-outlined" style="font-size:20px;color:rgba(255,255,255,0.6)">more_horiz</span>
+          </div>
+          <span
+            style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em">Other</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ═══ 10 GÜNLÜK TAVSİYELER (Her gün farklı başlar) ═══
+    var DAILY_AFFIRMATIONS = [
+      {
+        vibration: 1,
+        title: '"I am the creator of my reality."',
+        guidance: 'Today marks a powerful new beginning. Your thoughts become things — focus on what you want to manifest. Take bold action toward your dreams.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA'
+      },
+      {
+        vibration: 2,
+        title: '"I find peace in balance and harmony."',
+        guidance: 'Cooperation is your superpower today. Listen more, speak less. Trust that relationships will flow with ease when you release control.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI'
+      },
+      {
+        vibration: 3,
+        title: '"I express my truth fearlessly."',
+        guidance: 'Your creativity is a gift to the world. Share your ideas, write that post, start that project. Joy multiplies when you let your light shine.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA'
+      },
+      {
+        vibration: 4,
+        title: '"I build foundations that last."',
+        guidance: 'Discipline meets destiny today. Focus on the work that matters. Small, consistent steps create extraordinary results over time.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI'
+      },
+      {
+        vibration: 5,
+        title: '"I embrace change with open arms."',
+        guidance: 'Freedom flows through you today. Break routines, try something new, say yes to adventure. The universe rewards those who dare to evolve.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA'
+      },
+      {
+        vibration: 6,
+        title: '"I nurture love in all its forms."',
+        guidance: 'Your heart is your compass today. Show kindness to yourself and others. Beauty surrounds you — pause and appreciate it.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI'
+      },
+      {
+        vibration: 7,
+        title: '"I trust the timing of my life."',
+        guidance: 'Turn inward today. Meditation, journaling, or quiet reflection will reveal hidden truths. Trust your intuition above all else.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA'
+      },
+      {
+        vibration: 8,
+        title: '"Abundance flows to me effortlessly."',
+        guidance: 'You are a magnet for success today. Make bold financial decisions, negotiate with confidence, claim what's rightfully yours.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI'
+      },
+      {
+        vibration: 9,
+        title: '"I release what no longer serves me."',
+        guidance: 'Completion energy surrounds you. Let go of old grudges, finish projects, close chapters. Space must be cleared for the new.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAlbHUdFS86eFASIV8ZsUHtjeQasp3243hgfT-ih3mtVE20EmRUgUWtu9LtPgGT1OiFXVN2H7gipbAkz9qhk9LV1NmHQa9aYXOJIM4PyO6TCjA0_Xqte6av9NAg6FkHmBm4P-5t4Edrg-xRevfi-PSUJcmkddKYWcM1PUC_73R8ltKlOIRnP8PVoM2ZfVzp28nWelNgP0TYKZrcXK1v-2g0AuDZmJiz8rUgnMqdp8M0jvSaGvMaPEcGIiG7vZeqAVDkTctmvIZNxTA'
+      },
+      {
+        vibration: 11,
+        title: '"I am a channel for divine wisdom."',
+        guidance: 'Master Number 11 amplifies your spiritual gifts today. Pay attention to synchronicities, dreams, and sudden insights. You're being guided.',
+        bg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDfVMMu0WAdPvSICBqYYV0Jbkr1VZ4QoKfSZD2ghTnAAOJ6pIKDCHCdoGhuSViP1vTd9TInb_K85TIdZbXKfsChj1m72j9V9I8kK9SRwTKjIUrBRLEkddmGEJpg5z6e2fk1dcuA7uSVRWiRJuiUwZEbKOZ78ST1LEiYLRr8a6HVS-7AJefxSbl_yG875ijCCa_pyt2W8k-7Tbq6aNVQN-Q9bgZscDM3qJDbGgyzzUzyw4Nh4MAdTCjoT7MC-vPzM8g3Ygh6PuSXzmI'
+      }
+    ];
+
+    // ═══ GÜNLÜK VİBRASYON HESAPLAMA ═══
+    function calcPersonalDay() {
+      var ud = null;
+      try { ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null'); } catch(e) {}
+      
+      if (!ud || !ud.birthDate) return 7; // Default fallback
+      
+      var today = new Date();
+      var birthParts = ud.birthDate.split('-');
+      var birthYear = parseInt(birthParts[0]);
+      var birthMonth = parseInt(birthParts[1]);
+      var birthDay = parseInt(birthParts[2]);
+      
+      // Personal Year
+      var pySum = birthDay + birthMonth + today.getFullYear();
+      var py = pySum;
+      while (py > 9 && py !== 11 && py !== 22 && py !== 33) {
+        py = String(py).split('').reduce(function(a,d){return a+parseInt(d);},0);
+      }
+      
+      // Personal Month
+      var pmSum = py + (today.getMonth() + 1);
+      var pm = pmSum;
+      while (pm > 9 && pm !== 11 && pm !== 22 && pm !== 33) {
+        pm = String(pm).split('').reduce(function(a,d){return a+parseInt(d);},0);
+      }
+      
+      // Personal Day
+      var pdSum = pm + today.getDate();
+      var pd = pdSum;
+      while (pd > 9 && pd !== 11 && pd !== 22 && pd !== 33) {
+        pd = String(pd).split('').reduce(function(a,d){return a+parseInt(d);},0);
+      }
+      
+      return pd;
+    }
+
+    // ═══ GÜNLÜK KART GÖSTER ═══
+    function showTodayAffirmation() {
+      var todayVibration = calcPersonalDay();
+      console.log('[Daily Guide] Personal Day vibration:', todayVibration);
+      
+      // Bugünün affirmation'ını bul
+      var todayAff = DAILY_AFFIRMATIONS.find(function(a) {
+        return a.vibration === todayVibration;
+      });
+      
+      if (!todayAff) todayAff = DAILY_AFFIRMATIONS[6]; // Fallback to Vibration 7
+      
+      // Kartı doldur
+      var cardEl = document.getElementById('affirmation-card');
+      cardEl.innerHTML = 
+        '<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url(\'' + todayAff.bg + '\')"></div>' +
+        '<div class="absolute inset-0 bg-gradient-to-t from-[#191022] via-[#191022]/40 to-transparent opacity-90"></div>' +
+        '<div class="absolute inset-0 p-8 flex flex-col justify-between">' +
+          '<div class="flex justify-between items-start">' +
+            '<div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 flex items-center gap-2">' +
+              '<span class="material-symbols-outlined text-white text-sm">auto_awesome</span>' +
+              '<span class="text-white text-xs font-bold tracking-wider uppercase">Vibration ' + todayAff.vibration + '</span>' +
+            '</div>' +
+            '<button class="text-white/70 hover:text-white transition-colors"><span class="material-symbols-outlined">favorite</span></button>' +
+          '</div>' +
+          '<div class="flex flex-col gap-4">' +
+            '<h3 class="text-white text-3xl font-bold leading-tight tracking-tight drop-shadow-lg">' + todayAff.title + '</h3>' +
+            '<p class="text-white/90 text-base font-medium leading-relaxed drop-shadow-md border-l-2 border-primary pl-4">' + todayAff.guidance + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>';
+      
+      // Tarihi göster
+      var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      var today = new Date();
+      var dateStr = months[today.getMonth()] + ' ' + today.getDate();
+      document.getElementById('current-date').textContent = dateStr;
+      
+      console.log('[Daily Guide] Showing affirmation for vibration:', todayVibration);
+    }
+
+    // ═══ SHARE FUNCTIONALITY ═══
+    function openShare() {
+      var overlay = document.getElementById('share-overlay');
+      var sheet = document.getElementById('share-sheet');
+      overlay.style.display = 'flex';
+      setTimeout(function () { sheet.style.transform = 'translateY(0)'; }, 10);
+    }
+    
+    function closeShare() {
+      var sheet = document.getElementById('share-sheet');
+      sheet.style.transform = 'translateY(100%)';
+      setTimeout(function () { document.getElementById('share-overlay').style.display = 'none'; }, 400);
+    }
+    
+    function shareAction(type) {
+      var messages = { 
+        instagram: "Instagram'a aktariliyor...", 
+        whatsapp: "WhatsApp'a gonderiliyor...", 
+        save: 'Galeriye kaydedildi ✓', 
+        copy: 'Link kopyalandi ✓', 
+        other: 'Paylasim secenekleri aciliyor...' 
+      };
+      var btn = event.currentTarget;
+      btn.style.opacity = '0.6';
+      setTimeout(function () { btn.style.opacity = '1'; }, 800);
+      
+      if (type === 'copy' || type === 'save') {
+        var toast = document.createElement('div');
+        toast.textContent = messages[type];
+        toast.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#7f0df2;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:999;white-space:nowrap';
+        document.body.appendChild(toast);
+        setTimeout(function () { toast.remove(); }, 2000);
+      }
+      
+      if (type === 'other' && navigator.share) {
+        var todayVibration = calcPersonalDay();
+        var aff = DAILY_AFFIRMATIONS.find(function(a) { return a.vibration === todayVibration; });
+        if (aff) {
+          navigator.share({ 
+            title: 'Günlük Rehberim', 
+            text: aff.title + ' — Kader', 
+            url: window.location.href 
+          });
+        }
+      }
+    }
+
+    // ═══ BAŞLANGIÇ ═══
+    window.addEventListener('load', function() {
+      showTodayAffirmation();
+      if (window.gamification) { window.gamification.addXP('daily_reading', 0); window.gamification.trackAction('daily_reading'); }
+    });
+  </script>
+
+  <script src="js/numerology-ai.js"></script>
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

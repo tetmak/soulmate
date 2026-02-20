@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Share Analysis Card</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cfa117",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#0a0907",
+                        "instagram": "#E1306C",
+                        "whatsapp": "#25D366",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">:root {
+    --cosmic-gradient: radial-gradient(circle at top right, #2d1b4d 0%, #0a0907 60%)
+    }
+.cosmic-bg {
+    background: var(--cosmic-gradient);
+    position: relative;
+    overflow: hidden
+    }
+.cosmic-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCVBO61WxIlVfsd7xLQ2RFuHwIv154zBZABkPunPBXVElJ9u5tjhGMGwqSbLVHez1XTL5JyeK77zFowzN8IHug7T-j4vaxxN76KS7kJ_I_tNTt9-pq3ia4T6zs7vdNJbLcsH27_VcyfUArrpqCzOY7FRfSGKymEFC6URwYJ4uquAG4yyTDjdF_nz8EUWUqqGFhBYcZMJ8CYFqOBXEsv-h8r3KG-i1FJgyRM9Lyyh3AufFHtzyZvw6xx4U2xPcU3u8xvRBD4Zz3Ankjf);
+    opacity: 0.3;
+    pointer-events: none
+    }
+.glass-card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(207, 161, 23, 0.2)
+    }
+.gold-shimmer {
+    background: linear-gradient(135deg, #cfa117 0%, #f7e4a1 50%, #cfa117 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-white min-h-screen">
+<header class="flex items-center justify-between px-6 pt-12 pb-6">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10">
+<span onclick="window.location.href='relationship_compatibility_analysis.html'" style="cursor:pointer" class="material-symbols-outlined text-white">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold">Share Analysis</h1>
+<div class="w-10"></div>
+</header>
+<main class="px-6 pb-12 flex flex-col items-center">
+<div class="w-full aspect-square max-w-[340px] rounded-3xl cosmic-bg shadow-2xl relative flex flex-col items-center justify-center p-8 border border-white/10 group">
+<div class="absolute -top-10 -left-10 w-40 h-40 bg-primary/20 blur-[60px] rounded-full"></div>
+<div class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-600/10 blur-[60px] rounded-full"></div>
+<div class="absolute top-6 flex items-center gap-2 opacity-80">
+<div class="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-background-dark font-bold">star</span>
+</div>
+<span class="text-[10px] uppercase tracking-[0.2em] font-bold text-primary">Aura Numerology</span>
+</div>
+<div class="text-center z-10">
+<p class="text-primary/70 uppercase tracking-widest text-xs font-bold mb-1">Analiz Kartı</p>
+<h2 class="text-3xl font-serif italic gold-shimmer mb-6">Alexander Smith</h2>
+<div class="flex flex-col items-center mb-6">
+<div class="relative">
+<svg class="w-24 h-24 transform -rotate-90">
+<circle class="text-primary/20" cx="48" cy="48" fill="transparent" r="44" stroke="currentColor" stroke-width="2"></circle>
+<circle class="text-primary" cx="48" cy="48" fill="transparent" r="44" stroke="currentColor" stroke-dasharray="276" stroke-dashoffset="60" stroke-width="2"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-extrabold text-white">7</span>
+</div>
+</div>
+<p class="mt-2 text-xs uppercase tracking-tighter text-white/50">Life Path Number</p>
+</div>
+<div class="glass-card px-6 py-3 rounded-2xl">
+<p class="text-sm font-bold text-white/90">Deep Spiritual Seeker</p>
+<p class="text-[10px] text-white/50 mt-1 italic leading-tight">Wisdom · Introspection · Truth</p>
+</div>
+</div>
+<div class="absolute bottom-6 text-[9px] text-white/30 uppercase tracking-[0.1em]">
+                Discover your soul energy at auranum.app
+            </div>
+</div>
+<p class="mt-6 text-white/40 text-sm text-center px-8">
+            This card is formatted perfectly for stories and status updates.
+        </p>
+<div class="w-full max-w-sm mt-10 space-y-4">
+<button class="w-full h-14 bg-instagram hover:opacity-90 transition-all rounded-2xl flex items-center justify-between px-6 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-2xl">photo_camera</span>
+<span class="font-bold text-base">Instagram Stories</span>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<button class="w-full h-14 bg-whatsapp hover:opacity-90 transition-all rounded-2xl flex items-center justify-between px-6 group text-background-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-2xl">chat_bubble</span>
+<span class="font-bold text-base">WhatsApp Status</span>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<button class="w-full h-14 bg-white/5 border border-white/10 hover:bg-white/10 transition-all rounded-2xl flex items-center justify-between px-6 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-2xl text-primary">download</span>
+<span class="font-bold text-base">Save to Gallery</span>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+</div>
+<div class="mt-8 flex gap-6">
+<button class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-white/60">content_copy</span>
+</div>
+<span class="text-[10px] font-bold text-white/40 uppercase">Copy Link</span>
+</button>
+<button class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-white/60">more_horiz</span>
+</div>
+<span class="text-[10px] font-bold text-white/40 uppercase">Other</span>
+</button>
+</div>
+</main>
+<div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/20 rounded-full"></div>
+
+
+<script src="js/bottom-nav.js"></script>
+</body></html>

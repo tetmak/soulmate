@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profile &amp; Soul Journey</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/discovery-engine.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: { extend: {
+                colors: { "primary":"#f2cc0d","background-dark":"#181711","surface-dark":"#221f10","card-dark":"#393628" },
+                fontFamily: { "display":["Space Grotesk","sans-serif"] },
+                borderRadius: { "DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px" }
+            }}
+        }
+    </script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        .glow-border{box-shadow:0 0 15px rgba(242,204,13,0.4)}
+        body{min-height:max(884px,100dvh);font-family:'Space Grotesk',sans-serif}
+        @keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .fade-in{animation:fade-in 0.4s ease forwards}
+        .card-hover{transition:transform 0.15s ease}
+        .card-hover:active{transform:scale(0.97)}
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div onclick="window.location.href='mystic_numerology_home_1.html'"
+            class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Soul Journey</h2>
+        <button onclick="window.location.href='app_settings_preferences.html'"
+            class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-transparent hover:bg-white/10 transition-colors">
+            <span class="material-symbols-outlined text-white/60">settings</span>
+        </button>
+    </header>
+
+    <!-- Profile Hero -->
+    <div class="flex p-6 pt-8 flex-col items-center fade-in">
+        <div class="relative">
+            <div id="profile-avatar" class="h-32 w-32 rounded-full border-4 border-primary/40 glow-border overflow-hidden bg-primary/20 flex items-center justify-center">
+                <span id="profile-initial" class="text-primary text-5xl font-bold">?</span>
+            </div>
+            <div class="absolute -bottom-2 -right-2 bg-primary text-[#181711] h-12 w-12 rounded-full flex flex-col items-center justify-center border-4 border-[#181711] font-bold shadow-lg">
+                <span class="text-[9px] leading-none uppercase tracking-tighter">Path</span>
+                <span id="lp-number" class="text-xl leading-none font-black">—</span>
+            </div>
+        </div>
+        <div class="mt-5 flex flex-col items-center gap-1">
+            <p id="profile-name" class="text-white text-2xl font-bold tracking-tight">—</p>
+            <p id="profile-birthdate" class="text-white/40 text-sm">—</p>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="material-symbols-outlined text-primary text-base">auto_awesome</span>
+                <p id="profile-archetype" class="text-primary/90 text-sm font-semibold">—</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gamification Rank -->
+    <div id="profile-rank-section" class="px-4 pb-4">
+        <div class="rounded-2xl p-4 border" style="background:rgba(57,54,40,0.3);border-color:rgba(255,255,255,0.05)">
+            <div class="flex items-center gap-3">
+                <div id="pr-icon" class="size-11 rounded-xl flex items-center justify-center" style="background:rgba(139,92,246,0.12)">
+                    <span class="material-symbols-outlined text-purple-400" style="font-variation-settings:'FILL' 1" id="pr-icon-span">explore</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <p id="pr-rank-name" class="text-white text-sm font-bold">—</p>
+                        <span id="pr-nbp" class="text-white/20 text-xs">0 NBP</span>
+                    </div>
+                    <div class="mt-1.5 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div id="pr-progress" class="h-full rounded-full transition-all" style="width:0%;background:#a855f7"></div>
+                    </div>
+                </div>
+                <div onclick="window.location.href='numerology_quiz.html'" class="px-3 py-1.5 rounded-full cursor-pointer active:scale-95 transition-transform" style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.2)">
+                    <span class="text-green-400 text-xs font-bold">Quiz →</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Numerology Stats -->
+    <div class="grid grid-cols-2 gap-3 px-4 pb-4">
+        <div class="flex flex-col gap-1.5 rounded-2xl p-4 bg-card-dark border border-white/5">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Life Path</p>
+            <p id="stat-lifepath" class="text-primary text-3xl font-black">—</p>
+        </div>
+        <div class="flex flex-col gap-1.5 rounded-2xl p-4 bg-card-dark border border-white/5">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Expression</p>
+            <p id="stat-expression" class="text-white text-3xl font-black">—</p>
+        </div>
+        <div class="flex flex-col gap-1.5 rounded-2xl p-4 bg-card-dark border border-white/5">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Soul Urge</p>
+            <p id="stat-soul" class="text-white text-3xl font-black">—</p>
+        </div>
+        <div class="flex flex-col gap-1.5 rounded-2xl p-4 bg-card-dark border border-white/5">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Personality</p>
+            <p id="stat-pers" class="text-white text-3xl font-black">—</p>
+        </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="flex-1 pb-10 px-4 space-y-6">
+
+        <!-- İsim Analizi -->
+        <div class="fade-in" style="animation-delay:0.1s">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-3">Name Analysis</p>
+            <div onclick="window.location.href='name_numerology_breakdown_1.html'"
+                class="card-hover flex items-center gap-4 p-4 bg-card-dark rounded-2xl border border-primary/25 cursor-pointer">
+                <div class="size-12 shrink-0 rounded-full bg-primary/15 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">person_search</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p id="name-analysis-title" class="text-white font-bold truncate">— Deep Insight</p>
+                    <p class="text-white/40 text-xs mt-0.5">Pisagor · Soul Urge · Life Path</p>
+                </div>
+                <div class="shrink-0 flex items-center gap-2">
+                    <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">OPEN</span>
+                    <span class="material-symbols-outlined text-white/30">chevron_right</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uyumluluk Geçmişi -->
+        <div class="fade-in" style="animation-delay:0.2s">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Compatibility Readings</p>
+            </div>
+            <div id="compat-history-list" class="space-y-3"></div>
+            <div id="compat-empty" style="display:none"
+                class="text-center py-8 text-white/25 text-sm italic rounded-2xl border border-white/5 bg-card-dark">
+                Henüz uyumluluk analizi yok.<br/>
+                <span class="mt-3 text-white/35 text-xs block">Alttaki <span class="text-primary font-bold">+</span> menüsünden "Ruh Eşi" ile başlayabilirsin.</span>
+            </div>
+        </div>
+
+        <!-- Cosmic Match Keşfedilebilirlik -->
+        <div class="fade-in" style="animation-delay:0.25s">
+            <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-3">Cosmic Match</p>
+            <div class="flex items-center gap-4 p-4 bg-card-dark rounded-2xl border border-white/5">
+                <div class="size-12 shrink-0 rounded-full flex items-center justify-center" style="background:rgba(139,92,246,0.12)">
+                    <span class="material-symbols-outlined" style="color:#8b5cf6">auto_awesome</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-sm">Keşfedilebilir Ol</p>
+                    <p class="text-white/35 text-xs mt-0.5">Diğer kullanıcılar seni eşleşme radarında görsün</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" id="toggle-discoverable" class="sr-only peer">
+                    <div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/50 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8b5cf6] peer-checked:after:bg-white"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="space-y-3 fade-in pt-2" style="animation-delay:0.3s">
+            <button id="btn-refresh-soul"
+                class="w-full bg-primary text-[#181711] py-4 rounded-full font-bold text-base shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                <span class="material-symbols-outlined">refresh</span>
+                Ruh Analizimi Yenile
+            </button>
+            <button id="btn-logout"
+                class="w-full bg-white/5 text-red-400 py-3 rounded-full font-semibold text-sm border border-red-500/15 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                <span class="material-symbols-outlined text-base">logout</span>
+                Sign Out
+            </button>
+        </div>
+    </div>
+    <div class="h-8"></div>
+</div>
+
+<script>
+(function() {
+
+    // ─── Pisagor Tablosu ───────────────────────────────────────
+    var TABLE = {
+        A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
+        J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
+        S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8,
+        'Ş':1,'Ç':3,'Ü':3,'Ö':6,'Ğ':7,'İ':9
+    };
+    var VOWELS = 'AEIOUİIÖÜ';
+    function reduce(n) {
+        if (n===11||n===22||n===33) return n;
+        while (n>9) {
+            n = String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);
+            if (n===11||n===22||n===33) break;
+        }
+        return n;
+    }
+    function calcExpression(name) {
+        var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,'');
+        for(var i=0;i<c.length;i++) s+=(TABLE[c[i]]||0);
+        return reduce(s);
+    }
+    function calcSoul(name) {
+        var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,'');
+        for(var i=0;i<c.length;i++) if(VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0);
+        return reduce(s);
+    }
+    function calcPers(name) {
+        var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,'');
+        for(var i=0;i<c.length;i++) if(!VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0);
+        return reduce(s);
+    }
+    function calcLP(d) {
+        if(!d) return null;
+        return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0));
+    }
+    function formatDate(s) {
+        if(!s) return '';
+        try { return new Date(s+'T00:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}); } catch(e){return s;}
+    }
+    function shortDate(s) {
+        if(!s) return '';
+        try { return new Date(s).toLocaleDateString('tr-TR',{day:'numeric',month:'short'}); } catch(e){return '';}
+    }
+    var ARCH = {1:'The Leader',2:'The Diplomat',3:'The Creator',4:'The Builder',5:'The Adventurer',6:'The Nurturer',7:'The Seeker',8:'The Achiever',9:'The Humanitarian',11:'The Illuminator',22:'The Master Builder',33:'The Teacher'};
+    var CM = {'1-1':75,'1-2':85,'1-3':90,'1-4':65,'1-5':80,'1-6':70,'1-7':75,'1-8':85,'1-9':80,'2-2':80,'2-3':85,'2-4':90,'2-5':65,'2-6':95,'2-7':70,'2-8':60,'2-9':90,'3-3':75,'3-4':65,'3-5':90,'3-6':80,'3-7':70,'3-8':75,'3-9':85,'4-4':85,'4-5':60,'4-6':90,'4-7':80,'4-8':95,'4-9':70,'5-5':70,'5-6':75,'5-7':80,'5-8':65,'5-9':85,'6-6':85,'6-7':75,'6-8':80,'6-9':95,'7-7':75,'7-8':70,'7-9':85,'8-8':70,'8-9':75,'9-9':95};
+    function compatScore(a,b){var k=a<=b?a+'-'+b:b+'-'+a;return CM[k]||75;}
+
+    // ─── Veri ─────────────────────────────────────────────────
+    var ud = null;
+    try { ud = JSON.parse(localStorage.getItem('kader_user_data')||'null'); } catch(e){}
+    if (!ud || !ud.name) { window.location.href='data-ready_birth_form.html'; return; }
+
+    var name=ud.name, bd=ud.birthDate||'';
+    var lp=calcLP(bd), exp=calcExpression(name), soul=calcSoul(name), pers=calcPers(name);
+
+    // ─── UI ───────────────────────────────────────────────────
+    var MALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuCuOsAz49QL47Y42kzevX6C-TTqnQcn-fKw9bm9U03OA6_buy44Ic8bt_wBUtcV1MJ5sSb6R8X_DJ-8lXNkSzsIERq3NcoxgBJpX1j8AHhsCx98dsslHkQKdYdaF2cK9NTMVQ_OIb_O9MJ9U-ow3guDO7mGY7CZqxCnsEYsQtxoblSjPmW1y00tP0EZpQ-aEvg3xi3jiQQYomz46nlrrOFmED0f3iCzkJ1soKbGh7PjJ9Gt3wTvCduVO9zVt_o3gQ0nIpmOLHD736c";
+    var FEMALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuAwVIwPfxW7vQTdT6_K5paisRbNWYqgoOiwgoxaVjFXEkx2Hocf55LzYmz1rXyDXknrbMiB8X59nhq-ptzZsewBCHh9Bi4547zbTT3ZGBQPNn6awMcDKio5VTuc-gUc0V9YR2bAFRCjLTR5wqzwERZcGYXOLcXEN3lp4szkNmpf1Pd1-9lj37_4nq74Sfu5spZUv6QDfvpVwS7fZTl7cHKYVI8htJIgEwQ7EgFwZuHn8KfRUOgWtjHWZ3pu_qj4AgsK0fYYsgjY2_g";
+    var FEMALE_NAMES = ['şevval','ayşe','leyla','fatma','zeynep','elif','meryem','selin','buse','esra','merve','büşra','naz','nur','ece','derya','gül','pınar'];
+
+    // Gender tespiti
+    var gender = ud.gender || '';
+    var low = name.toLowerCase();
+    var isFemale = gender === 'female' || FEMALE_NAMES.some(function(fn){ return low.startsWith(fn); });
+    var photo = isFemale ? FEMALE_PHOTO : MALE_PHOTO;
+
+    // Avatar fotoğrafını set et
+    var avatarEl = document.getElementById('profile-avatar');
+    avatarEl.innerHTML = '<img src="' + photo + '" alt="' + name + '" class="w-full h-full object-cover">';
+
+    document.getElementById('profile-name').textContent = name;
+    document.getElementById('profile-birthdate').textContent = formatDate(bd);
+    document.getElementById('lp-number').textContent = lp||'—';
+    document.getElementById('profile-archetype').textContent = ARCH[lp]||'The Soul';
+
+    // Gamification rank
+    if (window.gamification) {
+        var rp = window.gamification.getRankProgress();
+        var r = rp.current;
+        document.getElementById('pr-rank-name').textContent = r.name;
+        document.getElementById('pr-rank-name').style.color = r.color;
+        document.getElementById('pr-nbp').textContent = rp.nbp + ' NBP';
+        document.getElementById('pr-progress').style.width = rp.progress + '%';
+        document.getElementById('pr-progress').style.background = r.color;
+        document.getElementById('pr-icon-span').textContent = r.icon;
+        document.getElementById('pr-icon-span').style.color = r.color;
+        document.getElementById('pr-icon').style.background = r.color + '20';
+    }
+
+    document.getElementById('stat-lifepath').textContent = lp||'—';
+    document.getElementById('stat-expression').textContent = exp||'—';
+    document.getElementById('stat-soul').textContent = soul||'—';
+    document.getElementById('stat-pers').textContent = pers||'—';
+    document.getElementById('name-analysis-title').textContent = name.toUpperCase()+' — Deep Insight';
+
+    // ─── Uyumluluk Geçmişi ───────────────────────────────────
+    var hist = [];
+    try { hist = JSON.parse(localStorage.getItem('kader_compat_history')||'[]'); } catch(e){}
+    var listEl = document.getElementById('compat-history-list');
+    var emptyEl = document.getElementById('compat-empty');
+
+    if (!hist.length) {
+        emptyEl.style.display='block';
+    } else {
+        hist.forEach(function(item, idx) {
+            var pName = item.partnerName || 'Partner';
+            var pDate = item.partnerDate || '';
+            var lp2 = calcLP(pDate)||1;
+            var score = compatScore(lp||1, lp2);
+
+            var div = document.createElement('div');
+            div.className = 'card-hover flex items-center gap-4 p-4 bg-card-dark rounded-2xl border border-white/5 cursor-pointer fade-in';
+            div.style.animationDelay = (0.1 + idx*0.07)+'s';
+            div.innerHTML =
+                '<div class="size-12 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center">' +
+                    '<span class="material-symbols-outlined text-red-400">favorite</span>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<p class="text-white font-bold text-sm truncate">' + name + ' &amp; ' + pName + '</p>' +
+                    '<p class="text-white/40 text-xs mt-0.5">Life Path ' + (lp||'?') + ' &amp; ' + lp2 + ' · <span class="text-primary font-bold">' + score + '% uyum</span></p>' +
+                '</div>' +
+                '<div class="text-right shrink-0">' +
+                    '<p class="text-white/30 text-xs">' + shortDate(item.date) + '</p>' +
+                    '<span class="material-symbols-outlined text-white/20 text-sm">chevron_right</span>' +
+                '</div>';
+
+            div.addEventListener('click', function() {
+                try {
+                    localStorage.setItem('kader_compat_data', JSON.stringify({
+                        person1: { name: name, birthDate: bd },
+                        person2: { name: pName, birthDate: pDate }
+                    }));
+                } catch(e){}
+                window.location.href = 'relationship_compatibility_analysis.html';
+            });
+            listEl.appendChild(div);
+        });
+    }
+
+    // ─── Cosmic Match Keşfedilebilirlik Toggle ────────────────
+    var toggleEl = document.getElementById('toggle-discoverable');
+    var isOptedIn = localStorage.getItem('kader_discovery_opted_in') === 'true';
+    toggleEl.checked = isOptedIn;
+
+    toggleEl.addEventListener('change', async function() {
+        var session = null;
+        try { session = await window.auth.getSession(); } catch(e){}
+        var uid = session && session.user ? session.user.id : null;
+        if (!uid) { toggleEl.checked = false; return; }
+
+        if (toggleEl.checked) {
+            var ok = await window.discovery.optIn(uid);
+            if (!ok) toggleEl.checked = false;
+        } else {
+            await window.discovery.optOut(uid);
+        }
+    });
+
+    // ─── Ruh Analizi Yenile ──────────────────────────────────
+    document.getElementById('btn-refresh-soul').addEventListener('click', function() {
+        // Ana kullanıcının cache'lerini temizle (yeni AI analiz üretilecek)
+        var slug = name.toLowerCase().replace(/\s+/g, '_');
+        var keys = Object.keys(localStorage);
+        var cleared = 0;
+        keys.forEach(function(k) {
+            if (k.indexOf('kader_karmic') !== -1 && k.indexOf(slug) !== -1) {
+                localStorage.removeItem(k);
+                cleared++;
+            }
+            // accordion-ai cache'leri de temizle
+            if (k.indexOf('kader_accord_') !== -1 && k.indexOf(slug) !== -1) {
+                localStorage.removeItem(k);
+                cleared++;
+            }
+        });
+        console.log('[Soul Refresh] ' + cleared + ' cache temizlendi: ' + name);
+
+        // Deep Insight sayfasına git (kisi parametresi yok = ana kullanıcı)
+        window.location.href = 'name_numerology_breakdown_1.html';
+    });
+
+    // ─── Logout ───────────────────────────────────────────────
+    document.getElementById('btn-logout').addEventListener('click', async function() {
+        try {
+            localStorage.removeItem('kader_user_data');
+            localStorage.removeItem('kader_compat_data');
+            localStorage.removeItem('kader_active_analysis');
+            await window.auth.signOut();
+        } catch(e){}
+        window.location.href = 'mystic_splash_screen.html';
+    });
+
+})();
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

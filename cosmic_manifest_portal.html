@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cosmic Manifestation Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100dvh;
+            overflow: hidden;
+        }
+
+        /* Fazlara göre temalar */
+        .theme-full {
+            background: radial-gradient(circle at top, #2c2c2e 0%, #000000 100%);
+        }
+
+        .theme-new {
+            background: radial-gradient(circle at top, #1a1a3a 0%, #050505 100%);
+        }
+
+        .theme-wax {
+            background: radial-gradient(circle at 50% 50%, #1a1228 0%, #0a0a18 100%);
+        }
+
+        .glass-full {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(226, 232, 240, 0.15);
+        }
+
+        .glass-new {
+            background: rgba(15, 12, 41, 0.3);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(242, 185, 13, 0.2);
+        }
+
+        .glass-wax {
+            background: rgba(11, 46, 218, 0.05);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(11, 46, 218, 0.2);
+        }
+
+        .input-full::placeholder {
+            color: rgba(148, 163, 184, 0.4);
+        }
+
+        .input-new::placeholder {
+            color: rgba(99, 102, 241, 0.4);
+        }
+
+        .input-wax::placeholder {
+            color: rgba(11, 46, 218, 0.4);
+        }
+
+        .btn-full {
+            background: linear-gradient(to right, #e2e8f0, #ffffff);
+            color: #0f0f0f;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-new {
+            background: #f2b90d;
+            color: #0f0f0f;
+            box-shadow: 0 0 30px rgba(242, 185, 13, 0.3);
+        }
+
+        .btn-wax {
+            background: linear-gradient(to right, #f23694, #f2b90d);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(242, 54, 148, 0.2);
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        #flash {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        #sent-msg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        #sent-msg.show {
+            display: flex;
+        }
+
+        @keyframes shrinkIn {
+            0% {
+                transform: scale(1);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(0.05);
+                opacity: 0.8;
+                filter: brightness(3)
+            }
+        }
+
+        @keyframes bigBang {
+            0% {
+                transform: scale(0.05);
+                opacity: 0.8;
+                filter: brightness(8) blur(0px)
+            }
+
+            40% {
+                transform: scale(2.5);
+                opacity: 1;
+                filter: brightness(6) blur(4px)
+            }
+
+            100% {
+                transform: scale(0.05);
+                opacity: 0;
+                filter: brightness(1)
+            }
+        }
+
+        @keyframes returnBack {
+            0% {
+                transform: scale(0.05);
+                opacity: 0;
+                filter: brightness(4) blur(2px)
+            }
+
+            60% {
+                transform: scale(1.08);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                filter: brightness(1)
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0% 50%
+            }
+
+            100% {
+                background-position: 200% 50%
+            }
+        }
+
+        .shrink-anim {
+            animation: shrinkIn 0.6s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        .bigbang-anim {
+            animation: bigBang 0.5s cubic-bezier(0, 0, 0.2, 1) forwards;
+        }
+
+        .return-anim {
+            animation: returnBack 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .border-shimmer {
+            background: linear-gradient(90deg, #f23694, #ffd700, #e2e8f0, #f23694);
+            background-size: 300% auto;
+            padding: 2px;
+            animation: shimmer 3s linear infinite;
+        }
+    </style>
+</head>
+
+<body id="body" class="text-white flex flex-col items-center justify-center">
+
+    <div id="flash"></div>
+    <div id="sent-msg">
+        <div id="sent-icon" style="font-size:64px;line-height:1">✨</div>
+        <p id="sent-title"
+            style="font-size:22px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-shadow:0 0 20px currentColor">
+        </p>
+        <p id="sent-sub" style="font-size:13px;opacity:0.6;letter-spacing:0.1em"></p>
+    </div>
+
+    <!-- Cosmic bg -->
+    <div id="bg-layer" class="fixed inset-0 z-0 pointer-events-none">
+        <div id="nebula-1" class="absolute w-[80%] h-[80%] rounded-full"
+            style="top:-20%;left:-10%;filter:blur(80px);opacity:0.3"></div>
+        <div id="nebula-2" class="absolute w-[70%] h-[70%] rounded-full"
+            style="bottom:-20%;right:-10%;filter:blur(80px);opacity:0.2"></div>
+        <div class="star w-0.5 h-0.5" style="top:25%;left:33%;background:white;opacity:0.5;box-shadow:0 0 8px #fff">
+        </div>
+        <div class="star w-1 h-1" style="top:50%;left:25%;background:white;opacity:0.4;box-shadow:0 0 10px #fff"></div>
+        <div class="star w-0.5 h-0.5" style="top:66%;left:75%;background:white;opacity:0.5;box-shadow:0 0 8px #fff">
+        </div>
+        <div class="star w-1 h-1" style="top:33%;left:66%;background:white;opacity:0.4;box-shadow:0 0 10px #fff"></div>
+        <div class="star w-0.5 h-0.5" style="top:75%;left:50%;background:white;opacity:0.6;box-shadow:0 0 8px #fff">
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div id="universe-wrapper" class="relative z-10 w-full max-w-md px-6 flex flex-col items-center">
+
+        <!-- Phase badge -->
+        <div id="phase-badge" class="mb-6 flex flex-col items-center gap-1">
+            <div id="phase-pill" class="flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md border">
+                <span id="phase-icon" class="material-icons text-[18px]"></span>
+                <span id="phase-label" class="text-[11px] font-bold uppercase tracking-widest"></span>
+            </div>
+            <p id="phase-sub" class="text-[10px] uppercase tracking-wider opacity-50"></p>
+        </div>
+
+        <!-- Title -->
+        <div class="mb-8 text-center">
+            <h1 id="portal-title" class="text-3xl font-light tracking-[0.1em] mb-2"></h1>
+            <p id="portal-sub" class="text-sm opacity-60 leading-relaxed max-w-xs mx-auto"></p>
+        </div>
+
+        <!-- Input -->
+        <div class="w-full relative group mb-6" style="position: relative; z-index: 100;">
+            <div id="input-glow"
+                class="absolute -inset-4 rounded-full opacity-40 blur-3xl transition-opacity duration-700 group-focus-within:opacity-70 pointer-events-none" style="z-index: 1;">
+            </div>
+            <div id="border-wrap" class="border-shimmer rounded-xl overflow-hidden shadow-2xl" style="position: relative; z-index: 10; pointer-events: none;">
+                <div id="input-bg" class="p-1 rounded-[calc(12px-1px)]" style="position: relative; z-index: 20; pointer-events: auto;">
+                    <textarea id="intention-text"
+                        style="position: relative; z-index: 50; width: 100%; height: 11rem; background: transparent; border: none; font-size: 1.125rem; color: white; font-weight: 300; padding: 1.25rem; resize: none; outline: none;"
+                        placeholder=""></textarea>
+                </div>
+            </div>
+            <div id="spark-1" class="absolute -top-2 -right-2 animate-pulse pointer-events-none" style="z-index: 5;">
+                <span class="material-icons text-sm">auto_fix_high</span>
+            </div>
+            <div id="spark-2" class="absolute -bottom-2 -left-2 animate-bounce pointer-events-none" style="z-index: 5;">
+                <span class="material-icons text-xs">star</span>
+            </div>
+        </div>
+
+        <!-- Hint -->
+        <p id="hint-text"
+            class="text-xs font-medium uppercase tracking-[0.15em] flex items-center gap-2 mb-10 opacity-70">
+            <span class="w-8 h-[1px]" id="hint-line-l"></span>
+            <span id="hint-msg"></span>
+            <span class="w-8 h-[1px]" id="hint-line-r"></span>
+        </p>
+
+        <!-- Send button -->
+        <button id="send-btn" onclick="sendToUniverse()"
+            class="relative w-full py-5 rounded-full overflow-hidden active:scale-95 transition-transform"
+            style="cursor:pointer">
+            <div id="btn-bg" class="absolute inset-0"></div>
+            <div
+                class="relative flex items-center justify-center gap-3 font-semibold text-lg tracking-widest uppercase">
+                <span id="btn-text"></span>
+                <span id="btn-icon" class="material-icons text-xl"></span>
+            </div>
+        </button>
+
+        <div class="mt-12 flex gap-3">
+            <div class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+            <div id="dot-active" class="w-1.5 h-1.5 rounded-full"></div>
+            <div class="w-1.5 h-1.5 rounded-full" style="background:rgba(255,255,255,0.2)"></div>
+        </div>
+    </div>
+
+    <!-- Top nav -->
+    <nav class="fixed top-0 w-full px-8 py-10 flex justify-between items-center z-20">
+        <button onclick="window.location.href='cosmic_energy_calendar_2.html'"
+            class="p-2 rounded-full backdrop-blur-md text-white/80"
+            style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);cursor:pointer">
+            <span class="material-icons">arrow_back_ios_new</span>
+        </button>
+        <button onclick="window.location.href='lunar_phase_energy_tracker.html'"
+            class="p-2 rounded-full backdrop-blur-md text-white/80"
+            style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);cursor:pointer">
+            <span class="material-icons">nightlight</span>
+        </button>
+    </nav>
+
+    <div class="fixed bottom-2 w-32 h-1 rounded-full left-1/2 -translate-x-1/2"
+        style="background:rgba(255,255,255,0.15)"></div>
+
+    <script>
+        // ── Ay fazı ─────────────────────────────────────
+        function moonAge(date) {
+            var known = new Date(2000, 0, 6);
+            var diff = (date - known) / 86400000;
+            var cycle = 29.53058867;
+            return ((diff % cycle) + cycle) % cycle;
+        }
+        function getMoonPhase(date) {
+            var age = moonAge(date);
+            var illum = Math.round((1 - Math.cos((age / 29.53058867) * 2 * Math.PI)) / 2 * 100);
+            var phase = 'Waxing Crescent';
+            if (age < 1.85) phase = 'New Moon';
+            else if (age < 7.38) phase = 'Waxing Crescent';
+            else if (age < 9.22) phase = 'First Quarter';
+            else if (age < 14.77) phase = 'Waxing Gibbous';
+            else if (age < 16.61) phase = 'Full Moon';
+            else if (age < 22.15) phase = 'Waning Gibbous';
+            else if (age < 23.99) phase = 'Last Quarter';
+            else phase = 'Waning Crescent';
+            return { phase: phase, illum: illum, age: age };
+        }
+
+        // ── Tema konfigürasyonları ───────────────────────
+        function getTheme(phase, illum) {
+            var isFullMoon = phase === 'Full Moon';
+            var isNewMoon = phase === 'New Moon';
+            var isWaning = phase === 'Waning Gibbous' || phase === 'Last Quarter' || phase === 'Waning Crescent';
+            var isWaxing = !isFullMoon && !isNewMoon && !isWaning;
+
+            if (isFullMoon) return {
+                bodyBg: 'radial-gradient(circle at top, #2c2c2e 0%, #080808 100%)',
+                nebula1: 'rgba(200,200,220,0.12)',
+                nebula2: 'rgba(255,255,255,0.06)',
+                phasePillBg: 'rgba(255,255,255,0.1)',
+                phasePillBorder: 'rgba(226,232,240,0.4)',
+                phaseIcon: 'brightness_high',
+                phaseIconColor: '#e2e8f0',
+                phaseLabel: 'Full Moon Phase',
+                phaseSub: 'Energy: Release & Completion',
+                title: 'Release & Let Go',
+                titleColor: '#e2e8f0',
+                sub: 'Surrender what no longer serves your highest path to the silver moonlight.',
+                inputGlow: 'rgba(226,232,240,0.1)',
+                inputBg: 'rgba(0,0,0,0.6)',
+                inputClass: 'input-full',
+                placeholder: 'What are you ready to release into the universe?',
+                hintColor: '#e2e8f0',
+                hintLineColor: 'rgba(226,232,240,0.3)',
+                hintMsg: 'Release. Surrender. Be free.',
+                btnClass: 'btn-full',
+                btnText: 'Release to Universe',
+                btnIcon: 'send',
+                btnTextColor: '#0f0f0f',
+                spark1Color: '#e2e8f0',
+                spark2Color: 'rgba(226,232,240,0.5)',
+                dotColor: '#e2e8f0',
+                sentIcon: '🌕',
+                sentTitle: 'Released to the Universe',
+                sentTitleColor: '#e2e8f0',
+                sentSub: 'Your intention is now weaving into the cosmic tapestry',
+                particleColors: ['#ffffff', '#e2e8f0', '#94a3b8', '#cbd5e1', '#f1f5f9'],
+                flashColor: 'rgba(255,255,255,0.9)'
+            };
+
+            if (isNewMoon) return {
+                bodyBg: 'radial-gradient(circle at top, #1a1a3a 0%, #050505 100%)',
+                nebula1: 'rgba(242,185,13,0.08)',
+                nebula2: 'rgba(99,102,241,0.08)',
+                phasePillBg: 'rgba(242,185,13,0.1)',
+                phasePillBorder: 'rgba(242,185,13,0.3)',
+                phaseIcon: 'brightness_3',
+                phaseIconColor: '#f2b90d',
+                phaseLabel: 'New Moon Phase',
+                phaseSub: 'Energy: New Intentions',
+                title: 'New Intentions',
+                titleColor: '#f2b90d',
+                sub: 'Plant your cosmic desires in the fertile darkness of the new cycle.',
+                inputGlow: 'rgba(242,185,13,0.08)',
+                inputBg: 'rgba(15,12,41,0.7)',
+                inputClass: 'input-new',
+                placeholder: 'What seeds are you ready to plant today?',
+                hintColor: '#f2b90d',
+                hintLineColor: 'rgba(242,185,13,0.25)',
+                hintMsg: 'Plant the seed. Trust the cosmos.',
+                btnClass: 'btn-new',
+                btnText: 'Plant My Seed',
+                btnIcon: 'local_florist',
+                btnTextColor: '#0f0f0f',
+                spark1Color: '#f2b90d',
+                spark2Color: 'rgba(242,185,13,0.6)',
+                dotColor: '#f2b90d',
+                sentIcon: '🌑',
+                sentTitle: 'Seed Planted in the Cosmos',
+                sentTitleColor: '#f2b90d',
+                sentSub: 'Your intention takes root in the fertile darkness',
+                particleColors: ['#f2b90d', '#ffd700', '#f59e0b', '#fbbf24', '#ffffff'],
+                flashColor: 'rgba(242,185,13,0.7)'
+            };
+
+            // Diğer fazlar (waxing/waning)
+            var isRelease = isWaning;
+            return {
+                bodyBg: 'radial-gradient(circle at 50% 50%, #1a0d2e 0%, #0a0818 100%)',
+                nebula1: 'rgba(242,54,148,0.15)',
+                nebula2: 'rgba(242,185,13,0.1)',
+                phasePillBg: 'rgba(242,54,148,0.1)',
+                phasePillBorder: 'rgba(242,54,148,0.3)',
+                phaseIcon: isRelease ? 'brightness_4' : 'auto_awesome',
+                phaseIconColor: '#f23694',
+                phaseLabel: phase,
+                phaseSub: isRelease ? 'Energy: Waning & Releasing' : 'Energy: Growing & Building',
+                title: isRelease ? 'Cosmic Portal' : 'Cosmic Portal',
+                titleColor: '#ffffff',
+                sub: 'Vibrate at the frequency of your desires.',
+                inputGlow: 'rgba(242,54,148,0.15)',
+                inputBg: 'rgba(34,16,25,0.8)',
+                inputClass: 'input-full',
+                placeholder: 'Write your intention to the universe...',
+                hintColor: '#f2b90d',
+                hintLineColor: 'rgba(242,185,13,0.2)',
+                hintMsg: 'Be specific. Feel the vibration.',
+                btnClass: 'btn-wax',
+                btnText: 'Send to Universe',
+                btnIcon: 'send',
+                btnTextColor: '#ffffff',
+                spark1Color: '#f2b90d',
+                spark2Color: 'rgba(242,185,13,0.5)',
+                dotColor: '#f23694',
+                sentIcon: '✨',
+                sentTitle: 'Sent to Universe',
+                sentTitleColor: '#f23694',
+                sentSub: 'Your intention is now cosmic energy',
+                particleColors: ['#f23694', '#ffd700', '#ff8ab3', '#ffffff', '#c084fc'],
+                flashColor: 'rgba(255,255,255,0.85)'
+            };
+        }
+
+        // ── Temayı uygula ────────────────────────────────
+        var moon = getMoonPhase(new Date());
+        var T = getTheme(moon.phase, moon.illum);
+
+        document.body.style.background = T.bodyBg;
+        document.getElementById('nebula-1').style.background = T.nebula1;
+        document.getElementById('nebula-2').style.background = T.nebula2;
+
+        var pill = document.getElementById('phase-pill');
+        pill.style.background = T.phasePillBg;
+        pill.style.borderColor = T.phasePillBorder;
+
+        var icon = document.getElementById('phase-icon');
+        icon.textContent = T.phaseIcon;
+        icon.style.color = T.phaseIconColor;
+
+        document.getElementById('phase-label').textContent = T.phaseLabel;
+        document.getElementById('phase-label').style.color = T.phaseIconColor;
+        document.getElementById('phase-sub').textContent = T.phaseSub;
+
+        var title = document.getElementById('portal-title');
+        title.textContent = T.title;
+        title.style.color = T.titleColor;
+        document.getElementById('portal-sub').textContent = T.sub;
+
+        document.getElementById('input-glow').style.background = T.inputGlow;
+        document.getElementById('input-bg').style.background = T.inputBg;
+
+        var ta = document.getElementById('intention-text');
+        ta.placeholder = T.placeholder;
+        ta.className = 'w-full h-44 bg-transparent border-none focus:ring-0 text-lg text-white font-light p-5 resize-none ' + T.inputClass;
+
+        document.getElementById('hint-msg').textContent = T.hintMsg;
+        document.getElementById('hint-msg').style.color = T.hintColor;
+        document.getElementById('hint-line-l').style.background = T.hintLineColor;
+        document.getElementById('hint-line-r').style.background = T.hintLineColor;
+
+        var btnBg = document.getElementById('btn-bg');
+        if (T.btnClass === 'btn-full') {
+            btnBg.style.background = 'linear-gradient(to right, #e2e8f0, #ffffff)';
+        } else if (T.btnClass === 'btn-new') {
+            btnBg.style.background = '#f2b90d';
+        } else {
+            btnBg.style.background = 'linear-gradient(to right, #f23694, #f2b90d)';
+        }
+
+        var btnT = document.getElementById('btn-text');
+        btnT.textContent = T.btnText;
+        btnT.style.color = T.btnTextColor;
+        document.getElementById('btn-icon').style.color = T.btnTextColor;
+        document.getElementById('btn-icon').textContent = T.btnIcon;
+
+        document.getElementById('spark-1').style.color = T.spark1Color;
+        document.getElementById('spark-2').style.color = T.spark2Color;
+        document.getElementById('dot-active').style.background = T.dotColor;
+        document.getElementById('dot-active').style.boxShadow = '0 0 8px ' + T.dotColor;
+
+        // ── Animasyon ────────────────────────────────────
+        var animating = false;
+
+        function createParticles() {
+            var cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+            for (var i = 0; i < 60; i++) {
+                (function (idx) {
+                    setTimeout(function () {
+                        var p = document.createElement('div');
+                        p.className = 'particle';
+                        var size = Math.random() * 8 + 2;
+                        var color = T.particleColors[Math.floor(Math.random() * T.particleColors.length)];
+                        var angle = Math.random() * 360 * Math.PI / 180;
+                        var dist = Math.random() * Math.min(window.innerWidth, window.innerHeight) * 0.8;
+                        var dur = Math.random() * 600 + 400;
+                        p.style.cssText = 'width:' + size + 'px;height:' + size + 'px;background:' + color + ';left:' + cx + 'px;top:' + cy + 'px;box-shadow:0 0 ' + (size * 2) + 'px ' + color + ';transition:transform ' + dur + 'ms cubic-bezier(0,0,0.3,1),opacity ' + dur + 'ms ease;';
+                        document.body.appendChild(p);
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                p.style.transform = 'translate(' + (Math.cos(angle) * dist) + 'px,' + (Math.sin(angle) * dist) + 'px)';
+                                p.style.opacity = '0';
+                            });
+                        });
+                        setTimeout(function () { p.remove(); }, dur + 100);
+                    }, idx * 8);
+                })(i);
+            }
+        }
+
+        function flashScreen() {
+            var f = document.getElementById('flash');
+            f.style.display = 'block';
+            f.style.background = T.flashColor;
+            f.style.opacity = '1';
+            f.style.transition = 'none';
+            setTimeout(function () {
+                f.style.transition = 'opacity 0.4s ease';
+                f.style.opacity = '0';
+                setTimeout(function () { f.style.display = 'none'; }, 400);
+            }, 80);
+        }
+
+        function sendToUniverse() {
+            if (animating) return;
+            animating = true;
+            var w = document.getElementById('universe-wrapper');
+            var sm = document.getElementById('sent-msg');
+            document.getElementById('send-btn').disabled = true;
+            // XP tracking
+            if (window.gamification) { window.gamification.addXP('manifest_set', 0); window.gamification.trackAction('manifest_set'); }
+
+            // Sent msg içeriğini doldur
+            document.getElementById('sent-icon').textContent = T.sentIcon;
+            document.getElementById('sent-title').textContent = T.sentTitle;
+            document.getElementById('sent-title').style.color = T.sentTitleColor;
+            document.getElementById('sent-title').style.textShadow = '0 0 20px ' + T.sentTitleColor;
+            document.getElementById('sent-sub').textContent = T.sentSub;
+
+            w.classList.add('shrink-anim');
+            setTimeout(function () {
+                w.classList.remove('shrink-anim');
+                flashScreen();
+                createParticles();
+                w.classList.add('bigbang-anim');
+                setTimeout(function () {
+                    w.classList.remove('bigbang-anim');
+                    w.style.transform = 'scale(0.05)'; w.style.opacity = '0';
+                    sm.classList.add('show');
+                    setTimeout(function () {
+                        sm.classList.remove('show');
+                        w.classList.add('return-anim');
+                        w.style.transform = ''; w.style.opacity = '';
+                        document.getElementById('intention-text').value = '';
+                        setTimeout(function () {
+                            w.classList.remove('return-anim');
+                            document.getElementById('send-btn').disabled = false;
+                            animating = false;
+                        }, 700);
+                    }, 1400);
+                }, 500);
+            }, 600);
+        }
+    </script>
+    <script src="js/numerology-ai.js"></script>
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>App Settings &amp; Preferences</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb613",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#181611",
+                        "surface-dark": "#221d10",
+                        "border-dark": "#393528"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .custom-toggle {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .custom-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #393528;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #ecb613;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+    <div
+        class="max-w-md mx-auto min-h-screen flex flex-col bg-background-light dark:bg-background-dark relative overflow-hidden">
+        <!-- Subtle Background Pattern -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none"
+            style="background-image: radial-gradient(#ecb613 0.5px, transparent 0.5px); background-size: 24px 24px;">
+        </div>
+        <!-- Top Navigation Bar -->
+        <div
+            class="sticky top-0 z-10 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+            <div onclick="window.location.href='profile_soul_journey.html'"
+                class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
+                <span class="material-symbols-outlined text-[24px]">arrow_back_ios</span>
+            </div>
+            <h2
+                class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12 font-display">
+                Settings</h2>
+        </div>
+        <div class="flex-1 overflow-y-auto pb-10 relative z-0">
+            <!-- Personal Information Section -->
+            <div class="mt-4">
+                <h3
+                    class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4 font-display">
+                    Personal Information</h3>
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-[72px] py-2 justify-between cursor-pointer border-b border-slate-100 dark:border-border-dark">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12">
+                            <span class="material-symbols-outlined">person</span>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">
+                                Full Name</p>
+                            <p
+                                class="text-slate-500 dark:text-[#b9b29d] text-sm font-normal leading-normal line-clamp-1">
+                                Alexandrina Vance</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0">
+                        <span class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-[72px] py-2 justify-between cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-12">
+                            <span class="material-symbols-outlined">auto_awesome</span>
+                        </div>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-slate-900 dark:text-white text-base font-medium leading-normal line-clamp-1">
+                                Birthdate &amp; Time</p>
+                            <p
+                                class="text-slate-500 dark:text-[#b9b29d] text-sm font-normal leading-normal line-clamp-1">
+                                Nov 12, 1990 at 11:11 PM</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0">
+                        <span class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Notifications Section -->
+            <div class="mt-6">
+                <h3
+                    class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4 font-display">
+                    Notification Preferences</h3>
+                <!-- Daily Insight Toggle -->
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-16 justify-between border-b border-slate-100 dark:border-border-dark">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">light_mode</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            Daily Numerology Insight</p>
+                    </div>
+                    <label class="custom-toggle">
+                        <input checked="" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <!-- Lunar Alerts Toggle -->
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-16 justify-between border-b border-slate-100 dark:border-border-dark">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">dark_mode</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            Lunar Phase Alerts</p>
+                    </div>
+                    <label class="custom-toggle">
+                        <input checked="" type="checkbox" />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <!-- Generic Notification Settings -->
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-16 justify-between cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">notifications_active</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            System Notifications</p>
+                    </div>
+                    <div class="shrink-0">
+                        <span class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Security & Privacy Section -->
+            <div class="mt-6">
+                <h3
+                    class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4 font-display">
+                    Security &amp; Legal</h3>
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-14 justify-between border-b border-slate-100 dark:border-border-dark cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">lock</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            Change Password</p>
+                    </div>
+                    <div class="shrink-0"><span
+                            class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span></div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-14 justify-between border-b border-slate-100 dark:border-border-dark cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">verified_user</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            Privacy Policy</p>
+                    </div>
+                    <div class="shrink-0"><span
+                            class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span></div>
+                </div>
+                <div
+                    class="flex items-center gap-4 bg-white dark:bg-surface-dark px-4 min-h-14 justify-between cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="text-primary flex items-center justify-center rounded-lg bg-primary/10 shrink-0 size-10">
+                            <span class="material-symbols-outlined">description</span>
+                        </div>
+                        <p class="text-slate-900 dark:text-white text-base font-normal leading-normal flex-1 truncate">
+                            Terms of Service</p>
+                    </div>
+                    <div class="shrink-0"><span
+                            class="material-symbols-outlined text-slate-400 dark:text-white">chevron_right</span></div>
+                </div>
+            </div>
+            <!-- Destructive Actions -->
+            <div class="mt-8 px-4 space-y-4">
+                <button id="btn-logout"
+                    class="w-full h-14 rounded-xl border border-slate-200 dark:border-border-dark text-slate-900 dark:text-white font-semibold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                    <span class="material-symbols-outlined">logout</span>
+                    Log Out
+                </button>
+                <button
+                    class="w-full h-14 rounded-xl text-red-500 font-semibold flex items-center justify-center gap-2 hover:bg-red-500/5 transition-colors">
+                    <span class="material-symbols-outlined">delete_forever</span>
+                    Delete Account
+                </button>
+            </div>
+            <!-- Version Footer -->
+            <div class="mt-8 text-center px-4">
+                <p class="text-slate-400 dark:text-[#b9b29d] text-xs font-normal">Your spiritual data is encrypted using
+                    256-bit AES protection.</p>
+                <p class="text-slate-400 dark:text-[#b9b29d] text-xs font-normal mt-2">V 2.4.1 — Made with stardust</p>
+            </div>
+        </div>
+        <!-- Bottom Tab Bar (Placeholder) -->
+        <div
+            class="h-[72px] bg-background-light dark:bg-background-dark border-t border-slate-100 dark:border-border-dark flex items-center justify-around px-6">
+            <span class="material-symbols-outlined text-slate-400">home</span>
+            <span class="material-symbols-outlined text-slate-400">auto_graph</span>
+            <span class="material-symbols-outlined text-slate-400">explore</span>
+            <span class="material-symbols-outlined text-primary">person</span>
+        </div>
+    </div>
+
+    <script>
+            // KADER APP - Navigation Helper
+            (function () {
+                // Auto navigation için
+                var autoTarget = '';
+                var autoDelay = 2500;
+
+                if (autoTarget) {
+                    setTimeout(function () {
+                        window.location.href = autoTarget;
+                    }, autoDelay);
+                }
+
+                // Bottom nav linkleri ekle
+                setTimeout(function () {
+                    // Home button
+                    var allBtns = document.querySelectorAll('button, a');
+                    allBtns.forEach(function (btn) {
+                        var text = btn.textContent || '';
+                        var html = btn.innerHTML || '';
+
+                        // Home nav
+                        if ((text.includes('Home') || html.includes('>home<')) && text.trim().length < 20) {
+                            btn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                window.location.href = 'mystic_numerology_home_1.html';
+                            });
+                        }
+                        // Crystal Store / Journal
+                        if (text.includes('Crystal Store') || text.includes('Journal')) {
+                            btn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                window.location.href = 'premium_crystal_store.html';
+                            });
+                        }
+                        // Profile / Settings nav
+                        if ((text.includes('Profile') || html.includes('>settings<')) && text.trim().length < 20) {
+                            btn.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                window.location.href = 'profile_soul_journey.html';
+                            });
+                        }
+                    });
+                }, 500);
+            })();
+
+        setTimeout(function () {
+
+            // Real Log Out Logic
+            const btnLogout = document.getElementById('btn-logout');
+            if (btnLogout) {
+                btnLogout.addEventListener('click', async function () {
+                    try {
+                        await window.auth.signOut();
+                        window.location.href = 'mystic_splash_screen.html';
+                    } catch (e) {
+                        console.error('Logout error:', e);
+                        window.location.href = 'mystic_splash_screen.html';
+                    }
+                });
+            }
+
+            // arrow_back → profile_soul_journey.html
+            document.querySelectorAll('button, a, [class*="cursor"]').forEach(function (el) {
+                var txt = (el.textContent || '') + (el.innerHTML || '');
+                if (txt.includes('arrow_back')) {
+                    el.style.cursor = 'pointer';
+                    el.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        window.location.href = 'profile_soul_journey.html';
+                    });
+                }
+            });
+
+        }, 100);
+    </script>
+
+
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

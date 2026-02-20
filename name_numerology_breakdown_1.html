@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Name Numerology Breakdown</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2cc0d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#12110a",
+                        "card-dark": "#221f10",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .cosmic-glow {
+            box-shadow: 0 0 15px rgba(242, 204, 13, 0.3);
+        }
+
+        .letter-glow {
+            text-shadow: 0 0 8px rgba(242, 204, 13, 0.6);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+    <header
+        class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50">
+        <div onclick="window.location.href='mystic_numerology_home_1.html'"
+            class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">
+            Name Analysis</h2>
+        <div class="flex w-12 items-center justify-end">
+            <button
+                class="flex size-12 cursor-pointer items-center justify-center rounded-xl bg-transparent text-slate-900 dark:text-white">
+                <span class="material-symbols-outlined">info</span>
+            </button>
+        </div>
+    </header>
+    <main class="max-w-md mx-auto pb-10">
+        <!-- Pythagorean sistem kullanılıyor -->
+        <section class="mt-4 px-4">
+            <div class="flex flex-wrap justify-center gap-2 py-6">
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">1</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold">
+                        A</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">3</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold text-white/50">
+                        L</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">5</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold">
+                        E</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">6</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold text-white/50">
+                        X</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">1</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold">
+                        A</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">5</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold text-white/50">
+                        N</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">4</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold text-white/50">
+                        D</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">5</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold">
+                        E</div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">2</span>
+                    <div
+                        class="w-10 h-14 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-2xl font-bold text-white/50">
+                        R</div>
+                </div>
+            </div>
+            <h1 id="name-display"
+                class="text-slate-900 dark:text-white tracking-widest text-4xl font-extrabold leading-tight text-center mt-2">
+                ALEXANDER</h1>
+        </section>
+        <section id="expression-section" class="flex flex-col items-center justify-center py-10 relative">
+            <div class="relative size-56 flex items-center justify-center cursor-pointer" id="expression-circle">
+                <svg class="absolute inset-0 size-full -rotate-90">
+                    <circle class="text-slate-200 dark:text-white/10" cx="112" cy="112" fill="transparent" r="100"
+                        stroke="currentColor" stroke-width="8"></circle>
+                    <circle class="drop-shadow-[0_0_10px_rgba(242,204,13,0.5)]" cx="112" cy="112" fill="transparent"
+                        r="100" stroke="#f2cc0d" stroke-dasharray="628" stroke-dashoffset="157" stroke-linecap="round"
+                        stroke-width="12"></circle>
+                </svg>
+                <div class="text-center z-10">
+                    <p class="text-slate-500 dark:text-primary/70 text-sm font-bold tracking-widest uppercase">
+                        Expression</p>
+                    <h3 id="expression-number" class="text-slate-900 dark:text-white text-7xl font-bold py-1">32</h3>
+                    <div class="bg-primary px-3 py-1 rounded-full text-background-dark text-sm font-bold">Number 5</div>
+                </div>
+            </div>
+            <p class="mt-2 text-center text-primary/50 text-xs uppercase tracking-wider">Tap to see calculation</p>
+            <p id="expression-slogan" class="mt-2 text-center text-slate-500 dark:text-[#bab59c] text-sm px-8 italic">
+                "The Catalyst of Change and Freedom"
+            </p>
+            <!-- Expression detail -->
+            <div id="expression-detail" style="display:none;width:100%;max-width:90%;margin:16px auto 0;padding:16px;background:rgba(0,0,0,0.2);border:1px solid rgba(242,204,13,0.2);border-radius:12px"></div>
+        </section>
+        <section class="px-4 space-y-3">
+            <div
+                class="flex flex-col rounded-xl border border-primary/20 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+                <button
+                    class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div
+                            class="p-2.5 rounded-lg bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">favorite</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h2 class="text-slate-900 dark:text-white text-lg font-bold">Soul Urge</h2>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-primary text-background-dark text-[10px] font-black leading-none uppercase tracking-tighter shrink-0">Inner</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                                    MYSTIC</span>
+                            </div>
+                            <p class="text-slate-500 dark:text-[#bab59c] text-sm mt-0.5 line-clamp-1">A deep seeker of
+                                truth craving spiritual understanding.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 ml-2 shrink-0">
+                        <div class="text-primary text-3xl font-black">7</div>
+                        <span class="material-symbols-outlined text-slate-400">expand_more</span>
+                    </div>
+                </button>
+            </div>
+            <div
+                class="flex flex-col rounded-xl border border-white/10 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+                <button
+                    class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div
+                            class="p-2.5 rounded-lg bg-white/10 text-slate-400 dark:text-white/60 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">person</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h2 class="text-slate-900 dark:text-white text-lg font-bold">Personality</h2>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-white/10 text-slate-400 dark:text-white/60 text-[10px] font-black leading-none uppercase tracking-tighter shrink-0">Outer</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                                    SCHOLAR</span>
+                            </div>
+                            <p class="text-slate-500 dark:text-[#bab59c] text-sm mt-0.5 line-clamp-1">Perceived as
+                                reserved, analytical, and highly competent.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 ml-2 shrink-0">
+                        <div class="text-slate-900 dark:text-white text-3xl font-black">25<span
+                                class="text-sm font-bold text-slate-500 ml-0.5">/7</span></div>
+                        <span class="material-symbols-outlined text-slate-400">expand_more</span>
+                    </div>
+                </button>
+            </div>
+            <div id="life-path-card"
+                class="flex flex-col rounded-xl border border-white/10 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+                <button
+                    class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div
+                            class="p-2.5 rounded-lg bg-primary/10 text-primary/80 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">route</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h2 class="text-slate-900 dark:text-white text-lg font-bold">Life Path</h2>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-black leading-none uppercase tracking-tighter shrink-0">Destiny</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                                    NOMAD</span>
+                            </div>
+                            <p class="text-slate-500 dark:text-[#bab59c] text-sm mt-0.5 line-clamp-1">Your destiny's
+                                blueprint, guiding your ultimate purpose and growth.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 ml-2 shrink-0">
+                        <div class="text-slate-900 dark:text-white text-3xl font-black">11</div>
+                        <span class="material-symbols-outlined text-slate-400">expand_more</span>
+                    </div>
+                </button>
+            </div>
+            <!-- ═══ KARMİC BOND KARTI ═══ -->
+            <div id="karmic-bond-card"
+                class="flex flex-col rounded-xl border border-red-500/30 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+                <button id="karmic-bond-btn"
+                    class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div class="p-2.5 rounded-lg bg-red-500/15 text-red-400 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-2xl">cycle</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h2 class="text-slate-900 dark:text-white text-lg font-bold">Karmic Bond</h2>
+                                <span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-black leading-none uppercase tracking-tighter shrink-0">Debt</span>
+                                <span id="karmic-badge" class="px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 text-[10px] font-bold leading-none uppercase tracking-tight border border-red-500/20 shrink-0">—</span>
+                            </div>
+                            <p class="text-slate-500 dark:text-[#bab59c] text-sm mt-0.5 line-clamp-1">Geçmiş yaşamdan gelen karmik borç ve dersin analizi.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 ml-2 shrink-0">
+                        <div id="karmic-number" class="text-red-400 text-3xl font-black">—</div>
+                        <span id="karmic-expand-icon" class="material-symbols-outlined text-slate-400">expand_more</span>
+                    </div>
+                </button>
+                <!-- İçerik alanı -->
+                <div id="karmic-content" style="display:none;">
+                    <div style="padding:0 20px 20px;">
+                        <!-- Transparency Box -->
+                        <div id="karmic-transparency" style="background:rgba(239,68,77,0.1);border:1px solid rgba(239,68,77,0.3);border-radius:8px;padding:12px;margin-bottom:12px"></div>
+                        <div id="karmic-ai-text" style="color:rgba(186,181,156,0.9);font-size:14px;line-height:1.75;"></div>
+                        <!-- Numeroloji Ustası Butonu -->
+                        <div id="karmic-master-btn-wrap" style="margin-top:16px;display:none;">
+                            <button id="btn-goto-master"
+                                style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#7f1313,#c0392b);color:white;border:none;border-radius:12px;padding:14px;font-size:13px;font-weight:800;letter-spacing:0.05em;cursor:pointer;text-transform:uppercase;">
+                                <span class="material-symbols-outlined" style="font-size:18px;">psychology</span>
+                                Numeroloji Ustasına Sor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="grid grid-cols-2 gap-3 p-4">
+            <div class="flex flex-col gap-2 rounded-xl bg-primary/5 border border-primary/10 p-4">
+                <span class="material-symbols-outlined text-primary">auto_awesome</span>
+                <p class="text-xs font-bold text-primary tracking-widest uppercase">Key Energy</p>
+                <p class="text-slate-900 dark:text-white text-base font-bold">Adaptability</p>
+            </div>
+            <div class="flex flex-col gap-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-white/5 p-4">
+                <span class="material-symbols-outlined text-slate-400">psychology</span>
+                <p class="text-xs font-bold text-slate-400 tracking-widest uppercase">Focus</p>
+                <p class="text-slate-900 dark:text-white text-base font-bold">Intellect</p>
+            </div>
+        </div>
+        <div class="px-4 py-6">
+            <button id="view-detailed-reading-btn"
+                onclick="(function(){ var p = new URLSearchParams(window.location.search); var k = p.get('kisi'); var r = 'past_reading_archive_detail.html' + (k ? '?kisi=' + encodeURIComponent(k) : ''); window.location.href = 'premium_crystal_store.html?return=' + encodeURIComponent(r); })();"
+                class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-background-dark py-4 rounded-xl font-bold text-lg transition-transform active:scale-95">
+                <span class="material-symbols-outlined">menu_book</span>
+                View Detailed Reading
+            </button>
+        </div>
+    </main>
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden opacity-30 dark:opacity-20">
+        <div class="absolute -top-20 -right-20 size-80 rounded-full bg-primary/20 blur-[100px]"></div>
+        <div class="absolute bottom-40 -left-20 size-60 rounded-full bg-primary/10 blur-[80px]"></div>
+    </div>
+
+
+
+
+
+    <!-- ═══ NUMEROLOJİ USTASI CHAT MODAL ═══ -->
+    <div id="master-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);flex-direction:column;">
+        <div style="display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;position:relative;">
+            <!-- Modal Header -->
+            <div style="background:linear-gradient(135deg,#1a0808,#2d1010);border-bottom:1px solid rgba(192,57,43,0.3);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7f1313,#c0392b);display:flex;align-items:center;justify-content:center;border:2px solid rgba(192,57,43,0.5);">
+                        <span class="material-symbols-outlined" style="color:white;font-size:20px;">psychology</span>
+                    </div>
+                    <div>
+                        <p style="color:white;font-weight:800;font-size:14px;letter-spacing:0.05em;">NUMEROLOJİ USTASI</p>
+                        <p style="color:rgba(255,255,255,0.4);font-size:11px;">Karmik sorularınızı yanıtlıyor</p>
+                    </div>
+                </div>
+                <button onclick="closeMasterModal()" style="background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;">
+                    <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+                </button>
+            </div>
+            <!-- Mesajlar -->
+            <div id="master-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;"></div>
+            <!-- Input -->
+            <div style="padding:12px 16px;background:#1a1711;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;display:flex;gap:8px;">
+                <input id="master-input" type="text" placeholder="Karmik borcunuz hakkında sorun..."
+                    style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 16px;color:white;font-size:14px;outline:none;font-family:'Space Grotesk',sans-serif;" />
+                <button id="master-send"
+                    style="background:linear-gradient(135deg,#7f1313,#c0392b);border:none;border-radius:12px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                    <span class="material-symbols-outlined" style="color:white;font-size:20px;">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/numerology-engine.js"></script>
+    <script src="js/numerology-ai.js"></script>
+    <script>
+        // ─── Numeroloji hesaplamaları (PYTHAGOREAN SİSTEM) ────────────
+        var PYTHAGOREAN = { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9, J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9, S: 1, T: 2, U: 3, V: 4, W: 5, X: 6, Y: 7, Z: 8 };
+        var VOWELS = 'AEIOU';
+        function reduce(n) { while (n > 9 && n !== 11 && n !== 22 && n !== 33) { n = String(n).split('').reduce(function (a, d) { return a + parseInt(d); }, 0); } return n; }
+        
+        // Detaylı hesaplama breakdown fonksiyonları
+        function getExpressionBreakdown(name) {
+            var clean = name.toUpperCase().replace(/[^A-Z]/g, '');
+            var letters = clean.split('');
+            var values = letters.map(function(c) { return PYTHAGOREAN[c] || 0; });
+            var sum = values.reduce(function(a,x){return a+x;},0);
+            var steps = [];
+            var current = sum;
+            steps.push(sum);
+            while (current > 9 && current !== 11 && current !== 22 && current !== 33) {
+                current = String(current).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                steps.push(current);
+            }
+            return {
+                letters: letters,
+                values: values,
+                sum: sum,
+                steps: steps,
+                final: current
+            };
+        }
+        
+        function getSoulUrgeBreakdown(name) {
+            var clean = name.toUpperCase().replace(/[^A-Z]/g, '');
+            var vowels = clean.split('').filter(function(c){ return VOWELS.includes(c); });
+            var values = vowels.map(function(c) { return PYTHAGOREAN[c] || 0; });
+            var sum = values.reduce(function(a,x){return a+x;},0);
+            var steps = [];
+            var current = sum;
+            steps.push(sum);
+            while (current > 9 && current !== 11 && current !== 22 && current !== 33) {
+                current = String(current).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                steps.push(current);
+            }
+            return {
+                vowels: vowels,
+                values: values,
+                sum: sum,
+                steps: steps,
+                final: current
+            };
+        }
+        
+        function getPersonalityBreakdown(name) {
+            var clean = name.toUpperCase().replace(/[^A-Z]/g, '');
+            var consonants = clean.split('').filter(function(c){ return !VOWELS.includes(c); });
+            var values = consonants.map(function(c) { return PYTHAGOREAN[c] || 0; });
+            var sum = values.reduce(function(a,x){return a+x;},0);
+            var steps = [];
+            var current = sum;
+            steps.push(sum);
+            while (current > 9 && current !== 11 && current !== 22 && current !== 33) {
+                current = String(current).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                steps.push(current);
+            }
+            return {
+                consonants: consonants,
+                values: values,
+                sum: sum,
+                steps: steps,
+                final: current
+            };
+        }
+        
+        function getLifePathBreakdown(dateStr) {
+            var digits = dateStr.replace(/\D/g, '').split('').map(Number);
+            var sum = digits.reduce(function(a,x){return a+x;},0);
+            var steps = [];
+            var current = sum;
+            steps.push(sum);
+            while (current > 9 && current !== 11 && current !== 22 && current !== 33) {
+                current = String(current).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                steps.push(current);
+            }
+            return {
+                digits: digits,
+                sum: sum,
+                steps: steps,
+                final: current
+            };
+        }
+        
+        function calcExpression(name) { return reduce(name.toUpperCase().replace(/[^A-Z]/g, '').split('').reduce(function (s, c) { return s + (PYTHAGOREAN[c] || 0); }, 0)); }
+        function calcSoulUrge(name) { return reduce(name.toUpperCase().replace(/[^A-Z]/g, '').split('').reduce(function (s, c) { return s + (VOWELS.includes(c) ? PYTHAGOREAN[c] || 0 : 0); }, 0)); }
+        function calcPersonality(name) { return reduce(name.toUpperCase().replace(/[^A-Z]/g, '').split('').reduce(function (s, c) { return s + (!VOWELS.includes(c) && c != ' ' ? PYTHAGOREAN[c] || 0 : 0); }, 0)); }
+        function calcLifePath(dateStr) { 
+            // Doğru Life Path algoritması: Tüm rakamları topla
+            console.log('[Life Path Debug] Input:', dateStr);
+            if (!dateStr) return 1;
+            var digits = dateStr.replace(/\D/g, '').split('').map(Number);
+            console.log('[Life Path Debug] Digits:', digits);
+            if (digits.length === 0) return 1;
+            var sum = digits.reduce(function(a, x) { return a + x; }, 0);
+            console.log('[Life Path Debug] Sum:', sum);
+            var result = reduce(sum);
+            console.log('[Life Path Debug] Final:', result);
+            return result;
+        }
+
+        // ─── Sayfa Başlatıcı ──────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', function () {
+            // 1. Veri Hazırlığı
+            var params = new URLSearchParams(window.location.search);
+            var userData = {};
+            try { userData = JSON.parse(localStorage.getItem('kader_user_data') || '{}'); } catch (e) { }
+
+            var name = params.get('kisi') || userData.name || 'Alexander';
+            var birthDate = params.get('dt') || userData.birthDate || '1990-01-01';
+            
+            console.log('[Main Debug] Name:', name);
+            console.log('[Main Debug] BirthDate:', birthDate);
+
+            // 2. Hesaplamalar
+            var lpNum = calcLifePath(birthDate);
+            var expNum = calcExpression(name);
+            var soulNum = calcSoulUrge(name);
+            var persNum = calcPersonality(name);
+            
+            console.log('[Main Debug] Life Path:', lpNum);
+            console.log('[Main Debug] Expression:', expNum);
+            console.log('[Main Debug] Soul Urge:', soulNum);
+            console.log('[Main Debug] Personality:', persNum);
+
+            // 3. UI Güncelleme (Statik Alanlar)
+            var nameUpper = name.toUpperCase();
+            var nameTitle = document.querySelector('h1.tracking-widest.text-4xl, h1.font-extrabold');
+            if (nameTitle) nameTitle.textContent = nameUpper;
+
+            var bigExp = document.querySelector('h3.text-7xl');
+            if (bigExp) bigExp.textContent = expNum;
+            
+            // Expression calculation detail
+            var expBreakdown = getExpressionBreakdown(name);
+            var expCircle = document.getElementById('expression-circle');
+            var expDetail = document.getElementById('expression-detail');
+            var expSlogan = document.getElementById('expression-slogan');
+            
+            if (expCircle && expDetail) {
+                expCircle.addEventListener('click', function() {
+                    var isHidden = expDetail.style.display === 'none';
+                    if (isHidden) {
+                        // Generate content
+                        var html = '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05)">';
+                        html += '<div style="color:#f2cc0d;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">📊 EXPRESSION NUMBER CALCULATION</div>';
+                        html += '<div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:8px">Source: ALL LETTERS (Full Name)</div>';
+                        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">';
+                        expBreakdown.letters.forEach(function(letter, idx) {
+                            html += '<div style="background:rgba(242,204,13,0.15);border:1px solid rgba(242,204,13,0.3);border-radius:6px;padding:4px 8px;display:flex;gap:4px;align-items:center">';
+                            html += '<span style="color:#f2cc0d;font-weight:700;font-size:13px">' + letter + '</span>';
+                            html += '<span style="color:rgba(255,255,255,0.4);font-size:11px">→</span>';
+                            html += '<span style="color:rgba(255,255,255,0.7);font-size:12px">' + expBreakdown.values[idx] + '</span>';
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                        
+                        // Reduction steps
+                        if (expBreakdown.steps.length > 1) {
+                            html += '<div style="margin-top:8px">';
+                            html += '<div style="color:rgba(255,255,255,0.5);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Reduction Steps:</div>';
+                            html += '<div style="font-family:monospace;color:#f2cc0d;font-size:13px;font-weight:600">';
+                            expBreakdown.steps.forEach(function(step, idx) {
+                                html += step;
+                                if (idx < expBreakdown.steps.length - 1) {
+                                    html += ' → ';
+                                }
+                            });
+                            html += '</div>';
+                            html += '</div>';
+                        }
+                        
+                        html += '</div>';
+                        html += '<div style="color:rgba(186,181,156,0.8);font-size:13px;line-height:1.6">Final Result: <strong style="color:#f2cc0d;font-size:18px">' + expBreakdown.final + '</strong></div>';
+                        expDetail.innerHTML = html;
+                        expDetail.style.display = 'block';
+                    } else {
+                        expDetail.style.display = 'none';
+                    }
+                });
+            }
+            var expBadge = document.querySelector('.bg-primary.px-3.py-1.rounded-full');
+            if (expBadge) expBadge.textContent = 'Number ' + expNum;
+
+            // Harf kutularını güncelle
+            var letterContainer = document.querySelector('.flex.flex-wrap.justify-center.gap-2.py-6');
+            if (letterContainer) {
+                var chars = nameUpper.replace(/[^A-Z]/g, '').split('');
+                letterContainer.innerHTML = chars.map(function (c) {
+                    var v = PYTHAGOREAN[c] || 0;
+                    var isVowel = VOWELS.includes(c);
+                    return '<div class="flex flex-col items-center">' +
+                        '<span class="text-primary text-xs font-bold mb-1 letter-glow">' + v + '</span>' +
+                        '<div class="w-10 h-14 flex items-center justify-center border ' + (isVowel ? 'border-primary bg-primary/10' : 'border-primary/30 bg-primary/5') + ' rounded-lg text-2xl font-bold">' + c + '</div>' +
+                        '</div>';
+                }).join('');
+            }
+
+            // Kartlardaki sayıları güncelle VE hesaplama detayları ekle
+            var accordionSection = document.querySelector('section.px-4.space-y-3');
+            console.log('[Accordion Debug] Section found:', accordionSection);
+            if (accordionSection) {
+                var cards = accordionSection.querySelectorAll(':scope > div');
+                console.log('[Accordion Debug] Cards found:', cards.length);
+                
+                // Hesaplama breakdownları
+                var soulBreakdown = getSoulUrgeBreakdown(name);
+                var persBreakdown = getPersonalityBreakdown(name);
+                var lpBreakdown = getLifePathBreakdown(birthDate);
+                
+                console.log('[Accordion Debug] Breakdowns:', { soul: soulBreakdown, pers: persBreakdown, lp: lpBreakdown });
+                
+                var cardMapping = [
+                    { num: soulNum, breakdown: soulBreakdown, type: 'soul' },
+                    { num: persNum, breakdown: persBreakdown, type: 'personality' },
+                    { num: lpNum, breakdown: lpBreakdown, type: 'lifepath' }
+                ];
+                
+                cards.forEach(function (card, i) {
+                    if (cardMapping[i]) {
+                        // Sayıyı güncelle
+                        var numDisplay = card.querySelector('.text-3xl.font-black');
+                        if (numDisplay) {
+                            numDisplay.innerHTML = cardMapping[i].num + (i === 1 && cardMapping[i].num > 9 ? '<span class="text-sm font-bold text-slate-500 ml-0.5">/' + reduce(cardMapping[i].num) + '</span>' : '');
+                        }
+                        
+                        // Hesaplama detayı accordion içeriği oluştur
+                        var breakdown = cardMapping[i].breakdown;
+                        var contentHTML = '<div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2)">';
+                        contentHTML += '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05)">';
+                        contentHTML += '<div style="color:#f2cc0d;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">📊 CALCULATION TRANSPARENCY</div>';
+                        
+                        if (cardMapping[i].type === 'soul') {
+                            contentHTML += '<div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:8px">Source: VOWELS ONLY (A,E,I,O,U)</div>';
+                            contentHTML += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">';
+                            breakdown.vowels.forEach(function(v, idx) {
+                                contentHTML += '<div style="background:rgba(242,204,13,0.15);border:1px solid rgba(242,204,13,0.3);border-radius:6px;padding:4px 8px;display:flex;gap:4px;align-items:center">';
+                                contentHTML += '<span style="color:#f2cc0d;font-weight:700;font-size:13px">' + v + '</span>';
+                                contentHTML += '<span style="color:rgba(255,255,255,0.4);font-size:11px">→</span>';
+                                contentHTML += '<span style="color:rgba(255,255,255,0.7);font-size:12px">' + breakdown.values[idx] + '</span>';
+                                contentHTML += '</div>';
+                            });
+                            contentHTML += '</div>';
+                            if (breakdown.vowels.length === 0) {
+                                contentHTML += '<div style="color:#ef4444;font-size:13px;font-weight:600">⚠ No vowels detected</div>';
+                            }
+                        } else if (cardMapping[i].type === 'personality') {
+                            contentHTML += '<div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:8px">Source: CONSONANTS ONLY</div>';
+                            contentHTML += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">';
+                            breakdown.consonants.forEach(function(c, idx) {
+                                contentHTML += '<div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:4px 8px;display:flex;gap:4px;align-items:center">';
+                                contentHTML += '<span style="color:rgba(255,255,255,0.9);font-weight:700;font-size:13px">' + c + '</span>';
+                                contentHTML += '<span style="color:rgba(255,255,255,0.4);font-size:11px">→</span>';
+                                contentHTML += '<span style="color:rgba(255,255,255,0.7);font-size:12px">' + breakdown.values[idx] + '</span>';
+                                contentHTML += '</div>';
+                            });
+                            contentHTML += '</div>';
+                        } else if (cardMapping[i].type === 'lifepath') {
+                            contentHTML += '<div style="color:rgba(255,255,255,0.6);font-size:12px;margin-bottom:8px">Source: ALL DATE DIGITS</div>';
+                            contentHTML += '<div style="font-family:monospace;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px;margin-bottom:8px">';
+                            contentHTML += '<div style="color:rgba(255,255,255,0.9);font-size:13px">' + breakdown.digits.join(' + ') + ' = ' + breakdown.sum + '</div>';
+                            contentHTML += '</div>';
+                        }
+                        
+                        // Reduction steps
+                        if (breakdown.steps.length > 1) {
+                            contentHTML += '<div style="margin-top:8px">';
+                            contentHTML += '<div style="color:rgba(255,255,255,0.5);font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Reduction Steps:</div>';
+                            contentHTML += '<div style="font-family:monospace;color:#f2cc0d;font-size:13px;font-weight:600">';
+                            breakdown.steps.forEach(function(step, idx) {
+                                contentHTML += step;
+                                if (idx < breakdown.steps.length - 1) {
+                                    contentHTML += ' → ';
+                                }
+                            });
+                            contentHTML += '</div>';
+                            contentHTML += '</div>';
+                        }
+                        
+                        contentHTML += '</div>';
+                        contentHTML += '<div style="color:rgba(186,181,156,0.8);font-size:13px;line-height:1.6">Final Result: <strong style="color:#f2cc0d;font-size:16px">' + breakdown.final + '</strong></div>';
+                        contentHTML += '</div>';
+                        
+                        // Accordion contentDiv oluştur ve ekle
+                        var existingContent = card.querySelector('[data-accordion-content]');
+                        if (!existingContent) {
+                            var contentDiv = document.createElement('div');
+                            contentDiv.setAttribute('data-accordion-content', 'true');
+                            contentDiv.style.display = 'none';
+                            contentDiv.innerHTML = contentHTML;
+                            card.appendChild(contentDiv);
+                            
+                            // Button click handler
+                            var btn = card.querySelector('button');
+                            if (btn) {
+                                btn.style.cursor = 'pointer';
+                                btn.addEventListener('click', function() {
+                                    var icon = btn.querySelector('.material-symbols-outlined:last-child');
+                                    var isHidden = contentDiv.style.display === 'none';
+                                    contentDiv.style.display = isHidden ? 'block' : 'none';
+                                    if (icon) icon.textContent = isHidden ? 'expand_less' : 'expand_more';
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. Dinamik Slogan
+            var descMap = {
+                1: "The Independent Force and Pioneer",
+                2: "The Harmonious Partner and Diplomat",
+                3: "The Creative Soul and Communicator",
+                4: "The Practical Master and Builder",
+                5: "The Catalyst of Change and Freedom",
+                6: "The Nurturing Heart and Caretaker",
+                7: "The Seeker of Wisdom and Truth",
+                8: "The Powerful Manifestor and Leader",
+                9: "The Universal Soul and Philanthropist",
+                11: "The Intuitive Visionary and Guide",
+                22: "The Master Architect of Reality",
+                33: "The Compassionate Spiritual Teacher"
+            };
+            var slogan = document.querySelector('p.italic');
+            if (slogan) slogan.textContent = '"' + (descMap[expNum] || "A Soul Guided by Eternal Vibration") + '"';
+
+            // 5. Navigasyon
+            document.querySelectorAll('button, span, div').forEach(function (el) {
+                var txt = el.textContent || '';
+                var html = el.innerHTML || '';
+                if (html.includes('arrow_back_ios')) {
+                    el.onclick = function () { window.location.href = 'mystic_numerology_home_1.html'; };
+                }
+            });
+            
+            // View Detailed Reading butonu artık inline onclick ile çalışıyor
+        });
+    </script>
+    <!-- accordion-ai.js kaldırıldı — numerology-engine.js tarafından yönetiliyor -->
+
+
+    <!-- ═══ KARMİC BOND MOTORU ═══ -->
+    <script>
+    (function() {
+        // Karmik borç sayıları
+        var KARMIC_DEBTS = [13, 14, 16, 19];
+        var KARMIC_INFO = {
+            13: { label: '13/4', theme: 'Tembellik & Disiplin', desc: 'Geçmişte sorumluluktan kaçış. Bu yaşamda disiplin ve çalışkanlık ders.' },
+            14: { label: '14/5', theme: 'Özgürlüğün Kötüye Kullanımı', desc: 'Aşırılık ve bağımlılık döngüsü. Denge ve öz-kontrol bu yaşamın anahtarı.' },
+            16: { label: '16/7', theme: 'Ego & Kibir', desc: 'Ego kaynaklı yıkım. Alçakgönüllülük ve manevi arayış bu yaşamın dersi.' },
+            19: { label: '19/1', theme: 'Güç & Bağımsızlık', desc: 'Gücün yanlış kullanımı. Paylaşımcı liderlik ve yardım istemek bu yaşamın dersi.' }
+        };
+
+        function reduceNum(n) {
+            if (n===11||n===22||n===33) return n;
+            while (n > 9) { n = String(n).split('').reduce(function(a,d){return a+parseInt(d);},0); if(n===11||n===22||n===33)break; }
+            return n;
+        }
+        function calcLP(d) {
+            if (!d) return null;
+            return reduceNum(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0));
+        }
+        function getRawLP(d) {
+            if (!d) return null;
+            return d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0);
+        }
+        // Hesap adımlarını metin olarak üret (ChatGPT gibi göster)
+        function buildCalcSteps(birthDate) {
+            if (!birthDate) return { digits: '', sum1: 0, sum2: 0, final: 0, steps: '' };
+            var digits = birthDate.replace(/\D/g,'').split('').map(Number);
+            var sum1 = digits.reduce(function(a,x){return a+x;},0);
+            var reduced1 = sum1;
+            while (reduced1 > 9 && reduced1 !== 11 && reduced1 !== 22 && reduced1 !== 33) {
+                reduced1 = String(reduced1).split('').reduce(function(a,d){return a+parseInt(d);},0);
+            }
+            var digitStr = birthDate.replace(/-/g,'').split('').join('+');
+            var steps = digitStr + ' = ' + sum1;
+            if (sum1 !== reduced1) {
+                var mid = String(sum1).split('').join('+');
+                steps += ' → ' + mid + ' = ' + reduced1;
+            }
+            return { digitStr: digitStr, sum1: sum1, final: reduced1, steps: steps };
+        }
+        function detectKarmicDebt(birthDate, name) {
+            var debts = [];
+            // Doğum tarihinden ham sayılar
+            var rawLP = getRawLP(birthDate);
+            KARMIC_DEBTS.forEach(function(k) { if (rawLP === k) debts.push(k); });
+            // Doğum tarihinin parçaları (gün, ay karmik olabilir)
+            if (birthDate) {
+                var parts = birthDate.split('-');
+                var day = parseInt(parts[2]);
+                var month = parseInt(parts[1]);
+                [day, month].forEach(function(v) { if (KARMIC_DEBTS.includes(v) && !debts.includes(v)) debts.push(v); });
+            }
+            return debts;
+        }
+
+        // ─── Kullanıcı verisi — birden fazla kaynaktan çek ──────────
+        window.addEventListener('load', async function() {
+            var params = new URLSearchParams(window.location.search);
+            var kisiName = params.get('kisi');
+
+            if (kisiName) {
+                // Başkasının profili
+                if (window.profile) {
+                    try {
+                        var conn = await window.profile.getConnectionDetail(kisiName);
+                        if (conn) initKarmic({ name: conn.fullName, birthDate: conn.birthDate });
+                    } catch(e) {}
+                }
+                return;
+            }
+
+            // Ana kullanıcı — 3 kaynaktan dene
+            var name = '', birthDate = '';
+
+            // 1. kader_user_data
+            try {
+                var ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null');
+                if (ud) { name = ud.name || ''; birthDate = ud.birthDate || ''; }
+            } catch(e) {}
+
+            // 2. Supabase profiles tablosu (birthDate hala yoksa)
+            if (name && !birthDate && window.supabaseClient) {
+                try {
+                    var sess = await window.supabaseClient.auth.getUser();
+                    if (sess && sess.data && sess.data.user) {
+                        var { data: prof } = await window.supabaseClient
+                            .from('profiles')
+                            .select('birth_date, full_name')
+                            .eq('id', sess.data.user.id)
+                            .single();
+                        if (prof) {
+                            // Supabase'de alan adı birth_date (snake_case)
+                            birthDate = prof.birth_date || prof.birthDate || prof.dob || '';
+                            if (!name) name = prof.full_name || prof.name || '';
+                            console.log('[Karmic] Supabase prof:', prof, '→ birthDate:', birthDate);
+                            // kader_user_data'yı güncelle — bir daha sormasın
+                            if (birthDate) {
+                                try {
+                                    var existing = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+                                    existing.birthDate = birthDate;
+                                    if (!existing.name) existing.name = name;
+                                    localStorage.setItem('kader_user_data', JSON.stringify(existing));
+                                } catch(e2) {}
+                            }
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            // 3. kader_connections'dan kendi kaydını bul (saveConnection'da da kaydediliyor)
+            if (name && !birthDate) {
+                try {
+                    var allKeys = Object.keys(localStorage).filter(function(k){ return k.startsWith('kader_connections_'); });
+                    allKeys.forEach(function(k) {
+                        var conns = JSON.parse(localStorage.getItem(k) || '[]');
+                        conns.forEach(function(c) {
+                            if (!birthDate && c.fullName && c.fullName.toLowerCase() === name.toLowerCase() && c.birthDate) {
+                                birthDate = c.birthDate;
+                            }
+                        });
+                    });
+                } catch(e) {}
+            }
+
+            if (name) initKarmic({ name: name, birthDate: birthDate });
+        });
+
+        function initKarmic(data) {
+            var name = (data && data.name) ? data.name : '';
+            var birthDate = (data && data.birthDate) ? data.birthDate : '';
+            console.log('[Karmic] initKarmic called:', { name: name, birthDate: birthDate });
+            if (!name) return;
+            
+            // birthDate yoksa kartı tıklanabilir bırak ama uyarı göster
+            if (!birthDate) {
+                var numEl2 = document.getElementById('karmic-number');
+                var badgeEl2 = document.getElementById('karmic-badge');
+                if (numEl2) { numEl2.textContent = '?'; numEl2.style.fontSize = '22px'; }
+                if (badgeEl2) { badgeEl2.textContent = 'TARİH GEREKLİ'; }
+                var btn2 = document.getElementById('karmic-bond-btn');
+                var content2 = document.getElementById('karmic-content');
+                var icon2 = document.getElementById('karmic-expand-icon');
+                var aiText2 = document.getElementById('karmic-ai-text');
+                if (btn2) btn2.addEventListener('click', function() {
+                    var isOpen = content2.style.display !== 'none';
+                    content2.style.display = isOpen ? 'none' : 'block';
+                    icon2.textContent = isOpen ? 'expand_more' : 'expand_less';
+                    if (!isOpen) aiText2.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ Doğum tarihi bulunamadı. Lütfen <a href="data-ready_birth_form.html" style="color:#f2cc0d;text-decoration:underline;">profil formunu</a> doldurun.</p>';
+                });
+                return;
+            }
+            var lp = calcLP(birthDate);
+            var rawLP = getRawLP(birthDate);
+            var calcSteps = buildCalcSteps(birthDate);
+            var debts = detectKarmicDebt(birthDate, name);
+            var primaryDebt = debts.length > 0 ? debts[0] : null;
+            // Gün ve ay numaraları
+            var birthParts = (birthDate||'').split('-');
+            var birthDay = parseInt(birthParts[2]||0);
+            var birthMonth = parseInt(birthParts[1]||0);
+            var birthYear = parseInt(birthParts[0]||0);
+            // Karmik tespit sebebi
+            var debtSource = [];
+            if (KARMIC_DEBTS.includes(birthDay)) debtSource.push('gün sayısı ' + birthDay);
+            if (KARMIC_DEBTS.includes(birthMonth)) debtSource.push('ay sayısı ' + birthMonth);
+            if (KARMIC_DEBTS.includes(rawLP)) debtSource.push('doğum tarihi toplamı ' + rawLP);
+
+            // Kart üzerinde başlangıçta yıldız göster, AI analiz edince detay çıkar
+            var numEl = document.getElementById('karmic-number');
+            var badgeEl = document.getElementById('karmic-badge');
+            if (numEl) { numEl.textContent = '✦'; numEl.style.fontSize = '22px'; }
+            if (badgeEl) badgeEl.textContent = 'ANALİZ ET';
+
+            // Cache key
+            var cacheKey = 'kader_karmic_v11__' + name.toLowerCase().replace(/\s+/g,'_') + '__' + (birthDate||'').replace(/-/g,'') + '__' + (primaryDebt||0);
+
+            // Accordion tıklama
+            var btn = document.getElementById('karmic-bond-btn');
+            var content = document.getElementById('karmic-content');
+            var icon = document.getElementById('karmic-expand-icon');
+            var aiText = document.getElementById('karmic-ai-text');
+            var masterWrap = document.getElementById('karmic-master-btn-wrap');
+            var loaded = false;
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    var isOpen = content.style.display !== 'none';
+                    content.style.display = isOpen ? 'none' : 'block';
+                    icon.textContent = isOpen ? 'expand_more' : 'expand_less';
+
+                    if (!loaded && !isOpen) {
+                        loaded = true;
+                        // Cache kontrol
+                        var cached = null;
+                        try { cached = localStorage.getItem(cacheKey); } catch(e) {}
+                        if (cached) {
+                            renderKarmicText(aiText, cached);
+                            masterWrap.style.display = 'block';
+                            return;
+                        }
+                        // Loading
+                        aiText.innerHTML = '<div style="display:flex;align-items:center;gap:8px;padding:12px 0;color:rgba(255,100,100,0.6);"><span class=\"material-symbols-outlined\" style=\"animation:spin 1s linear infinite;font-size:18px;\">cycle</span><span style=\"font-size:13px;\">Karmik borç hesaplanıyor...</span></div>';
+                        // AI çağrısı — API key /api/openai proxy'si tarafından server-side ekleniyor
+                        // Sadece doğum tarihini ver — ChatGPT'nin kendisi hesaplar ve analiz eder
+                        if (!birthDate) {
+                            aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ Doğum tarihi bulunamadı. Lütfen profil formunu doldurun.</p>';
+                            loaded = false;
+                            return;
+                        }
+                        var birthDisplay = birthDate.split('-').reverse().join('/'); // YYYY-MM-DD → DD/MM/YYYY
+                        var prompt = birthDisplay + ' için en baskın ve yorucu karma';
+                        // Timeout ile fetch
+                        var controller = new AbortController();
+                        var timeoutId = setTimeout(function() {
+                            controller.abort();
+                            aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.</p>';
+                            loaded = false; // tekrar denenebilsin
+                        }, 30000);
+
+                        fetch('/api/openai', {
+                            method: 'POST',
+                            signal: controller.signal,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: 'gpt-4o-mini',
+                                messages: [
+                                    { role: 'system', content: 'Sen Pisagor numerolojisi karmik borç uzmanısın. Türkçe yaz, net ve pratik ol. Karmik borç sayıları SADECE 13,14,16,19. Gün sayısını ASLA indirgeme.' },
+                                    { role: 'user', content: '19/10/1997 için en baskın ve yorucu karma' },
+                                    { role: 'assistant', content: '19/10/1997 icin en baskin ve yorucu karma: 19/1 karmik borcu.\nNeden 19/1?\nNumerolojide 19; gucun, otoritenin ve bireyselligin yanlis kullanimiyla iliskilendirilen klasik bir karmik borc sayisidir.\n\n19/1 karmik borcunun pratik etkileri\n* Yalniz ilerlemek zorunda kalma.\n* Ego-tevazu catismasi.\n* Otoriteyle surtusme.\n* Erken sorumluluk.\n* Basari gecikmesi.\n\nBu karmanin dersi\n* Gucu baskalariyla paylasarak kullanmak.\n* Yardim istemeyi zayiflik gormemek.\n* Liderligi ornek olarak gostermek.\n\nNet gercek: Bu karma sanssizlik degil; yanlis guc kullanimini duzeltmeye zorlayan bir mekanizma.' },
+                                    { role: 'user', content: prompt }
+                                ],
+                                temperature: 0.75,
+                                max_tokens: 400
+                            })
+                        }).then(function(r) {
+                            clearTimeout(timeoutId);
+                            return r.json();
+                        }).then(function(d) {
+                            if (d.error) {
+                                aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ API hatası: ' + (d.error.message || 'Bilinmeyen hata') + '</p>';
+                                loaded = false;
+                                return;
+                            }
+                            var text = d.choices && d.choices[0] ? d.choices[0].message.content.trim() : null;
+                            if (text) {
+                                aiText.style.animation = 'karmic-fade 0.5s ease';
+                                renderKarmicText(aiText, text);
+                                try { localStorage.setItem(cacheKey, text); } catch(e) {}
+                                masterWrap.style.display = 'block';
+                            } else {
+                                aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ Yanıt alınamadı. Tekrar deneyin.</p>';
+                                loaded = false;
+                            }
+                        }).catch(function(err) {
+                            clearTimeout(timeoutId);
+                            if (err.name === 'AbortError') return; // timeout zaten halletti
+                            aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ Bağlantı hatası: ' + (err.message||'İnternet bağlantınızı kontrol edin.') + '</p>';
+                            loaded = false; // tekrar denenebilsin
+                        });
+                    }
+                });
+            }
+
+            // Ustaya sor butonu
+            var masterBtn = document.getElementById('btn-goto-master');
+            if (masterBtn) {
+                masterBtn.addEventListener('click', function() {
+                    openMasterModal(name, birthDate, lp, primaryDebt);
+                });
+            }
+        }
+
+        function renderKarmicText(el, text) {
+            // Markdown-lite: **bold**, - maddeler, \n\n paragraf
+            var html = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2cc0d;">$1</strong>')
+                .split('\n\n')
+                .map(function(block) {
+                    block = block.trim();
+                    if (!block) return '';
+                    // Satırları işle
+                    var lines = block.split('\n');
+                    var hasBullets = lines.some(function(l){ return l.trim().startsWith('-'); });
+                    if (hasBullets) {
+                        var items = lines.map(function(l) {
+                            l = l.trim();
+                            if (l.startsWith('-')) {
+                                return '<li style="margin-bottom:6px;list-style:none;padding-left:16px;position:relative;">' +
+                                    '<span style="position:absolute;left:0;color:#c0392b;">✦</span>' +
+                                    l.slice(1).trim() + '</li>';
+                            }
+                            return '<p style="margin-bottom:8px;font-weight:700;">' + l + '</p>';
+                        }).join('');
+                        return '<ul style="margin:0 0 14px;padding:0;">' + items + '</ul>';
+                    }
+                    // Normal paragraf veya başlık
+                    var firstLine = lines[0];
+                    var isTitle = !firstLine.endsWith('.') && firstLine.length < 60 && lines.length === 1;
+                    if (isTitle) {
+                        return '<p style="margin-bottom:8px;font-weight:800;color:rgba(255,255,255,0.95);font-size:13px;letter-spacing:0.03em;">' + block + '</p>';
+                    }
+                    return '<p style="margin-bottom:12px;color:rgba(186,181,156,0.9);">' + block.replace(/\n/g,'<br>') + '</p>';
+                }).join('');
+            el.innerHTML = html || '<p style="color:rgba(186,181,156,0.6);">Analiz hazırlanamadı.</p>';
+        }
+
+        // ─── NUMEROLOJİ USTASI CHAT ──────────────────────────────
+        var chatHistory = [];
+        var chatContext = {};
+
+        window.openMasterModal = function(name, birthDate, lp, primaryDebt) {
+            var DEBT_THEMES = {13:'Tembellik ve Disiplin',14:'Özgürlüğün Kötüye Kullanımı',16:'Ego ve Kibir',19:'Güç ve Bağımsızlık'};
+            chatContext = { name: name, birthDate: birthDate, lp: lp, primaryDebt: primaryDebt, debtTheme: primaryDebt ? (DEBT_THEMES[primaryDebt]||'') : '' };
+            chatHistory = [];
+            var modal = document.getElementById('master-modal');
+            modal.style.display = 'flex';
+            var msgEl = document.getElementById('master-messages');
+            msgEl.innerHTML = '';
+
+            // Açılış mesajı
+            var KARMIC_INFO_local = {
+                13: '13/4', 14: '14/5', 16: '16/7', 19: '19/1'
+            };
+            var karmicLabel = primaryDebt ? (KARMIC_INFO_local[primaryDebt] || primaryDebt) : 'yok';
+            var DEBT_THEMES_LOCAL2 = {13:'Tembellik & Disiplin',14:'Özgürlüğün Kötüye Kullanımı',16:'Ego & Kibir',19:'Güç & Bağımsızlık'};
+            var openingMsg = (primaryDebt
+                ? karmicLabel + ' karmik borcunuz tespit edildi. Hangi başlıktan açayım?\n\n• para/iş\n• ilişki\n• sağlık\n\nYa da mevcut durumunuzu yazın (sektör, iş modeli, ilişki sorunu) — o alana özel analiz yaparım.'
+                : 'Doğum tarihinizde klasik karmik borç sayısı tespit edilmedi. Yaşam Yolu ' + lp + ' derslerinizi konuşabiliriz. Ne sormak istersiniz?');
+
+            addMessage('assistant', openingMsg);
+            chatHistory.push({ role: 'system', content: `Sen Pisagor numerolojisi karmik borç uzmanısın. Türkçe yaz, net ve pratik ol.
+
+Analiz ettiğin kişi:
+- İsim: ${name}
+- Doğum: ${birthDate}
+- Yaşam Yolu: ${lp}
+- Karmik borç: ${primaryDebt ? karmicLabel : 'yok'}
+
+KURALLAR:
+- Mistik dil yok, astroloji yok, motivasyonel laf yok.
+- Kullanıcı "para/iş", "ilişki", "sağlık" veya meslek/sektör yazarsa o başlık altında analiz yap.
+- Kullanıcı sektör belirtirse (otomasyon, yazılım, gıda vs.) o sektöre özel karmik etkiyi açıkla.
+- Her yanıtın sonunda başka bir başlık öner.
+
+PARA/İŞ BAŞLIĞI İSTENİRSE bu formatta yaz:
+[TARİH] – Para & İş karması ([BORÇ]) net analizi
+
+Temel problem
+* [madde]
+* [madde]
+
+İş hayatında tipik döngü
+[numaralı liste]
+
+Para kaybına açık alanlar
+* [madde]
+
+Para kazanmanın doğru yolu
+* [madde]
+
+Uygun iş modelleri
+* [madde]
+
+Zamanlama gerçeği
+* [madde]
+
+Altın kural
+[tek cümle]
+
+İLİŞKİ BAŞLIĞI İSTENİRSE benzer yapıda ilişki odaklı analiz yap.
+SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
+            chatHistory.push({ role: 'assistant', content: openingMsg });
+
+            document.getElementById('master-input').focus();
+        };
+
+        window.closeMasterModal = function() {
+            document.getElementById('master-modal').style.display = 'none';
+        };
+
+        function addMessage(role, text) {
+            var msgEl = document.getElementById('master-messages');
+            var isUser = role === 'user';
+            var div = document.createElement('div');
+            div.style.cssText = 'display:flex;' + (isUser ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+            var bubble = document.createElement('div');
+            bubble.style.cssText = 'max-width:80%;padding:12px 16px;border-radius:' + (isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px') + ';font-size:14px;line-height:1.65;' +
+                (isUser ? 'background:linear-gradient(135deg,#7f1313,#c0392b);color:white;' : 'background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.88);border:1px solid rgba(255,255,255,0.1);');
+            bubble.textContent = text;
+            div.appendChild(bubble);
+            msgEl.appendChild(div);
+            msgEl.scrollTop = msgEl.scrollHeight;
+        }
+
+        function addLoadingBubble() {
+            var msgEl = document.getElementById('master-messages');
+            var div = document.createElement('div');
+            div.id = 'master-loading';
+            div.style.cssText = 'display:flex;justify-content:flex-start;';
+            div.innerHTML = '<div style="padding:12px 16px;border-radius:16px 16px 16px 4px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);font-size:13px;">✦ düşünüyor...</div>';
+            msgEl.appendChild(div);
+            msgEl.scrollTop = msgEl.scrollHeight;
+        }
+
+        async function sendMasterMessage() {
+            var input = document.getElementById('master-input');
+            var text = (input.value || '').trim();
+            if (!text) return;
+            input.value = '';
+            addMessage('user', text);
+            chatHistory.push({ role: 'user', content: text });
+            addLoadingBubble();
+
+            // API key /api/openai proxy'si tarafından server-side ekleniyor
+            // Few-shot: ChatGPT'nin para/iş cevabını örnek olarak ekle
+            var messagesWithExamples = chatHistory.slice(); // kopyala
+            // Sadece para/iş sorusu için örnek enjekte et
+            var lastUserMsg = (messagesWithExamples[messagesWithExamples.length-1]||{}).content||'';
+            if (lastUserMsg.match(/para|iş|kariyer|meslek|sektör|çalış|kazanç|gelir|işim|şirket/i)) {
+                var exampleIdx = messagesWithExamples.findIndex(function(m){ return m.role==='system'; });
+                if (exampleIdx !== -1) {
+                    messagesWithExamples.splice(exampleIdx+1, 0,
+                        { role: 'user', content: '19/10/1997 para/iş' },
+                        { role: 'assistant', content: '19/10/1997 Para ve Is karmasi (19/1):\n* Para kolay gelmez.\n* Ortakliklar yorar.\n* Emek-kazanc dengesi gec kurulur.\n\nDogru yol:\n* Tek lider modeli\n* Somut cikti ureten isler\n* Proje bazli calisma\n\nAltin kural: Parayi sisteme bagla.' }
+                    );
+                }
+            }
+
+            try {
+                var r = await fetch('/api/openai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: 'gpt-4o-mini', messages: messagesWithExamples, temperature: 0.75, max_tokens: 600 })
+                });
+                var d = await r.json();
+                var reply = d.choices && d.choices[0] ? d.choices[0].message.content.trim() : 'Yanıt alınamadı.';
+                document.getElementById('master-loading').remove();
+                addMessage('assistant', reply);
+                chatHistory.push({ role: 'assistant', content: reply });
+            } catch(e) {
+                document.getElementById('master-loading').remove();
+                addMessage('assistant', 'Bağlantı hatası.');
+            }
+        }
+
+        // Send butonu ve Enter tuşu
+        document.addEventListener('DOMContentLoaded', function() {
+            var sendBtn = document.getElementById('master-send');
+            var input = document.getElementById('master-input');
+            if (sendBtn) sendBtn.addEventListener('click', sendMasterMessage);
+            if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMasterMessage(); });
+        });
+
+    })();
+    </script>
+    <!-- accordion-ai.js kaldırıldı — numerology-engine.js tarafından yönetiliyor -->
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

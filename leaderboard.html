@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Kozmik Lig</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script>tailwind.config={darkMode:"class",theme:{extend:{colors:{primary:"#f2cc0d","background-dark":"#181711","surface-dark":"#221f10","card-dark":"#393628"},fontFamily:{display:["Space Grotesk","sans-serif"]}}}}</script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        body{min-height:100dvh;font-family:'Space Grotesk',sans-serif}
+        .glass{background:rgba(57,54,40,0.3);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05)}
+        @keyframes fade-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes crown-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+        .fade-up{animation:fade-up 0.4s ease forwards;opacity:0}
+        .lb-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:16px;transition:all 0.2s}
+        .lb-row.me{background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15)}
+        .lb-row:not(.me){border:1px solid transparent}
+        .rank-pos{width:28px;text-align:center;font-weight:800;font-size:14px;flex-shrink:0}
+        .league-tab{padding:8px 14px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+        .league-tab.active{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05)}
+        .prize-card{border-radius:16px;padding:12px;text-align:center;flex:1}
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden pb-24">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div onclick="history.back()" class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="text-white text-lg font-black flex-1 text-center">Kozmik Lig</h2>
+        <div onclick="window.location.href='numerology_quiz.html'" class="w-12 flex items-center justify-end cursor-pointer">
+            <span class="material-symbols-outlined text-white/40">quiz</span>
+        </div>
+    </header>
+
+    <!-- Lig Bilgisi -->
+    <div class="px-5 pt-6 pb-4 fade-up">
+        <div id="league-hero" class="glass rounded-2xl p-5 text-center"></div>
+    </div>
+
+    <!-- Haftalık Ödüller -->
+    <div class="px-5 pb-4 fade-up" style="animation-delay:0.06s">
+        <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest mb-3">Haftalık Ödüller</p>
+        <div class="flex gap-2">
+            <div class="prize-card glass">
+                <p class="text-2xl mb-1">🥇</p>
+                <p class="text-amber-400 text-xs font-bold">1.</p>
+                <p class="text-white/40 text-[10px]">2 Gün Premium</p>
+                <p class="text-white/25 text-[10px]">+ Şampiyon Tacı</p>
+            </div>
+            <div class="prize-card glass">
+                <p class="text-2xl mb-1">🥈</p>
+                <p class="text-gray-300 text-xs font-bold">2.</p>
+                <p class="text-white/40 text-[10px]">1 Gün Premium</p>
+                <p class="text-white/25 text-[10px]">+ Gümüş Taç</p>
+            </div>
+            <div class="prize-card glass">
+                <p class="text-2xl mb-1">🥉</p>
+                <p class="text-amber-700 text-xs font-bold">3.</p>
+                <p class="text-white/40 text-[10px]">Nadir Kart</p>
+                <p class="text-white/25 text-[10px]">+ Bronz Taç</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hafta sonu sayaç -->
+    <div class="px-5 pb-4 fade-up" style="animation-delay:0.08s">
+        <div class="flex items-center justify-between glass rounded-xl px-4 py-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-white/30 text-base">timer</span>
+                <span class="text-white/40 text-xs font-bold">Lig Kapanış:</span>
+            </div>
+            <span id="countdown" class="text-white/60 text-xs font-black">--:--:--</span>
+        </div>
+    </div>
+
+    <!-- Sıralama -->
+    <div class="px-5 pb-4 fade-up" style="animation-delay:0.1s">
+        <p class="text-white/30 text-[10px] font-bold uppercase tracking-widest mb-3">Haftalık Sıralama</p>
+        <div id="leaderboard-list" class="space-y-2"></div>
+    </div>
+
+    <!-- Terfi/Düşme Bilgisi -->
+    <div class="px-5 pb-6 fade-up" style="animation-delay:0.14s">
+        <div class="glass rounded-2xl p-4">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-green-400 text-sm">arrow_upward</span>
+                    <span class="text-green-400 text-xs font-bold">Üst 3 = Terfi</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-red-400 text-sm">arrow_downward</span>
+                    <span class="text-red-400 text-xs font-bold">Alt 3 = Düşme</span>
+                </div>
+            </div>
+            <p class="text-white/25 text-xs">Hafta sonunda üst 3 bir üst lige çıkar, alt 3 bir alt lige düşer. XP kazanmak için quiz çöz, düello yap ve günlük görevleri tamamla!</p>
+        </div>
+    </div>
+
+    <!-- Quiz CTA -->
+    <div class="px-5 pb-8 fade-up" style="animation-delay:0.18s">
+        <button onclick="window.location.href='numerology_quiz.html'"
+            class="w-full py-4 rounded-full font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-transform"
+            style="background:linear-gradient(135deg,#22c55e,#16a34a);color:white;box-shadow:0 0 20px rgba(34,197,94,0.3)">
+            <span class="material-symbols-outlined">swords</span>
+            Quiz Çöz & Sıralama Yüksel
+        </button>
+    </div>
+
+</div>
+
+<script>
+(async function() {
+    var league = window.gamification.getLeague();
+    var s = window.gamification.getState();
+    var rp = window.gamification.getRankProgress();
+
+    // Lig hero
+    document.getElementById('league-hero').innerHTML =
+        '<div class="size-16 rounded-full flex items-center justify-center mx-auto mb-3" style="background:' + league.color + '20;box-shadow:0 0 30px ' + league.color + '30">' +
+            '<span class="material-symbols-outlined text-3xl" style="color:' + league.color + ';font-variation-settings:\'FILL\' 1">' + league.icon + '</span>' +
+        '</div>' +
+        '<h3 class="text-white text-xl font-black mb-1">' + league.name + '</h3>' +
+        '<p class="text-white/30 text-xs">Rütbe: <span style="color:' + rp.current.color + ';font-weight:700">' + rp.current.name + '</span> · ' + s.nbp + ' NBP</p>';
+
+    // Loading göster
+    var list = document.getElementById('leaderboard-list');
+    list.innerHTML = '<div class="flex items-center justify-center gap-3 py-8"><div class="animate-spin size-5 border-2 border-white/10 border-t-amber-400 rounded-full"></div><span class="text-white/30 text-sm">Sıralama yükleniyor...</span></div>';
+
+    // Async leaderboard çek (Supabase → fallback simüle)
+    var board;
+    try {
+        board = await window.gamification.getLeaderboardAsync();
+    } catch(e) {
+        board = window.gamification.getLeaderboard();
+    }
+
+    // Render
+    list.innerHTML = '';
+    if (!board || board.length === 0) {
+        list.innerHTML = '<div class="text-center py-8"><p class="text-white/30 text-sm">Henüz sıralamada kimse yok</p><p class="text-white/15 text-xs mt-1">Quiz çöz, ilk sen ol!</p></div>';
+        return;
+    }
+
+    board.forEach(function(entry, idx) {
+        var pos = idx + 1;
+        var row = document.createElement('div');
+        row.className = 'lb-row' + (entry.isUser ? ' me' : '');
+
+        var posColor = 'rgba(255,255,255,0.3)';
+        var posContent = pos;
+        if (pos === 1) { posColor = '#ffd700'; posContent = '👑'; }
+        else if (pos === 2) { posColor = '#c0c0c0'; posContent = '🥈'; }
+        else if (pos === 3) { posColor = '#cd7f32'; posContent = '🥉'; }
+
+        var arrow = '';
+        if (pos <= 3) arrow = '<span class="material-symbols-outlined text-green-400 text-xs">arrow_upward</span>';
+        if (board.length >= 6 && pos > board.length - 3) arrow = '<span class="material-symbols-outlined text-red-400 text-xs">arrow_downward</span>';
+
+        row.innerHTML =
+            '<div class="rank-pos" style="color:' + posColor + '">' + posContent + '</div>' +
+            '<div class="size-9 shrink-0 rounded-full flex items-center justify-center text-sm font-bold" style="background:' + (entry.rank ? entry.rank.color : '#666') + '20;color:' + (entry.rank ? entry.rank.color : '#666') + '">' +
+                (entry.name ? entry.name.charAt(0).toUpperCase() : '?') +
+            '</div>' +
+            '<div class="flex-1 min-w-0">' +
+                '<p class="text-white text-sm font-bold truncate">' + entry.name + (entry.isUser ? ' <span style="color:#a855f7;font-size:10px">(SEN)</span>' : '') + '</p>' +
+                '<p class="text-white/25 text-xs">' + (entry.rank ? entry.rank.name : '') + '</p>' +
+            '</div>' +
+            '<div class="text-right flex items-center gap-1">' +
+                '<span class="text-white/60 text-sm font-black">' + entry.weeklyXP + '</span>' +
+                '<span class="text-white/20 text-xs">XP</span>' +
+                arrow +
+            '</div>';
+
+        list.appendChild(row);
+    });
+
+    // Countdown (pazar gecesi 23:59)
+    function updateCountdown() {
+        var now = new Date();
+        var end = new Date(now);
+        end.setDate(end.getDate() + (7 - end.getDay()) % 7);
+        end.setHours(23, 59, 59, 999);
+        if (now > end) end.setDate(end.getDate() + 7);
+
+        var diff = end - now;
+        var d = Math.floor(diff / 86400000);
+        var h = Math.floor((diff % 86400000) / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        var sec = Math.floor((diff % 60000) / 1000);
+
+        document.getElementById('countdown').textContent =
+            (d > 0 ? d + 'g ' : '') + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + sec.toString().padStart(2, '0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+})();
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

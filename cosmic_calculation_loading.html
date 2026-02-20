@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#7f13ec",
+              "background-light": "#f7f6f8",
+              "background-dark": "#191022",
+              "mystic-gold": "#D4AF37",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .nebula-gradient {
+            background: radial-gradient(circle at 50% 50%, #2d1b4d 0%, #191022 100%);
+        }
+        .sacred-glow {
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-screen">
+<div class="relative flex h-full w-full flex-col nebula-gradient group/design-root">
+<!-- Top App Bar Space -->
+<div class="flex items-center p-4 pb-2 justify-end h-14">
+<span class="material-symbols-outlined text-white/50 cursor-pointer">close</span>
+</div>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col items-center justify-center px-8 text-center">
+<!-- Sacred Geometry Visual (Central Symbol) -->
+<div class="relative mb-12 flex items-center justify-center">
+<!-- Outer Ring -->
+<div class="absolute w-64 h-64 border border-mystic-gold/20 rounded-full"></div>
+<!-- Inner Ring -->
+<div class="absolute w-48 h-48 border border-mystic-gold/40 rounded-full"></div>
+<!-- Center Sacred Geometry SVG Placeholder -->
+<div class="w-40 h-40 flex items-center justify-center rounded-full bg-primary/10 sacred-glow border border-mystic-gold/60">
+<span class="material-symbols-outlined text-mystic-gold !text-7xl">all_inclusive</span>
+</div>
+</div>
+<!-- Header Text -->
+<div class="space-y-2">
+<h3 class="text-white tracking-tight text-3xl font-bold leading-tight">Calculating your vibrations...</h3>
+<p class="text-white/60 text-lg font-normal leading-normal">Consulting the stars and aligning cosmic paths</p>
+</div>
+<!-- Loading Indicator / Progress -->
+<div class="w-full max-w-xs mt-12 flex flex-col gap-4">
+<div class="flex gap-6 justify-between items-end">
+<p class="text-mystic-gold text-sm font-medium uppercase tracking-widest" id="calc-text">Syncing with the universe</p>
+<p class="text-white/40 text-xs" id="calc-pct">0%</p>
+</div>
+<div class="rounded-full bg-white/5 h-1.5 w-full overflow-hidden">
+<div class="h-full rounded-full bg-mystic-gold shadow-[0_0_10px_#D4AF37]" id="calc-bar" style="width:0%;transition:width 0.3s ease;"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Detail -->
+<div class="pb-12 flex flex-col items-center">
+<div class="flex gap-2 items-center opacity-40">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span class="text-xs font-medium uppercase tracking-[0.2em]">Numerology Engine v2.0</span>
+</div>
+</div>
+<!-- Subtle Background Elements -->
+<div class="absolute top-1/4 -left-20 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-mystic-gold/5 rounded-full blur-[120px] pointer-events-none"></div>
+</div>
+
+<script>
+// Progress bar animasyonu
+var calcMessages = ['Syncing with the universe', 'Calculating your vibrations', 'Aligning cosmic paths', 'Reading sacred numbers', 'Almost there...'];
+var calcProgress = 0;
+var calcMsgIdx = 0;
+var calcBar = document.getElementById('calc-bar');
+var calcPct = document.getElementById('calc-pct');
+var calcTxt = document.getElementById('calc-text');
+
+var calcInterval = setInterval(function() {
+    calcProgress += Math.random() * 7 + 2;
+    if (calcProgress >= 100) {
+        calcProgress = 100;
+        calcBar.style.width = '100%';
+        calcPct.textContent = '100%';
+        clearInterval(calcInterval);
+        setTimeout(function() {
+            window.location.href = 'mystic_numerology_home_1.html';
+        }, 400);
+        return;
+    }
+    calcBar.style.width = calcProgress + '%';
+    calcPct.textContent = Math.round(calcProgress) + '%';
+    var newIdx = Math.min(Math.floor((calcProgress / 100) * calcMessages.length), calcMessages.length - 1);
+    if (newIdx !== calcMsgIdx) { calcMsgIdx = newIdx; calcTxt.textContent = calcMessages[calcMsgIdx]; }
+}, 130);
+</script>
+
+</body></html>

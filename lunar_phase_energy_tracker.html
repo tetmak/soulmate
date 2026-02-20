@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Lunar Energy</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#0b2eda", "background-dark": "#0a0c16", silver: "#c0c0c8" }, fontFamily: { display: ["Spline Sans", "sans-serif"] } } } };
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100dvh;
+      background: #0a0c16;
+      font-family: 'Spline Sans', sans-serif;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .star-bg {
+      background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+      background-size: 50px 50px;
+    }
+
+    .moon-glow {
+      box-shadow: 0 0 80px 20px rgba(11, 46, 218, 0.3), 0 0 40px 5px rgba(200, 200, 255, 0.15);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+    }
+
+    .slider-wrap {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      align-items: center;
+      scrollbar-width: none;
+    }
+
+    .slider-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .day-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 56px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .day-item.future {
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .day-item.past {
+      opacity: 0.45;
+    }
+
+    .day-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: rgba(192, 192, 200, 0.7);
+      letter-spacing: 0.05em;
+    }
+
+    .moon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, #c0c0c8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+
+<body class="star-bg">
+
+  <!-- CONTENT -->
+  <div style="max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column">
+
+    <!-- NAV -->
+    <div
+      style="position:sticky;top:0;z-index:100;background:rgba(10,12,22,0.95);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px">
+      <button onclick="window.location.href='mystic_numerology_home_1.html'"
+        style="cursor:pointer;width:44px;height:44px;background:#0b2eda;border:none;border-radius:50%;color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0;box-shadow:0 0 20px rgba(11,46,218,0.5)">
+        <span class="material-symbols-outlined"
+          style="font-size:22px;color:white;pointer-events:none">arrow_back_ios</span>
+      </button>
+      <span style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.2em;color:white">Lunar
+        Energy</span>
+      <div style="width:44px"></div>
+    </div>
+
+    <!-- Moon Hero -->
+    <div style="display:flex;flex-direction:column;align-items:center;padding:32px 24px 24px;position:relative">
+      <div
+        style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;height:280px;background:rgba(11,46,218,0.12);border-radius:50%;filter:blur(80px);pointer-events:none">
+      </div>
+      <div class="moon-glow" style="border-radius:50%;overflow:hidden;width:240px;height:240px;flex-shrink:0">
+        <canvas id="moon-canvas" width="240" height="240" style="display:block"></canvas>
+      </div>
+      <div style="margin-top:32px;text-align:center">
+        <h1 id="phase-name" class="gradient-text"
+          style="font-size:36px;font-weight:700;line-height:1.1;margin:0 0 12px">Loading...</h1>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+          <span id="illumination" style="color:#0b2eda;font-weight:700;font-size:14px">-</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.2)"></span>
+          <span id="days-old" style="color:rgba(192,192,200,0.6);font-size:14px">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Slider -->
+    <div style="padding:8px 24px">
+      <div class="slider-wrap" id="date-slider"></div>
+    </div>
+
+    <!-- Vibration Card -->
+    <div style="padding:0 24px 48px;display:flex;flex-direction:column;gap:24px">
+      <div class="glass-card" style="padding:24px;position:relative;overflow:hidden">
+        <div
+          style="position:absolute;right:-32px;top:-32px;width:128px;height:128px;background:rgba(11,46,218,0.1);border-radius:50%;filter:blur(40px);pointer-events:none">
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+          <div
+            style="width:48px;height:48px;background:rgba(11,46,218,0.2);border-radius:12px;border:1px solid rgba(11,46,218,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span class="material-symbols-outlined" style="color:#0b2eda">auto_awesome</span>
+          </div>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;margin:0 0 4px">Vibration Phase</h3>
+            <p id="vibration-num" style="font-size:12px;color:rgba(192,192,200,0.6);margin:0">-</p>
+          </div>
+        </div>
+        <p id="lunar-desc-1" style="color:#c0c0c8;line-height:1.7;font-size:15px;margin-bottom:12px"></p>
+        <p id="lunar-desc-2" style="color:#c0c0c8;line-height:1.7;font-size:15px;margin:0"></p>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <span
+          style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.3em;color:rgba(11,46,218,0.8)">Detailed
+          Reading</span>
+        <div style="display:flex;flex-direction:column;gap:32px;padding-bottom:8px">
+          <div style="padding-left:20px;border-left:1px solid rgba(255,255,255,0.1);position:relative">
+            <div
+              style="position:absolute;left:-5px;top:0;width:9px;height:9px;border-radius:50%;background:#0b2eda;box-shadow:0 0 8px rgba(11,46,218,0.8);pointer-events:none">
+            </div>
+            <h5 id="r1t" style="font-weight:700;margin:0 0 8px;font-size:15px"></h5>
+            <p id="r1" style="color:rgba(192,192,200,0.8);font-size:13px;line-height:1.7;margin:0"></p>
+          </div>
+          <div style="padding-left:20px;border-left:1px solid rgba(255,255,255,0.1);position:relative">
+            <div
+              style="position:absolute;left:-5px;top:0;width:9px;height:9px;border-radius:50%;background:rgba(192,192,200,0.3);pointer-events:none">
+            </div>
+            <h5 id="r2t" style="font-weight:700;margin:0 0 8px;font-size:15px"></h5>
+            <p id="r2" style="color:rgba(192,192,200,0.8);font-size:13px;line-height:1.7;margin:0"></p>
+          </div>
+          <div style="padding-left:20px;border-left:1px solid rgba(255,255,255,0.1);position:relative">
+            <div
+              style="position:absolute;left:-5px;top:0;width:9px;height:9px;border-radius:50%;background:rgba(192,192,200,0.3);pointer-events:none">
+            </div>
+            <h5 id="r3t" style="font-weight:700;margin:0 0 8px;font-size:15px"></h5>
+            <p id="r3" style="color:rgba(192,192,200,0.8);font-size:13px;line-height:1.7;margin:0"></p>
+          </div>
+        </div>
+
+        <div class="glass-card" style="padding:24px;border-left:4px solid #0b2eda">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span class="material-symbols-outlined" style="color:#0b2eda;font-size:20px">insights</span>
+            <span style="font-weight:700;font-size:17px">Lunar Guidance</span>
+          </div>
+          <p id="lunar-quote"
+            style="color:rgba(192,192,200,0.9);font-size:14px;font-style:italic;line-height:1.7;margin:0"></p>
+        </div>
+
+        <div
+          style="background:rgba(255,255,255,0.02);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.05)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+            <span class="material-symbols-outlined" style="color:rgba(234,179,8,0.8);font-size:20px">magic_button</span>
+            <span
+              style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:rgba(234,179,8,0.8)">Crystal
+              Wisdom</span>
+          </div>
+          <h4 id="crystal-title" style="font-weight:700;font-size:15px;margin:0 0 8px"></h4>
+          <p id="crystal-text" style="font-size:13px;color:rgba(192,192,200,0.7);line-height:1.7;margin:0"></p>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding-bottom:32px;display:flex;flex-direction:column;align-items:center;opacity:0.2">
+      <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px">End of Daily
+        Reading</span>
+      <div style="width:2px;height:32px;background:linear-gradient(to bottom,white,transparent);border-radius:2px">
+      </div>
+    </div>
+
+  </div><!-- end content -->
+
+  <script>
+
+    var TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+    var selectedDate = new Date(TODAY);
+    var MS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function moonAge(date) {
+      var known = new Date(2000, 0, 6);
+      return (((date - known) / 86400000) % 29.53058867 + 29.53058867) % 29.53058867;
+    }
+    function getMoon(date) {
+      var age = moonAge(date);
+      var illum = Math.round((1 - Math.cos((age / 29.53058867) * 2 * Math.PI)) / 2 * 100);
+      var phase = 'Waning Crescent';
+      if (age < 1.85) phase = 'New Moon';
+      else if (age < 7.38) phase = 'Waxing Crescent';
+      else if (age < 9.22) phase = 'First Quarter';
+      else if (age < 14.77) phase = 'Waxing Gibbous';
+      else if (age < 16.61) phase = 'Full Moon';
+      else if (age < 22.15) phase = 'Waning Gibbous';
+      else if (age < 23.99) phase = 'Last Quarter';
+      return { phase: phase, age: age.toFixed(1), illum: illum };
+    }
+    function calcVib(date) {
+      var s = 0;
+      ('' + (date.getDate()) + (date.getMonth() + 1) + date.getFullYear()).split('').forEach(function (c) { s += parseInt(c) || 0; });
+      while (s > 9 && s !== 11 && s !== 22) { var s2 = 0; ('' + s).split('').forEach(function (c) { s2 += parseInt(c) || 0; }); s = s2; }
+      return s;
+    }
+
+    // --- MOON CANVAS ---
+    function drawMoon(canvas, age, illum) {
+      var ctx = canvas.getContext('2d'), W = canvas.width, R = W / 2;
+      ctx.clearRect(0, 0, W, W);
+      ctx.fillStyle = '#050810';
+      ctx.beginPath(); ctx.arc(R, R, R, 0, Math.PI * 2); ctx.fill();
+      // stars
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      for (var i = 0; i < 20; i++) {
+        var sx = Math.random() * W, sy = Math.random() * W;
+        if (Math.sqrt((sx - R) * (sx - R) + (sy - R) * (sy - R)) < R) { ctx.beginPath(); ctx.arc(sx, sy, Math.random() * 0.6 + 0.2, 0, Math.PI * 2); ctx.fill(); }
+      }
+      var t = age / 29.53058867, ex = R * Math.cos(t * 2 * Math.PI);
+      ctx.save(); ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.clip();
+      if (illum < 3) {
+        ctx.fillStyle = 'rgba(18,22,45,0.93)'; ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.fill();
+      } else if (illum > 97) {
+        var fg = ctx.createRadialGradient(R * .65, R * .65, R * .05, R, R, R);
+        fg.addColorStop(0, '#fff'); fg.addColorStop(.4, '#f0f0f8'); fg.addColorStop(.8, '#c8cad8'); fg.addColorStop(1, '#909099');
+        ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.fill();
+        [[.55, .3, .07], [.38, .58, .1], [.65, .52, .05], [.45, .44, .06]].forEach(function (c) {
+          ctx.fillStyle = 'rgba(80,82,95,0.2)'; ctx.beginPath(); ctx.arc(c[0] * W, c[1] * W, c[2] * W, 0, Math.PI * 2); ctx.fill();
+        });
+      } else {
+        ctx.fillStyle = 'rgba(12,14,28,0.96)'; ctx.fillRect(0, 0, W, W);
+        var mg = ctx.createRadialGradient(t < .5 ? R * 1.1 : R * .9, R * .75, 0, R, R, R);
+        mg.addColorStop(0, '#fff'); mg.addColorStop(.4, '#eeeef8'); mg.addColorStop(.75, '#c0c0d0'); mg.addColorStop(1, '#909099');
+        ctx.fillStyle = mg; ctx.beginPath();
+        if (t < .5) { ctx.arc(R, R, R - 1, -Math.PI / 2, Math.PI / 2, false); ctx.bezierCurveTo(R + ex, R + (R - 1), R + ex, R - (R - 1), R, R - (R - 1)); }
+        else { ctx.arc(R, R, R - 1, Math.PI / 2, -Math.PI / 2, false); ctx.bezierCurveTo(R - ex, R - (R - 1), R - ex, R + (R - 1), R, R + (R - 1)); }
+        ctx.closePath(); ctx.fill();
+        if (illum > 20) [[.55, .3, .06], [.38, .58, .09], [.62, .52, .04], [.45, .44, .05]].forEach(function (c) {
+          ctx.fillStyle = 'rgba(80,82,95,0.18)'; ctx.beginPath(); ctx.arc(c[0] * W, c[1] * W, c[2] * W, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(180,185,220,0.2)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(R, R, R - 1.5, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    function drawMiniMoon(canvas, age, illum) {
+      var ctx = canvas.getContext('2d'), W = canvas.width, R = W / 2;
+      ctx.clearRect(0, 0, W, W);
+      ctx.fillStyle = '#070a16'; ctx.beginPath(); ctx.arc(R, R, R, 0, Math.PI * 2); ctx.fill();
+      var t = age / 29.53058867, ex = R * Math.cos(t * 2 * Math.PI);
+      ctx.save(); ctx.beginPath(); ctx.arc(R, R, R - .5, 0, Math.PI * 2); ctx.clip();
+      if (illum < 3) {
+        ctx.fillStyle = 'rgba(30,35,60,0.7)'; ctx.beginPath(); ctx.arc(R, R, R - .5, 0, Math.PI * 2); ctx.fill();
+      } else if (illum > 97) {
+        var g = ctx.createRadialGradient(R * .7, R * .7, R * .1, R, R, R);
+        g.addColorStop(0, '#fff'); g.addColorStop(.6, '#e8e8f0'); g.addColorStop(1, '#aaaabc');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(R, R, R - .5, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = '#0d1020'; ctx.fillRect(0, 0, W, W);
+        var g2 = ctx.createRadialGradient(t < .5 ? R * 1.1 : R * .9, R * .75, 0, R, R, R);
+        g2.addColorStop(0, '#fff'); g2.addColorStop(.5, '#dde0f0'); g2.addColorStop(1, '#a0a8c0');
+        ctx.fillStyle = g2; ctx.beginPath();
+        if (t < .5) { ctx.arc(R, R, R - .5, -Math.PI / 2, Math.PI / 2, false); ctx.bezierCurveTo(R + ex, R + (R - .5), R + ex, R - (R - .5), R, R - (R - .5)); }
+        else { ctx.arc(R, R, R - .5, Math.PI / 2, -Math.PI / 2, false); ctx.bezierCurveTo(R - ex, R - (R - .5), R - ex, R + (R - .5), R, R + (R - .5)); }
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(180,190,220,0.2)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.stroke();
+    }
+
+
+
+    
+    // ═══ DAILY-VARYING LUNAR GUIDANCE ENGINE ═══
+    // AI yerine günlük değişen statik içerik (CORS sorunu yok)
+    
+    var LUNAR_CONTENT = {
+      'New Moon': [
+        { v1: 'Yeni Ay, kozmik bir sıfırlamayı işaret eder. Karanlık, yokluk değil, sonsuz potansiyeldir. Niyetlerinizi bilinçaltınızın verimli toprağına ekin.', v2: 'Derin iç yansıma zamanı. Niyetlerinizi net belirleyin; evren en durağan halindeyken en alıcıdır.', i1t: 'İç Dinginlik', i1: 'Bugün sessizlikle oturun. Hayatınıza çağırmak istedikleriniz üzerine meditasyon yapın.', i2t: 'Niyet Belirleme', i2: 'Üç net, içten niyet yazın. Özgüllük kozmosu manyetikleştirir.', i3t: 'Fiziksel Dinlenme', i3: 'Bedeniniz ayın çekilmesiyle uyum içinde. Dinlenme son derece üretkendir.', q: 'Yeni Ayın karanlığında tüm olasılıklar eşittir. Ne besleyeceğinizi akıllıca seçin.', ct: 'Siyah Turmalin & Labradorit', cx: 'Siyah Turmalin koruyucu enerjiyi topraklar, Labradorit bu eşik anında sezgiyi artırır.' },
+        { v1: 'Bu Yeni Ay döngüsü, içsel gücünüzü keşfetmeniz için bir fırsat sunuyor. Sessizlikte bulacağınız yanıtlar, gürültüde kaybolanlardır.', v2: 'Karanlık, sadece ışığın yokluğu değil, yaratımın başlangıcıdır. Bugün tohumları ekin, yarın hasadı toplayın.', i1t: 'Meditasyon Pratiği', i1: 'Günde 10 dakika sessizce oturun. Nefsinize odaklanın ve zihninizi sakinleştirin.', i2t: 'Yazılı Niyet', i2: 'Dileklerinizi bir kağıda yazın. Detaylı olun, evren detayları sever.', i3t: 'Uyku Ritmi', i3: 'Erken yatın, erken kalkın. Beden ve ruh yenilenmesi için ideal zaman.', q: 'Boşluk, doluluktan önce gelir. Bugün boşluk yaratın.', ct: 'Obsidyen & Ametist', cx: 'Obsidyen negatif enerjiyi temizler, Ametist ruhsal bağlantıyı güçlendirir.' },
+        { v1: 'Yeni Ay enerjisi, yeniden başlama cesareti verir. Geçmişi bırakın, geleceği kucaklayın.', v2: 'Bu faz, manifestasyonun en güçlü olduğu andır. Ne istediğinizi biliyorsanız, evren size yol gösterecektir.', i1t: 'Şükür Listesi', i1: 'Sahip olduğunuz her şey için şükredin. Şükür, bolluk çeker.', i2t: 'Görselleştirme', i2: 'Hayallerinizi zihninizde canlandırın. Sanki gerçekleşmiş gibi hissedin.', i3t: 'Su İçimi', i3: 'Bol su için. Su, temizlik ve yenilenme elementi.', q: 'Başlangıç, bitiş kadar önemlidir. Bugün başlayın.', ct: 'Kuvars & Selenite', cx: 'Kuvars enerjiyi yükseltir, Selenite ruhu temizler.' }
+      ],
+      'Waxing Crescent': [
+        { v1: 'Hilal Ay, evrenin yeni başlangıcından sonraki ilk nefesidir. İnce bir ışık, karanlığa karşı ilerler.', v2: 'Yeni Ayda ekilen tohumlar yüzeyin altında kıpırdanır. Odaklanmış eylemle onları besleyin.', i1t: 'Momentum Oluşturma', i1: 'Her niyet için somut bir adım atın. Küçük adımlar büyük değişimler yaratır.', i2t: 'Yaratıcı Kıvılcım', i2: 'Yaratıcı yetenekleriniz ayla birlikte uyanır. Yazın, çizin, hayal edin.', i3t: 'Beslenme', i3: 'Enerji veren yiyecekler tüketin. Tohumlar ve taze ürünler bu fazla uyumlu.', q: 'En ince hilal bile dolgunluğun vaadini taşır. Şimdi başlayın.', ct: 'Yeşil Aventurin & Karneol', cx: 'Aventurin fırsatları çoğaltır, Karneol motivasyonu ateşler.' },
+        { v1: 'Bu faz, büyümenin ilk işaretlerini görme zamanı. Sabırlı olun ama hareketsiz kalmayın.', v2: 'Enerjiniz yükseliyor. Bu enerjiyi doğru kanalize edin, hedefinize odaklanın.', i1t: 'Günlük Planı', i1: 'Her sabah günlük hedeflerinizi yazın. Küçük kazançlar büyük zaferlere dönüşür.', i2t: 'İlham Kaynakları', i2: 'Sizi motive eden insanları, kitapları, müziği keşfedin. İlham alın.', i3t: 'Hareket', i3: 'Günlük yürüyüş yapın. Hareket, enerji dolaşımını hızlandırır.', q: 'Büyüme, sessiz ama kararlıdır. Ayak izlerinizi bırakın.', ct: 'Sitrin & Akik', cx: 'Sitrin bolluğu çeker, Akik cesareti artırır.' }
+      ],
+      'First Quarter': [
+        { v1: 'İlk Çeyrek Ay, kozmik bir kavşak noktasıdır. Yarı karanlık, yarı aydınlık. İlk gerçek sınav zamanı.', v2: 'Zorluklar engel değil, yönlendirmedir. Enerji, en yüksek vizyonunuza karar ve bağlılık gerektirir.', i1t: 'Karar Verme', i1: 'Kaçındığınız seçimle yüzleşin. Bu faz size netlik ve cesaret verir.', i2t: 'Enerji Salımı', i2: 'Büyümenizi engelleyen bir inancı belirleyin. Yazın ve yırtın.', i3t: 'Fiziksel Aksiyon', i3: 'Yoğun enerjiyi harekete dönüştürün. Egzersiz, gerilimi boşaltır.', q: 'Kavşakta tereddüt tek yanlış yoldur. Seçin, bağlanın.', ct: 'Kaplan Gözü & Kırmızı Yaşma', cx: 'Kaplan Gözü irade gücünü keskinleştirir, Yaşma dayanıklılık sağlar.' },
+        { v1: 'Bu ay fazı, iç gücünüzü test eder. Direniş, aslında bir öğretmendir.', v2: 'Belirsizlikle barışın. Net olmayan yolda bile ilerlemek, durmaktan iyidir.', i1t: 'Sorunlarla Yüzleşme', i1: 'Ertelediğiniz bir sorunu çözün. Çözüm, sizi özgürleştirir.', i2t: 'Eski Alışkanlıkları Bırakma', i2: 'Size hizmet etmeyen bir alışkanlığı belirleyin ve bırakın.', i3t: 'Güç Antrenmanı', i3: 'Fiziksel gücünüzü artırın. Beden güçlenince zihin de güçlenir.', q: 'Zorluk, karakteri ortaya çıkarır. Bugün kim olduğunuzu gösterin.', ct: 'Hematit & Granat', cx: 'Hematit topraklar, Granat enerjiyi canlandırır.' }
+      ],
+      'Waxing Gibbous': [
+        { v1: 'Şişkin Ay, dolgunluğa yaklaşırken derin kinetik yoğunluk getirir. Zirve öncesi son itme.', v2: 'Otorite, özgüven ve iç güç birleşir. Somut sonuçlar için güçlü bir akım yaratır.', i1t: 'İç Uyum', i1: 'Uzun vadeli projelerin detaylarını iyileştirin. Bu enerji, mükemmellik için büyüteç gibidir.', i2t: 'Titreşim Sentezi', i2: 'Finansal ve profesyonel kararlar için yüksek sezgi bekleyin. Bugün atılan adımlar çarpan etkisi yapar.', i3t: 'Fiziksel Tezahür', i3: 'Artan ay ışığı fiziksel dayanıklılığınıza yansır. Bu canlılığı topraklama egzersizleriyle dengeleyin.', q: 'Tohum ile meyve arasındaki köprü, son şişkinlikte verilen özendir.', ct: 'Sitrin & Berrak Kuvars', cx: 'Sitrin güneş-ay yansımasını iletir, Kuvars sayısal frekansı güçlendirir.' },
+        { v1: 'Hedefleriniz artık elle tutulur hale geliyor. Son detaylar kritik önem taşıyor.', v2: 'Bu faz, sabır ve dikkat ister. Acele etmeyin, her adımı özenle atın.', i1t: 'Detaylara Odaklanma', i1: 'Projenizin küçük detaylarını gözden geçirin. Kusursuzluk şimdi mümkün.', i2t: 'Finansal Planlama', i2: 'Bütçenizi ve yatırımlarınızı değerlendirin. Akıllı kararlar alın.', i3t: 'Denge Egzersizleri', i3: 'Yoga veya pilates yapın. Denge, bu fazın anahtarıdır.', q: 'Zirveye çıkmadan önce son adımlar en önemli olanlarıdır.', ct: 'Turkuaz & Yeşim', cx: 'Turkuaz koruma sağlar, Yeşim şans getirir.' }
+      ],
+      'Full Moon': [
+        { v1: 'Dolunay, ay döngüsünün zirvesidir. Maksimum aydınlanma, maksimum güç. Duygular yoğunlaşır, sezgi zirvededir.', v2: 'Yeni Ayda ekilen artık hasat zamanı. Tezahür edeni kutlayın, olmayanı şükranla bırakın.', i1t: 'Şükran & Kutlama', i1: 'Bu döngüde meyvelerini veren her şeyi yazın. Ay ışığı altında yüksek sesle okuyun.', i2t: 'Duygusal Aydınlanma', i2: 'Dolunay gölgedekini açığa çıkarır. Yoğun duyguları şefkatle karşılayın.', i3t: 'Şarj Etme & Temizleme', i3: 'Kristalleri ve kutsal nesneleri dışarı koyun. Tüm döngünün en güçlü şarj gecesi.', q: 'Dolunay sizden sadece dürüstlük ister. Kendinize karşı dürüst olun.', ct: 'Selenite & Ay Taşı', cx: 'Selenite Dolunayın arındırıcı frekansını iletir, Ay Taşı duygusal bilgeliğe bağlar.' },
+        { v1: 'Bu gece, tüm yılın en güçlü enerjilerinden biri. Manifestasyonlarınız zirveye ulaşır.', v2: 'Dolunay, gizli olanı açığa çıkarır. Karanlıkta kalanı aydınlatma zamanı.', i1t: 'Dolunay Ritüeli', i1: 'Ay ışığında meditasyon yapın. İç sesini dinleyin.', i2t: 'Duygusal Salım', i2: 'Artık size hizmet etmeyen duyguları bırakın. Af ile salın.', i3t: 'Kristal Şarjı', i3: 'Tüm kristallerinizi dolunay ışığına koyun. Şarj olsunlar.', q: 'Dolunay, gerçeği gösterir. Gördüklerinizi kabul edin.', ct: 'Labradorit & İnci', cx: 'Labradorit sezgiyi artırır, İnci duygu dengesini sağlar.' }
+      ],
+      'Waning Gibbous': [
+        { v1: 'Azalan Şişkin Ay, şükran ve cömert paylaşım çağrısı yapar. Zirve geçti ama ışık hâlâ bol.', v2: 'Bu döngüde öğrendiklerinizi öğretin, paylaşın, ifade edin. Evren bolluğu vermekle döndürür.', i1t: 'Paylaşma & Öğretme', i1: 'Bu döngüde kazandığınız bir içgörüyü başkalarıyla paylaşın. Cömertlik bolluğu sürdürür.', i2t: 'Yansıma & Analiz', i2: 'Neyin işe yaradığını, neyin yaramadığını inceleyin. Dürüst analiz sonraki döngüyü keskinleştirir.', i3t: 'Kademeli Salım', i3: 'Beslemekten çok tüketen alışkanlıkları bırakın. Azalan enerji zarif sonları destekler.', q: 'Ay, sönmesine yas tutmaz. Her geri çekilmenin kutsal bir hazırlık olduğunu bilir.', ct: 'Ametist & Akuamarin', cx: 'Ametist ruhsal yansımayı kolaylaştırır, Akuamarin net iletişimi destekler.' },
+        { v1: 'Zirve geride kaldı ama yolculuk henüz bitmedi. Şimdi paylaşma ve öğretme zamanı.', v2: 'Bu faz, deneyimlerinizi başkalarıyla paylaşmanızı ister. Bilgi paylaşıldıkça çoğalır.', i1t: 'Mentorluk', i1: 'Birine rehberlik edin. Deneyimlerinizi aktarın.', i2t: 'Değerlendirme', i2: 'Son döngüyü gözden geçirin. Neler öğrendiniz? Neleri farklı yapardınız?', i3t: 'Hafif Egzersiz', i3: 'Yoğun antrenman yerine yoga veya yürüyüş tercih edin.', q: 'Paylaşmak, almak kadar kutsal bir eylemdir.', ct: 'Roze Kuvars & Jade', cx: 'Roze Kuvars sevgiyi yayar, Jade uyumu sağlar.' }
+      ],
+      'Last Quarter': [
+        { v1: 'Son Çeyrek, yapıda İlk Çeyreği yansıtır ama tersinedir. Bilinç krizi. Neyin bitmesi gerekiyor ki yeni başlayabilsin?', v2: 'Af - kendine ve başkalarına - bu fazın büyük işidir. Amacını tamamlayanı kederle değil bilgelikle sökün.', i1t: 'Af Çalışması', i1: 'Af etmeniz gerekeni zihne getirin. Göndermeyeceğiniz bir mektup yazın. Salın.', i2t: 'Mekan Temizliği', i2: 'Fiziksel ortamınızı iç temizliğinizin aynası olarak temizleyin. Bir alanı sadeleştirin.', i3t: 'Enerjetik Tamamlama', i3: 'Projelerde ve konuşmalarda gevşek uçları bağlayın. Tamamlama enerjetik bir eylemdir.', q: 'Bırakmak kaybetmek değildir. Kendinizin bir sonraki versiyonunun gelmesi için alan yaratmaktır.', ct: 'Siyah Obsidyen & Dumanlı Kuvars', cx: 'Obsidyen derinlerdeki blokları ortaya çıkarır ve eritir, Dumanlı Kuvars negativiteyi dönüştürür.' },
+        { v1: 'Bu faz, eskiyi bırakma ve yeniye hazırlanma zamanıdır. Af etmek, özgürleşmektir.', v2: 'Geçmişte kalmış ne varsa, bırakın. Geleceğe hafif adımlarla yürüyün.', i1t: 'Af Ritüeli', i1: 'Kendinizi ve başkalarını affedin. Bu sizi özgürleştirir.', i2t: 'Düzenleme', i2: 'Evinizi düzenleyin. Gereksiz eşyaları atın.', i3t: 'Detoks', i3: 'Hafif yemekler yiyin. Vücudunuzu temizleyin.', q: 'Bırakmak, tutmaktan daha cesur bir eylemdir.', ct: 'Oniks & Kuvars', cx: 'Oniks koruma sağlar, Kuvars enerjiyi temizler.' }
+      ],
+      'Waning Crescent': [
+        { v1: 'Azalan Hilal en mistik fazdır. Yenilenmenin büyük karanlığından önce bir ışık kırıntısı. Teslim olmak yenilgi değildir.', v2: 'Dinlenin, hayal edin, bilinçaltının tüm döngüyü işlemesine izin verin. Evren deneyimlerinizi kompost yapıyor.', i1t: 'Teslim & Dinlenme', i1: 'Bugün radikal yapma-ma pratik edin. İptal edilebileni iptal edin. Suçsuzca dinlenin.', i2t: 'Rüya Çalışması', i2: 'Yatağınızın yanında günlük tutun. Uyanışta her rüya parçasını kaydedin.', i3t: 'Nazik Arınma', i3: 'Bitki çayları ve hafif yiyeceklerle bedeninizin doğal detoksunu destekleyin.', q: 'En cesur eylem bazen sadece dinlenmektir. Karanlığa güvenip sizi tamamen tutmasına izin vermek.', ct: 'Celestite & İnci', cx: 'Celestite yüksek rehberliğe kanallar açar, İnci okyanus gelgitleri gibi döngüsel bilgelikle rezonansa girer.' },
+        { v1: 'Bu faz, sonu ve başlangıcı birleştirir. Yenilenme öncesi son dinlenme.', v2: 'Ruhunuz yorgun. Bedeniniz dinlenmeye ihtiyaç duyuyor. Kendinize izin verin.', i1t: 'Meditasyon', i1: 'Her gün 15 dakika meditasyon yapın. İçinize bakın.', i2t: 'Rüya Günlüğü', i2: 'Rüyalarınızı yazın. Bilinçaltınız size mesajlar gönderiyor.', i3t: 'Hafif Yemekler', i3: 'Vücudunuzu zorlamayın. Hafif, besleyici yemekler tüketin.', q: 'Karanlık, korkulmayacak bir yer. Yenilenmenin kaynağıdır.', ct: 'Ametist & Ay Taşı', cx: 'Ametist ruhsal barışı getirir, Ay Taşı sezgileri güçlendirir.' }
+      ]
+    };
+    
+    function getDateKey(date) {
+      return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    }
+
+    function generateLunarGuidance(moonPhase, selectedDate, callback) {
+      var dateKey = getDateKey(selectedDate);
+      
+      console.log('[Lunar] Date:', dateKey, 'Phase:', moonPhase.phase);
+      
+      // Her gün için farklı varyasyon seç (tarihe göre deterministik)
+      var phaseContent = LUNAR_CONTENT[moonPhase.phase] || LUNAR_CONTENT['New Moon'];
+      
+      // Tarihin sayısal toplamı ile varyasyon seç
+      var dateSum = selectedDate.getFullYear() + selectedDate.getMonth() + selectedDate.getDate();
+      var variantIndex = dateSum % phaseContent.length;
+      
+      var content = phaseContent[variantIndex];
+      
+      console.log('[Lunar] Using variant', variantIndex + 1, 'of', phaseContent.length);
+      
+      // Küçük gecikme ekle (AI gibi görünsün)
+      setTimeout(function() {
+        callback(null, content);
+      }, 300);
+    }
+
+    // --- SLIDER ---
+    function buildSlider() {
+      var slider = document.getElementById('date-slider');
+      slider.innerHTML = '';
+      for (var i = -7; i <= 5; i++) {
+        var d = new Date(TODAY); d.setDate(TODAY.getDate() + i);
+        var isFuture = d > TODAY, isToday = d.getTime() === TODAY.getTime(), isSel = d.getTime() === selectedDate.getTime(), isPast = d < TODAY;
+        var moon = getMoon(d);
+        var label = isToday ? 'Today' : (MS[d.getMonth()] + ' ' + d.getDate());
+        var item = document.createElement('div');
+        item.className = 'day-item' + (isFuture ? ' future' : isSel ? '' : isPast ? ' past' : '');
+
+        var lspan = document.createElement('span');
+        lspan.className = 'day-label';
+        if (isSel) { lspan.style.color = '#0b2eda'; lspan.style.fontWeight = '900'; lspan.style.letterSpacing = '0.1em'; }
+        lspan.textContent = label;
+
+        var btnDiv = document.createElement('div');
+        btnDiv.className = 'moon-btn';
+        if (isSel) { btnDiv.style.border = '2px solid #0b2eda'; btnDiv.style.background = 'rgba(11,46,218,0.15)'; btnDiv.style.boxShadow = '0 0 20px rgba(11,46,218,0.4)'; btnDiv.style.width = '50px'; btnDiv.style.height = '50px'; }
+
+        var mc = document.createElement('canvas');
+        var sz = isSel ? 50 : 40;
+        mc.width = sz; mc.height = sz; mc.style.display = 'block'; mc.style.borderRadius = '50%';
+        btnDiv.appendChild(mc);
+        item.appendChild(lspan); item.appendChild(btnDiv);
+        slider.appendChild(item);
+
+        (function (cv, ag, il) { setTimeout(function () { drawMiniMoon(cv, ag, il); }, 0); })(mc, parseFloat(moon.age), moon.illum);
+
+        if (!isFuture) {
+          (function (date) {
+            item.addEventListener('click', function () {
+              selectedDate = new Date(date); buildSlider(); updateAll(date);
+            });
+          })(new Date(d));
+        }
+      }
+      setTimeout(function () {
+        var items = slider.querySelectorAll('.day-item');
+        if (items[7]) items[7].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }, 150);
+    }
+
+    // --- UPDATE (DAILY-VARYING CONTENT) ---
+    function updateAll(date) {
+      var moon = getMoon(date), vib = calcVib(date);
+      drawMoon(document.getElementById('moon-canvas'), parseFloat(moon.age), moon.illum);
+      document.getElementById('phase-name').textContent = moon.phase;
+      document.getElementById('illumination').textContent = moon.illum + '% Illuminated';
+      document.getElementById('days-old').textContent = moon.age + ' Days Old';
+      document.getElementById('vibration-num').textContent = 'Numerological Frequency: ' + vib;
+      
+      // ═══ GÜNLÜK DEĞİŞEN İÇERİK ═══
+      generateLunarGuidance(moon, date, function(err, data) {
+        if (data) {
+          document.getElementById('lunar-desc-1').textContent = data.v1 || '';
+          document.getElementById('lunar-desc-2').textContent = data.v2 || '';
+          document.getElementById('r1t').textContent = data.i1t || '';
+          document.getElementById('r1').textContent = data.i1 || '';
+          document.getElementById('r2t').textContent = data.i2t || '';
+          document.getElementById('r2').textContent = data.i2 || '';
+          document.getElementById('r3t').textContent = data.i3t || '';
+          document.getElementById('r3').textContent = data.i3 || '';
+          document.getElementById('lunar-quote').textContent = data.q || '';
+          document.getElementById('crystal-title').textContent = (data.ct || 'Kristal') + ' Resonance';
+          document.getElementById('crystal-text').textContent = data.cx || '';
+        }
+      });
+    }
+
+    buildSlider();
+    updateAll(TODAY);
+  </script>
+  <script src="js/numerology-ai.js"></script>
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Soulmate Compatibility Home</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;700&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+  <script
+    id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#e8454d", "background-light": "#f8f6f6", "background-dark": "#211112", "card-dark": "#221f10" }, fontFamily: { display: "Be Vietnam Pro" }, borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" } } } };</script>
+  <style>
+    .cosmic-glow {
+      box-shadow: 0 0 15px rgba(242, 204, 13, 0.3);
+    }
+
+    .letter-glow {
+      text-shadow: 0 0 8px rgba(242, 204, 13, 0.6);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+  <header
+    class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50">
+    <div onclick="window.location.href='relationship_compatibility_analysis.html'"
+      class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+      <span class="material-symbols-outlined">arrow_back_ios</span>
+    </div>
+    <h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">
+      Compatibility Report</h2>
+    <div class="flex w-12 items-center justify-end">
+      <button onclick="openSoulmateShare()"
+        class="flex size-12 cursor-pointer items-center justify-center rounded-xl bg-transparent text-slate-900 dark:text-white">
+        <span class="material-symbols-outlined" style="pointer-events:none">share</span>
+      </button>
+    </div>
+  </header>
+  <main class="max-w-md mx-auto pb-10">
+    <!-- Pythagorean sistemi kullanılıyor -->
+    <section class="mt-4 px-4">
+      <div class="flex flex-wrap justify-center gap-2 pt-4 pb-2">
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">1</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-xl font-bold">
+            A</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">3</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-xl font-bold text-white/50">
+            L</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">5</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-xl font-bold">
+            E</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">6</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-xl font-bold text-white/50">
+            X</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-2 pb-4">
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">4</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-white/20 bg-white/5 rounded-lg text-xl font-bold text-white/50">
+            M</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">1</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-white/20 bg-white/5 rounded-lg text-xl font-bold">
+            A</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">7</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-white/20 bg-white/5 rounded-lg text-xl font-bold text-white/50">
+            Y</div>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-primary text-xs font-bold mb-1 letter-glow">1</span>
+          <div
+            class="w-9 h-12 flex items-center justify-center border border-white/20 bg-white/5 rounded-lg text-xl font-bold">
+            A</div>
+        </div>
+      </div>
+      <h1 class="text-slate-900 dark:text-white tracking-widest text-3xl font-extrabold leading-tight text-center mt-2">
+        ALEX <span class="text-primary font-light">&amp;</span> MAYA</h1>
+    </section>
+    <section class="flex flex-col items-center justify-center py-8 relative">
+      <div class="relative size-64 flex items-center justify-center">
+        <svg class="absolute inset-0 size-full -rotate-90">
+          <circle class="text-slate-200 dark:text-white/10" cx="128" cy="128" fill="transparent" r="110"
+            stroke="currentColor" stroke-width="8"></circle>
+          <circle class="drop-shadow-[0_0_15px_rgba(242,204,13,0.4)]" cx="128" cy="128" fill="transparent" r="110"
+            stroke="#f2cc0d" stroke-dasharray="691" stroke-dashoffset="83" stroke-linecap="round" stroke-width="12">
+          </circle>
+        </svg>
+        <div class="text-center z-10">
+          <p class="text-slate-500 dark:text-primary/70 text-xs font-bold tracking-[0.2em] uppercase mb-1">Cosmic
+            Resonance</p>
+          <h3 class="text-slate-900 dark:text-white text-7xl font-bold tracking-tighter">88<span
+              class="text-4xl align-top text-primary/80">%</span></h3>
+          <div
+            class="bg-primary/20 mt-2 px-3 py-1 rounded-full text-primary text-xs font-bold border border-primary/20 inline-block">
+            Exceptional Match</div>
+        </div>
+      </div>
+      <p class="mt-6 text-center text-slate-500 dark:text-[#bab59c] text-sm px-8 italic">
+        "Two souls vibrating at the same frequency, destined for growth."
+      </p>
+    </section>
+    <section class="px-4 space-y-3">
+      <div
+        class="flex flex-col rounded-xl border border-primary/20 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+        <button
+          class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+          <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div class="p-2.5 rounded-lg bg-primary/20 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-2xl">favorite</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h2 class="text-slate-900 dark:text-white text-base font-bold truncate">Soul Urge Compatibility</h2>
+                <span
+                  class="px-1.5 py-0.5 rounded bg-primary text-background-dark text-[9px] font-black leading-none uppercase tracking-tighter shrink-0">Heart</span>
+                <span
+                  class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                  MYSTICS</span>
+              </div>
+              <p class="text-slate-500 dark:text-[#bab59c] text-xs mt-1 line-clamp-1">Deeply aligned emotional and
+                spiritual needs.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 ml-2 shrink-0">
+            <div class="text-primary text-2xl font-black">94%</div>
+            <span class="material-symbols-outlined text-slate-400">expand_more</span>
+          </div>
+        </button>
+      </div>
+      <div class="flex flex-col rounded-xl border border-white/10 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+        <button
+          class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+          <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div
+              class="p-2.5 rounded-lg bg-white/10 text-slate-400 dark:text-white/60 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-2xl">groups</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h2 class="text-slate-900 dark:text-white text-base font-bold truncate">Personality Harmony</h2>
+                <span
+                  class="px-1.5 py-0.5 rounded bg-white/10 text-slate-400 dark:text-white/60 text-[9px] font-black leading-none uppercase tracking-tighter shrink-0">Social</span>
+                <span
+                  class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                  SCHOLARS</span>
+              </div>
+              <p class="text-slate-500 dark:text-[#bab59c] text-xs mt-1 line-clamp-1">A highly intellectual and
+                respectful bond.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 ml-2 shrink-0">
+            <div class="text-slate-900 dark:text-white text-2xl font-black">82%</div>
+            <span class="material-symbols-outlined text-slate-400">expand_more</span>
+          </div>
+        </button>
+      </div>
+      <div class="flex flex-col rounded-xl border border-white/10 bg-white dark:bg-card-dark shadow-sm overflow-hidden">
+        <button
+          class="w-full flex items-center justify-between p-5 text-left active:bg-slate-50 dark:active:bg-white/5 transition-colors">
+          <div class="flex items-center gap-4 flex-1 min-w-0">
+            <div class="p-2.5 rounded-lg bg-primary/10 text-primary/80 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-2xl">route</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h2 class="text-slate-900 dark:text-white text-base font-bold truncate">Life Path Union</h2>
+                <span
+                  class="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-black leading-none uppercase tracking-tighter shrink-0">Journey</span>
+                <span id="life-path-union-badge"
+                  class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold leading-none uppercase tracking-tight border border-primary/20 shrink-0">THE
+                  NOMADS</span>
+              </div>
+              <p class="text-slate-500 dark:text-[#bab59c] text-xs mt-1 line-clamp-1">Shared thirst for freedom and
+                adventure.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 ml-2 shrink-0">
+            <div class="text-slate-900 dark:text-white text-2xl font-black">88%</div>
+            <span class="material-symbols-outlined text-slate-400">expand_more</span>
+          </div>
+        </button>
+      </div>
+    </section>
+    <div class="grid grid-cols-2 gap-3 p-4">
+      <div class="flex flex-col gap-2 rounded-xl bg-primary/5 border border-primary/10 p-4">
+        <span class="material-symbols-outlined text-primary">auto_awesome</span>
+        <p class="text-xs font-bold text-primary tracking-widest uppercase">Connection</p>
+        <p class="text-slate-900 dark:text-white text-base font-bold">Twin Flame</p>
+      </div>
+      <div class="flex flex-col gap-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-white/5 p-4">
+        <span class="material-symbols-outlined text-slate-400">psychology</span>
+        <p class="text-xs font-bold text-slate-400 tracking-widest uppercase">Growth Area</p>
+        <p class="text-slate-900 dark:text-white text-base font-bold">Patience</p>
+      </div>
+    </div>
+    <div class="px-4 py-6">
+      <button
+        class="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-background-dark py-4 rounded-xl font-bold text-lg transition-transform active:scale-95">
+        <span class="material-symbols-outlined">visibility</span>
+        View Full Analysis
+      </button>
+    </div>
+  </main>
+  <div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden opacity-30 dark:opacity-20">
+    <div class="absolute -top-20 -right-20 size-80 rounded-full bg-primary/20 blur-[100px]"></div>
+    <div class="absolute bottom-40 -left-20 size-60 rounded-full bg-primary/10 blur-[80px]"></div>
+  </div>
+
+  <script>
+    // KADER APP - Navigation Helper
+    (function () {
+      // Auto navigation için
+      var autoTarget = '';
+      var autoDelay = 2500;
+
+      if (autoTarget) {
+        setTimeout(function () {
+          window.location.href = autoTarget;
+        }, autoDelay);
+      }
+
+      // Bottom nav linkleri ekle
+      setTimeout(function () {
+        // Home button
+        var allBtns = document.querySelectorAll('button, a');
+        allBtns.forEach(function (btn) {
+          var text = btn.textContent || '';
+          var html = btn.innerHTML || '';
+
+          // Home nav
+          if ((text.includes('Home') || html.includes('>home<')) && text.trim().length < 20) {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              window.location.href = 'mystic_numerology_home_1.html';
+            });
+          }
+          // Crystal Store / Journal
+          if (text.includes('Crystal Store') || text.includes('Journal')) {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              window.location.href = 'premium_crystal_store.html';
+            });
+          }
+          // Profile / Settings nav
+          if ((text.includes('Profile') || html.includes('>settings<')) && text.trim().length < 20) {
+            btn.addEventListener('click', function (e) {
+              e.preventDefault();
+              window.location.href = 'profile_soul_journey.html';
+            });
+          }
+        });
+      }, 500);
+    })();
+
+    setTimeout(function () {
+
+      // View Full Analysis → name_numerology_breakdown_2.html
+      document.querySelectorAll('button, a, [class*="cursor"]').forEach(function (el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('View Full Analysis')) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function (e) {
+            e.stopPropagation();
+            window.location.href = 'name_numerology_breakdown_2.html';
+          });
+        }
+      });
+
+      // visibility → name_numerology_breakdown_2.html
+      document.querySelectorAll('button, a, [class*="cursor"]').forEach(function (el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('visibility')) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function (e) {
+            e.stopPropagation();
+            window.location.href = 'name_numerology_breakdown_2.html';
+          });
+        }
+      });
+      // arrow_back → relationship_compatibility_analysis.html
+      document.querySelectorAll('button, a, [class*="cursor"]').forEach(function (el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('arrow_back')) {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function (e) {
+            e.stopPropagation();
+            window.location.href = 'relationship_compatibility_analysis.html';
+          });
+        }
+      });
+
+    }, 100);
+  </script>
+
+
+
+
+  <!-- ═══ SOULMATE SHARE OVERLAY ═══ -->
+  <div id="sm-overlay"
+    style="display:none;position:fixed;inset:0;z-index:300;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);background:rgba(10,9,7,0.85)"
+    onclick="if(event.target===this)smClose()">
+    <div id="sm-sheet"
+      style="width:100%;max-width:480px;background:#0a0907;border-radius:28px 28px 0 0;padding:20px 20px 48px;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);overflow-y:auto;max-height:94vh">
+
+      <!-- Handle + Header -->
+      <div style="width:40px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 16px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 4px">
+        <h3 style="font-size:17px;font-weight:800;color:white;font-family:Manrope,sans-serif">Share Soulmate Card</h3>
+        <button onclick="smClose()"
+          style="width:32px;height:32px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:50%;color:rgba(255,255,255,0.5);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
+      </div>
+
+      <!-- Soulmate Card - exact design -->
+      <div
+        style="width:100%;max-width:300px;margin:0 auto 16px;aspect-ratio:1/1;border-radius:1.5rem;position:relative;overflow:hidden;background:radial-gradient(circle at top left,#4a0404 0%,#2d0a15 50%,#0a0907 100%);box-shadow:0 20px 50px rgba(158,27,50,0.3);border:1px solid rgba(255,255,255,0.1)">
+        <!-- Grain overlay -->
+        <div
+          style="position:absolute;inset:0;background-image:url(https://lh3.googleusercontent.com/aida-public/AB6AXuCVBO61WxIlVfsd7xLQ2RFuHwIv154zBZABkPunPBXVElJ9u5tjhGMGwqSbLVHez1XTL5JyeK77zFowzN8IHug7T-j4vaxxN76KS7kJ_I_tNTt9-pq3ia4T6zs7vdNJbLcsH27_VcyfUArrpqCzOY7FRfSGKymEFC6URwYJ4uquAG4yyTDjdF_nz8EUWUqqGFhBYcZMJ8CYFqOBXEsv-h8r3KG-i1FJgyRM9Lyyh3AufFHtzyZvw6xx4U2xPcU3u8xvRBD4Zz3Ankjf);opacity:0.4;mix-blend-mode:overlay;pointer-events:none">
+        </div>
+        <!-- Glow blobs -->
+        <div
+          style="position:absolute;top:-40px;left:-40px;width:192px;height:192px;background:rgba(158,27,50,0.3);filter:blur(60px);border-radius:50%;pointer-events:none">
+        </div>
+        <div
+          style="position:absolute;bottom:-40px;right:-40px;width:192px;height:192px;background:rgba(225,48,108,0.2);filter:blur(60px);border-radius:50%;pointer-events:none">
+        </div>
+        <!-- Top badge -->
+        <div
+          style="position:absolute;top:20px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:8px">
+          <div
+            style="width:22px;height:22px;background:#cfa117;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(207,161,23,0.5)">
+            <span class="material-symbols-outlined"
+              style="font-size:12px;color:#0a0907;pointer-events:none">favorite</span>
+          </div>
+          <span
+            style="font-size:10px;text-transform:uppercase;letter-spacing:0.2em;font-weight:800;color:#cfa117;font-family:Manrope,sans-serif">Kader
+            Soulmate</span>
+        </div>
+        <!-- Main content -->
+        <div
+          style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center">
+          <p
+            style="font-size:10px;text-transform:uppercase;letter-spacing:0.2em;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:8px;font-family:Manrope,sans-serif">
+            Unity Card</p>
+          <h2 id="sm-names"
+            style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;font-weight:700;background:linear-gradient(135deg,#cfa117,#f7e4a1,#cfa117);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;padding:0 8px">
+            Alexander &amp; Sophia</h2>
+          <!-- Score circle -->
+          <div
+            style="width:112px;height:112px;border-radius:50%;border:2px solid rgba(207,161,23,0.5);box-shadow:0 0 25px rgba(207,161,23,0.4);background:rgba(10,9,7,0.4);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;position:relative">
+            <span id="sm-score"
+              style="font-size:36px;font-weight:800;background:linear-gradient(135deg,#cfa117,#f7e4a1,#cfa117);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;font-family:Manrope,sans-serif">94%</span>
+            <span
+              style="font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(207,161,23,0.8);font-weight:700;margin-top:4px;font-family:Manrope,sans-serif">Compatibility</span>
+            <span class="material-symbols-outlined"
+              style="position:absolute;top:-6px;right:-6px;font-size:16px;color:#cfa117">colors_spark</span>
+          </div>
+          <!-- Bond label -->
+          <div
+            style="backdrop-filter:blur(12px);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:10px 20px">
+            <p id="sm-bond"
+              style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);font-family:Manrope,sans-serif">Divine
+              Eternal Connection</p>
+            <p style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;font-style:italic">Sacred Bond &middot;
+              Destiny &middot; Harmony</p>
+          </div>
+        </div>
+        <!-- Footer -->
+        <div
+          style="position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:9px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.1em;font-family:Manrope,sans-serif">
+          kader.app</div>
+      </div>
+
+      <p
+        style="text-align:center;color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:20px;font-family:Manrope,sans-serif">
+        Bu kartı sevdiklerinle paylaş ❤️</p>
+
+      <!-- Share buttons -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+        <button onclick="smAction('instagram')"
+          style="width:100%;height:52px;background:#E1306C;border:none;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:white;font-family:Manrope,sans-serif">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="font-size:22px;pointer-events:none">photo_camera</span>
+            <span style="font-weight:700;font-size:15px">Instagram Stories</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+        <button onclick="smAction('whatsapp')"
+          style="width:100%;height:52px;background:#25D366;border:none;border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:#0a0907;font-family:Manrope,sans-serif">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined" style="font-size:22px;pointer-events:none">chat_bubble</span>
+            <span style="font-weight:700;font-size:15px">WhatsApp Status</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+        <button onclick="smAction('save')"
+          style="width:100%;height:52px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.08);border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;cursor:pointer;color:white;font-family:Manrope,sans-serif">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="material-symbols-outlined"
+              style="font-size:22px;opacity:0.7;pointer-events:none">download</span>
+            <span style="font-weight:700;font-size:15px">Save to Gallery</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size:20px;opacity:0.7">chevron_right</span>
+        </button>
+      </div>
+
+      <!-- Copy + Other -->
+      <div style="display:flex;justify-content:center;gap:40px">
+        <button onclick="smAction('copy')"
+          style="display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer">
+          <div
+            style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">
+            <span class="material-symbols-outlined"
+              style="font-size:20px;color:rgba(255,255,255,0.5)">content_copy</span>
+          </div>
+          <span
+            style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;font-family:Manrope,sans-serif">Copy
+            Link</span>
+        </button>
+        <button onclick="smAction('other')"
+          style="display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer">
+          <div
+            style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center">
+            <span class="material-symbols-outlined" style="font-size:20px;color:rgba(255,255,255,0.5)">more_horiz</span>
+          </div>
+          <span
+            style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;font-family:Manrope,sans-serif">Other</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/numerology-engine.js"></script>
+  <script src="js/numerology-ai.js"></script>
+  <script>
+    // KADER APP - Navigation & Dynamic Logic
+    window.addEventListener('DOMContentLoaded', async function () {
+      // Premium gate — sayfa 3 sadece premium
+      if (window.premium && !window.premium.isPremium()) {
+        window.premium.showPaywall('Bu analiz sayfası Premium özelliğidir.', 'breakdown_page_3');
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      // Partner ismini URL veya kader_compat_data'dan al
+      let kisiName = params.get('kisi');
+      let userData = null;
+      let compatData = null;
+
+      try { userData = JSON.parse(localStorage.getItem('kader_user_data')); } catch (e) { }
+      try { compatData = JSON.parse(localStorage.getItem('kader_compat_data')); } catch (e) { }
+
+      const userName = (userData && userData.name) ? userData.name : 'User';
+
+      // kisiName yoksa compatibility data'dan al
+      if (!kisiName && compatData && compatData.person2 && compatData.person2.name) {
+        kisiName = compatData.person2.name;
+      }
+
+      const partnerName = kisiName || 'Partner';
+
+      // Update Names in Title
+      const titleEl = document.querySelector('h1.tracking-widest.text-3xl.font-extrabold');
+      if (titleEl) {
+        titleEl.innerHTML = `${userName.toUpperCase()} <span class="text-primary font-light">&amp;</span> ${partnerName.toUpperCase()}`;
+      }
+
+      // Update Letters for both (Pythagorean sistem)
+      const table = NumerologyEngine.PYTHAGOREAN;
+
+      // Container 1: User
+      const container1 = document.querySelector('.flex.flex-wrap.justify-center.gap-2.pt-4.pb-2');
+      if (container1) {
+        const letters = NumerologyEngine.getLetterValues(userName, table);
+        container1.innerHTML = letters.map(l => `
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">${l.val || ''}</span>
+                    <div class="w-9 h-12 flex items-center justify-center border border-primary/30 bg-primary/5 rounded-lg text-xl font-bold ${l.val === null ? 'invisible' : ''}">${l.char}</div>
+                </div>
+            `).join('');
+      }
+
+      // Container 2: Partner
+      const container2 = document.querySelector('.flex.flex-wrap.justify-center.gap-2.pb-4');
+      if (container2) {
+        const letters = NumerologyEngine.getLetterValues(partnerName, table);
+        container2.innerHTML = letters.map(l => `
+                <div class="flex flex-col items-center">
+                    <span class="text-primary text-xs font-bold mb-1 letter-glow">${l.val || ''}</span>
+                    <div class="w-9 h-12 flex items-center justify-center border border-white/20 bg-white/5 rounded-lg text-xl font-bold ${l.val === null ? 'invisible' : ''}">${l.char}</div>
+                </div>
+            `).join('');
+      }
+
+      // Accordion & Links
+      document.querySelectorAll('button, span, a').forEach(function (el) {
+        const html = el.innerHTML || '';
+        const txt = el.textContent || '';
+
+        if (html.includes('arrow_back')) {
+          el.onclick = () => window.location.href = `kisi_profil.html?kisi=${encodeURIComponent(partnerName)}`;
+        }
+        if (txt.includes('View Full Analysis') || txt.includes('visibility')) {
+          el.onclick = () => window.location.href = `name_numerology_breakdown_2.html?kisi=${encodeURIComponent(partnerName)}`;
+        }
+      });
+
+      // Life Path başlıkları
+      const LP_TITLES = {
+        1: 'The Leader', 2: 'The Peacemaker', 3: 'The Creative', 4: 'The Builder',
+        5: 'The Adventurer', 6: 'The Nurturer', 7: 'The Mystic', 8: 'The Powerhouse',
+        9: 'The Humanitarian', 11: 'The Illuminator', 22: 'The Master Builder', 33: 'The Healer'
+      };
+
+      // Life Path hesapla
+      function calcLP(birthDate) {
+        if (!birthDate) return null;
+        const digits = birthDate.replace(/\D/g,'').split('').map(Number);
+        let sum = digits.reduce((a,x) => a+x, 0);
+        while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+          sum = String(sum).split('').reduce((a,d) => a+parseInt(d), 0);
+        }
+        return sum;
+      }
+
+      const userBirthDate = (compatData && compatData.person1 && compatData.person1.birthDate) || (userData && userData.birthDate) || '';
+      const partnerBirthDate = (compatData && compatData.person2 && compatData.person2.birthDate) || '';
+
+      const userLP = calcLP(userBirthDate);
+      const partnerLP = calcLP(partnerBirthDate);
+
+      const userTitle = LP_TITLES[userLP] || 'The Seeker';
+      const partnerTitle = LP_TITLES[partnerLP] || 'The Wanderer';
+
+      // Life Path Union badge'ini güncelle
+      const unionBadge = document.getElementById('life-path-union-badge');
+      if (unionBadge && userTitle && partnerTitle) {
+        const userTitleUpper = userTitle.replace('The ', '').toUpperCase();
+        const partnerTitleUpper = partnerTitle.replace('The ', '').toUpperCase();
+        unionBadge.innerHTML = `<span style="color:rgba(232,69,77,0.7)">${userTitleUpper}</span> & <span style="color:rgba(232,69,77,1)">${partnerTitleUpper}</span>`;
+      }
+
+      // Initialize Accordions (Keep existing logic but wrap it)
+      var accordionContent = [
+        '<p style="padding:16px 20px;color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6;border-top:1px solid rgba(255,255,255,0.08)">Your Soul Urge numbers are deeply aligned. Both souls crave emotional depth and authentic love.</p>',
+        '<p style="padding:16px 20px;color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6;border-top:1px solid rgba(255,255,255,0.08)">Personality Harmony is strong. You complement each other socially and intellectually.</p>',
+        `<div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+            <div style="background:rgba(242,204,13,0.08);border:1px solid rgba(242,204,13,0.2);border-radius:12px;padding:12px">
+              <div style="color:#f2cc0d;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">${userName.split(' ')[0]}</div>
+              <div style="color:rgba(255,255,255,0.95);font-size:13px;font-weight:600">Life Path ${userLP || '?'}</div>
+              <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:4px;font-style:italic">${userTitle}</div>
+            </div>
+            <div style="background:rgba(242,204,13,0.08);border:1px solid rgba(242,204,13,0.2);border-radius:12px;padding:12px">
+              <div style="color:#f2cc0d;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">${partnerName.split(' ')[0]}</div>
+              <div style="color:rgba(255,255,255,0.95);font-size:13px;font-weight:600">Life Path ${partnerLP || '?'}</div>
+              <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:4px;font-style:italic">${partnerTitle}</div>
+            </div>
+          </div>
+          <p style="color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6">${userName.split(' ')[0]} ve ${partnerName.split(' ')[0]}'in Kader Yolu, ${userLP || '?'} ve ${partnerLP || '?'} olarak birbirini tamamlayan bir dinamiğe sahip. ${userTitle} ve ${partnerTitle} enerjileri, özgürlük ve bireysellik ararken birbirlerine destek olur.</p>
+        </div>`
+      ];
+      var cards = document.querySelectorAll('section .flex.flex-col.rounded-xl');
+      cards.forEach(function (card, i) {
+        var btn = card.querySelector('button');
+        if (!btn) return;
+        var contentDiv = document.createElement('div');
+        contentDiv.style.display = 'none';
+        contentDiv.innerHTML = accordionContent[i] || '';
+        card.appendChild(contentDiv);
+        btn.style.cursor = 'pointer';
+        btn.onclick = function () {
+          var icon = btn.querySelector('.material-symbols-outlined:last-child');
+          var isHidden = contentDiv.style.display === 'none';
+          contentDiv.style.display = isHidden ? 'block' : 'none';
+          if (icon) icon.textContent = isHidden ? 'expand_less' : 'expand_more';
+        };
+      });
+    });
+
+    function smOpen() { var o = document.getElementById('sm-overlay'), s = document.getElementById('sm-sheet'); o.style.display = 'flex'; setTimeout(function () { s.style.transform = 'translateY(0)' }, 10); }
+    function smClose() { var s = document.getElementById('sm-sheet'); s.style.transform = 'translateY(100%)'; setTimeout(function () { document.getElementById('sm-overlay').style.display = 'none' }, 400); }
+    function smAction(t) {
+      if (t === 'copy' || t === 'save') {
+        var toast = document.createElement('div');
+        toast.textContent = t === 'copy' ? 'Link kopyalandi ✓' : 'Galeriye kaydedildi ✓';
+        toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#cfa117;color:#0a0907;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:800;z-index:999;white-space:nowrap;font-family:Manrope,sans-serif';
+        document.body.appendChild(toast); setTimeout(function () { toast.remove() }, 2000);
+      }
+      if (t === 'other' && navigator.share) { navigator.share({ title: 'Ruh Esinim', text: 'Kader ile ruh bagimizi kesfettim!', url: window.location.href }); }
+    }
+  </script>
+  <script src="js/compatibility-engine.js"></script>
+<script src="js/bottom-nav.js"></script>
+</body>
+
+</html>

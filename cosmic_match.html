@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cosmic Match</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/discovery-engine.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = { darkMode:"class", theme:{ extend:{
+            colors:{ primary:"#f2cc0d","background-dark":"#181711","surface-dark":"#221f10","card-dark":"#393628","cosmic-violet":"#8b5cf6","cosmic-pink":"#ec4899","cosmic-blue":"#6366f1" },
+            fontFamily:{ display:["Space Grotesk","sans-serif"] },
+            borderRadius:{ DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px" }
+        }}}
+    </script>
+    <style>
+        .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+        body{min-height:max(884px,100dvh);font-family:'Space Grotesk',sans-serif}
+
+        /* Cosmic gradient */
+        .cosmic-gradient{background:linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#6366f1 100%)}
+        .cosmic-gradient-text{background:linear-gradient(135deg,#c084fc,#f472b6,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .cosmic-glow{box-shadow:0 0 30px rgba(139,92,246,0.3),0 0 60px rgba(236,72,153,0.15)}
+        .cosmic-border{border:1px solid rgba(139,92,246,0.2)}
+
+        /* Glass */
+        .glass{background:rgba(57,54,40,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.05)}
+        .glass-cosmic{background:rgba(139,92,246,0.06);backdrop-filter:blur(12px);border:1px solid rgba(139,92,246,0.12)}
+
+        /* Animations */
+        @keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,0.3)}50%{box-shadow:0 0 40px rgba(236,72,153,0.5)}}
+        @keyframes radar-ping{0%{transform:scale(1);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @keyframes orbit{0%{transform:rotate(0deg) translateX(var(--orbit-r)) rotate(0deg)}100%{transform:rotate(360deg) translateX(var(--orbit-r)) rotate(-360deg)}}
+        @keyframes reveal-flash{0%{opacity:0;transform:scale(0.8)}50%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+        @keyframes streak-fire{0%,100%{text-shadow:0 0 8px rgba(251,191,36,0.5)}50%{text-shadow:0 0 20px rgba(251,191,36,0.8)}}
+        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+        .fade-up{animation:fade-up 0.5s ease forwards;opacity:0}
+        .pulse-glow{animation:pulse-glow 3s ease-in-out infinite}
+        .float-anim{animation:float 3s ease-in-out infinite}
+        .streak-fire{animation:streak-fire 2s ease-in-out infinite}
+
+        .shimmer-placeholder{background:linear-gradient(90deg,rgba(139,92,246,0.08) 25%,rgba(236,72,153,0.15) 50%,rgba(139,92,246,0.08) 75%);background-size:200% 100%;animation:shimmer 2s ease-in-out infinite}
+
+        /* Radar */
+        .radar-container{position:relative;width:260px;height:260px}
+        .radar-ring{position:absolute;border-radius:50%;border:1px solid rgba(139,92,246,0.1);top:50%;left:50%;transform:translate(-50%,-50%)}
+        .radar-ping{position:absolute;border-radius:50%;background:rgba(139,92,246,0.15);top:50%;left:50%;transform:translate(-50%,-50%);animation:radar-ping 3s ease-out infinite}
+        .radar-dot{position:absolute;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;cursor:pointer;transition:all 0.3s;border:2px solid}
+        .radar-dot:hover{transform:scale(1.3);z-index:10}
+
+        /* Match card */
+        .match-card-blur .blur-layer{filter:blur(8px);-webkit-filter:blur(8px);transition:filter 0.8s ease}
+        .match-card-revealed .blur-layer{filter:none;-webkit-filter:none}
+
+        /* Streak badge */
+        .streak-badge{background:linear-gradient(135deg,#f59e0b,#ef4444);box-shadow:0 0 12px rgba(245,158,11,0.4)}
+
+        /* Section divider */
+        .cosmic-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.2),transparent)}
+
+        /* Scrollbar */
+        ::-webkit-scrollbar{width:4px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.2);border-radius:2px}
+    </style>
+</head>
+<body class="bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden pb-10">
+
+    <!-- Header -->
+    <header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-50 bg-background-dark/90 backdrop-blur-md border-b border-white/5">
+        <div onclick="window.location.href='mystic_numerology_home_1.html'"
+            class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-white">
+            <span class="material-symbols-outlined">arrow_back_ios</span>
+        </div>
+        <h2 class="cosmic-gradient-text text-lg font-black leading-tight tracking-tight flex-1 text-center">Cosmic Match</h2>
+        <div class="flex w-12 items-center justify-end">
+            <!-- Streak badge -->
+            <div id="streak-badge" class="streak-badge rounded-full px-2.5 py-1 flex items-center gap-1 cursor-default" title="Streak">
+                <span class="text-white text-xs streak-fire">🔥</span>
+                <span id="streak-count" class="text-white text-xs font-black">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ OPT-IN EKRANI (henüz katılmamışsa) ═══ -->
+    <div id="optin-screen" style="display:none" class="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
+        <div class="size-28 rounded-full cosmic-gradient flex items-center justify-center mb-8 pulse-glow">
+            <span class="material-symbols-outlined text-white text-5xl">auto_awesome</span>
+        </div>
+        <h2 class="text-white text-2xl font-black mb-3">Kozmik Eşleşme</h2>
+        <p class="text-white/50 text-sm leading-relaxed max-w-[300px] mb-8">
+            Numerolojik profilini diğer kullanıcılarla paylaş ve evrenin senin için seçtiği ruh eşlerini keşfet.
+            Her gün yeni bir eşleşme, her 3 günde bir reveal hakkı!
+        </p>
+        <div class="glass-cosmic rounded-2xl p-4 mb-6 w-full max-w-[320px]">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="material-symbols-outlined text-cosmic-violet">visibility</span>
+                <div class="flex-1 text-left">
+                    <p class="text-white text-sm font-bold">Ne paylaşılır?</p>
+                    <p class="text-white/40 text-xs">Sadece ismin, yaşam yolu ve numerolojik sayıların</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 mb-3">
+                <span class="material-symbols-outlined text-cosmic-pink">lock</span>
+                <div class="flex-1 text-left">
+                    <p class="text-white text-sm font-bold">Gizlilik</p>
+                    <p class="text-white/40 text-xs">Doğum tarihin ve kişisel verilerin paylaşılmaz</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-cosmic-blue">toggle_on</span>
+                <div class="flex-1 text-left">
+                    <p class="text-white text-sm font-bold">İstediğin zaman kapat</p>
+                    <p class="text-white/40 text-xs">Profil ayarlarından keşfedilebilirliğini kapat</p>
+                </div>
+            </div>
+        </div>
+        <button id="btn-optin" class="w-full max-w-[320px] cosmic-gradient text-white py-4 rounded-full font-bold text-base shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform cosmic-glow">
+            <span class="material-symbols-outlined">rocket_launch</span>
+            Keşfe Katıl
+        </button>
+        <p class="text-white/20 text-xs mt-4">İstediğin zaman devre dışı bırakabilirsin</p>
+    </div>
+
+    <!-- ═══ ANA İÇERİK (opt-in yapılmışsa) ═══ -->
+    <div id="main-content" style="display:none">
+
+        <!-- Streak & Reveal Credits Bar -->
+        <div class="px-5 pt-5 pb-2 fade-up" style="animation-delay:0.05s">
+            <div class="flex items-center gap-3">
+                <div class="flex-1 glass-cosmic rounded-2xl p-3 flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-amber-500/15 flex items-center justify-center shrink-0">
+                        <span class="text-xl streak-fire">🔥</span>
+                    </div>
+                    <div>
+                        <p id="streak-label" class="text-white text-sm font-black">0 Gün Streak</p>
+                        <p id="streak-next" class="text-white/35 text-[10px]">Sonraki ödül: 3 günde</p>
+                    </div>
+                </div>
+                <div class="glass-cosmic rounded-2xl p-3 flex items-center gap-3 shrink-0">
+                    <div class="size-10 rounded-full bg-cosmic-violet/15 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-cosmic-violet text-xl">visibility</span>
+                    </div>
+                    <div>
+                        <p id="credits-count" class="text-white text-sm font-black">0</p>
+                        <p class="text-white/35 text-[10px]">Reveal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ GÜNLÜK EŞLEŞME ═══ -->
+        <div class="px-5 pt-4 pb-2 fade-up" style="animation-delay:0.1s">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-cosmic-pink text-base">today</span>
+                <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Bugünün Kozmik Eşleşmesi</p>
+            </div>
+
+            <!-- Eşleşme Kartı -->
+            <div id="match-card" class="glass-cosmic rounded-3xl p-6 relative overflow-hidden match-card-blur">
+                <!-- Background pattern -->
+                <div class="absolute inset-0 opacity-5" style="background-image:url('https://www.transparenttextures.com/patterns/stardust.png')"></div>
+
+                <!-- Loading state -->
+                <div id="match-loading" class="flex flex-col items-center gap-4 py-6 relative z-10">
+                    <div class="size-20 rounded-full shimmer-placeholder"></div>
+                    <div class="h-4 w-32 rounded shimmer-placeholder"></div>
+                    <div class="h-3 w-24 rounded shimmer-placeholder"></div>
+                </div>
+
+                <!-- Match content -->
+                <div id="match-content" style="display:none" class="relative z-10">
+                    <div class="flex flex-col items-center">
+                        <!-- Avatar -->
+                        <div class="relative mb-4">
+                            <div id="match-avatar" class="blur-layer size-24 rounded-full cosmic-border overflow-hidden bg-surface-dark flex items-center justify-center cosmic-glow">
+                                <span class="text-cosmic-violet text-4xl font-black">?</span>
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 size-8 rounded-full cosmic-gradient flex items-center justify-center border-2 border-background-dark">
+                                <span id="match-lp" class="text-white text-xs font-black">?</span>
+                            </div>
+                        </div>
+
+                        <!-- Name (blurred until revealed) -->
+                        <p id="match-name" class="blur-layer text-white text-xl font-black mb-1">???</p>
+                        <p id="match-archetype" class="text-white/40 text-xs mb-4">Life Path ?</p>
+
+                        <!-- Score -->
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="h-2 flex-1 bg-white/5 rounded-full overflow-hidden max-w-[160px]">
+                                <div id="match-bar" class="h-full rounded-full cosmic-gradient" style="width:0%;transition:width 1.5s cubic-bezier(0.34,1.56,0.64,1)"></div>
+                            </div>
+                            <span id="match-score" class="cosmic-gradient-text text-lg font-black">—%</span>
+                        </div>
+
+                        <!-- Bond label -->
+                        <p id="match-bond" class="cosmic-gradient-text text-sm font-bold mb-5">—</p>
+
+                        <!-- Reveal button -->
+                        <button id="btn-reveal" style="display:none"
+                            class="w-full cosmic-gradient text-white py-3.5 rounded-full font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-transform cosmic-glow">
+                            <span class="material-symbols-outlined text-lg">visibility</span>
+                            <span id="reveal-label">Profili Aç (1 Reveal)</span>
+                        </button>
+
+                        <!-- Already revealed info -->
+                        <div id="revealed-info" style="display:none" class="w-full text-center">
+                            <p class="text-white/30 text-xs">✦ Bugünkü eşleşme açıldı</p>
+                        </div>
+
+                        <!-- No credits message -->
+                        <div id="no-credits-msg" style="display:none" class="w-full glass rounded-xl p-3 text-center">
+                            <p class="text-white/40 text-xs">🔒 Reveal hakkın yok</p>
+                            <p class="text-white/25 text-[10px] mt-1">Her 3 günlük streak = 1 reveal hakkı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No match state -->
+                <div id="match-empty" style="display:none" class="flex flex-col items-center gap-3 py-8 relative z-10">
+                    <span class="material-symbols-outlined text-white/15 text-5xl">search_off</span>
+                    <p class="text-white/30 text-sm text-center">Henüz eşleşecek profil yok.<br/>Daha fazla kullanıcı katıldıkça eşleşmeler başlayacak!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ UYUMLULUK RADARI ═══ -->
+        <div class="px-5 pt-6 fade-up" style="animation-delay:0.18s">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-cosmic-blue text-base">radar</span>
+                <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Uyumluluk Radarı</p>
+            </div>
+
+            <div class="glass-cosmic rounded-3xl p-5 flex flex-col items-center">
+                <div class="radar-container">
+                    <!-- Radar halkaları -->
+                    <div class="radar-ring" style="width:240px;height:240px"></div>
+                    <div class="radar-ring" style="width:170px;height:170px"></div>
+                    <div class="radar-ring" style="width:100px;height:100px"></div>
+                    <!-- Radar ping -->
+                    <div class="radar-ping" style="width:80px;height:80px"></div>
+                    <!-- Merkez (sen) -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                        <div id="radar-center" class="size-14 rounded-full cosmic-gradient flex items-center justify-center border-2 border-background-dark cosmic-glow">
+                            <span id="radar-user-initial" class="text-white text-lg font-black">?</span>
+                        </div>
+                        <div id="radar-rank-label" class="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-bold px-2 py-0.5 rounded-full" style="background:rgba(0,0,0,0.6)">—</div>
+                    </div>
+                    <!-- Dots (JS ile doldurulacak) -->
+                    <div id="radar-dots"></div>
+                </div>
+
+                <div id="radar-empty" style="display:none" class="text-center mt-4">
+                    <p class="text-white/25 text-xs">Radar etrafında henüz ruh yok...</p>
+                </div>
+                <div id="radar-info" style="display:none" class="text-center mt-4">
+                    <p class="text-white/35 text-xs"><span id="radar-count">0</span> uyumlu ruh etrafında ✦</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cosmic-divider mx-6 mt-6"></div>
+
+        <!-- ═══ GEÇMİŞ EŞLEŞMELER ═══ -->
+        <div class="px-5 pt-6 pb-4 fade-up" style="animation-delay:0.25s">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-cosmic-violet text-base">history</span>
+                <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest">Geçmiş Eşleşmeler</p>
+            </div>
+            <div id="history-list" class="space-y-2.5"></div>
+            <div id="history-empty" style="display:none" class="text-center py-6 text-white/20 text-xs italic">
+                Eşleşme geçmişin burada görünecek
+            </div>
+        </div>
+
+        <div class="h-6"></div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+
+    var FEMALE_NAMES = ['şevval','ayşe','leyla','fatma','zeynep','elif','meryem','selin','buse','esra','merve','büşra','naz','nur','ece','derya','gül','pınar'];
+    var MALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuCuOsAz49QL47Y42kzevX6C-TTqnQcn-fKw9bm9U03OA6_buy44Ic8bt_wBUtcV1MJ5sSb6R8X_DJ-8lXNkSzsIERq3NcoxgBJpX1j8AHhsCx98dsslHkQKdYdaF2cK9NTMVQ_OIb_O9MJ9U-ow3guDO7mGY7CZqxCnsEYsQtxoblSjPmW1y00tP0EZpQ-aEvg3xi3jiQQYomz46nlrrOFmED0f3iCzkJ1soKbGh7PjJ9Gt3wTvCduVO9zVt_o3gQ0nIpmOLHD736c";
+    var FEMALE_PHOTO = "https://lh3.googleusercontent.com/aida-public/AB6AXuAwVIwPfxW7vQTdT6_K5paisRbNWYqgoOiwgoxaVjFXEkx2Hocf55LzYmz1rXyDXknrbMiB8X59nhq-ptzZsewBCHh9Bi4547zbTT3ZGBQPNn6awMcDKio5VTuc-gUc0V9YR2bAFRCjLTR5wqzwERZcGYXOLcXEN3lp4szkNmpf1Pd1-9lj37_4nq74Sfu5spZUv6QDfvpVwS7fZTl7cHKYVI8htJIgEwQ7EgFwZuHn8KfRUOgWtjHWZ3pu_qj4AgsK0fYYsgjY2_g";
+
+    function isFemale(name, gender) {
+        if (gender === 'female') return true;
+        var low = (name||'').toLowerCase();
+        return FEMALE_NAMES.some(function(fn){ return low.startsWith(fn); });
+    }
+    function getPhoto(name, gender) { return isFemale(name, gender) ? FEMALE_PHOTO : MALE_PHOTO; }
+    function initial(name) { return (name||'?').charAt(0).toUpperCase(); }
+
+    // ─── SESSION & USER DATA ─────────────────────────────────
+    var session = null;
+    var userId = null;
+    try {
+        session = await window.auth.getSession();
+        if (session && session.user) userId = session.user.id;
+    } catch(e) {}
+
+    if (!userId) { window.location.href = 'mystic_sign_up_screen.html'; return; }
+
+    var ud = null;
+    try { ud = JSON.parse(localStorage.getItem('kader_user_data')||'null'); } catch(e){}
+    if (!ud || !ud.name) { window.location.href = 'data-ready_birth_form.html'; return; }
+
+    // User numerology profile
+    var userProfile = {
+        user_id: userId,
+        full_name: ud.name,
+        life_path: window.discovery.calcLP(ud.birthDate),
+        expression_num: window.discovery.calcExp(ud.name),
+        soul_urge: window.discovery.calcSoul(ud.name),
+        personality_num: window.discovery.calcPers(ud.name)
+    };
+
+    document.getElementById('radar-user-initial').textContent = initial(ud.name);
+
+    // Gamification entegrasyonu — rütbe ve görünürlük
+    if (window.gamification) {
+        var gRank = window.gamification.getRank();
+        var gVis = window.gamification.getVisibility();
+        var rlabel = document.getElementById('radar-rank-label');
+        if (rlabel) {
+            rlabel.textContent = gRank.name;
+            rlabel.style.color = gRank.color;
+        }
+        // Merkez boyutunu rütbeye göre ayarla
+        var center = document.getElementById('radar-center');
+        if (center && gRank.radarSize > 14) {
+            var sz = Math.min(20, gRank.radarSize);
+            center.style.width = (sz * 4) + 'px';
+            center.style.height = (sz * 4) + 'px';
+            center.style.boxShadow = '0 0 ' + (sz * 2) + 'px ' + gRank.color + '40';
+        }
+        // XP kazan — cosmic match görüntüleme
+        window.gamification.addXP('cosmic_match_view', 0);
+        window.gamification.trackAction('cosmic_match_view');
+    }
+
+    // ─── OPT-IN KONTROLÜ ─────────────────────────────────────
+    var optedIn = localStorage.getItem('kader_discovery_opted_in') === 'true';
+
+    if (!optedIn) {
+        document.getElementById('optin-screen').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'none';
+
+        document.getElementById('btn-optin').addEventListener('click', async function() {
+            this.disabled = true;
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Katılınıyor...';
+            var success = await window.discovery.optIn(userId);
+            if (success) {
+                optedIn = true;
+                document.getElementById('optin-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                initMain();
+            } else {
+                this.disabled = false;
+                this.innerHTML = '<span class="material-symbols-outlined">rocket_launch</span> Keşfe Katıl';
+                alert('Bağlantı hatası. Lütfen tekrar dene.');
+            }
+        });
+    } else {
+        document.getElementById('optin-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        initMain();
+    }
+
+    // ─── ANA İÇERİK YÜKLEME ─────────────────────────────────
+    async function initMain() {
+        // Streak güncelle
+        var streak = await window.discovery.updateStreak(userId);
+        renderStreak(streak);
+
+        // Günlük eşleşme
+        var match = await window.discovery.findDailyMatch(userId, userProfile);
+        renderDailyMatch(match, streak);
+
+        // Radar
+        var topMatches = await window.discovery.getTopMatches(userId, userProfile, 8);
+        renderRadar(topMatches);
+
+        // Geçmiş
+        var history = await window.discovery.getMatchHistory(userId, 10);
+        renderHistory(history);
+    }
+
+    // ─── STREAK RENDER ───────────────────────────────────────
+    function renderStreak(s) {
+        if (!s) return;
+        document.getElementById('streak-count').textContent = s.current_streak;
+        document.getElementById('streak-label').textContent = s.current_streak + ' Gün Streak';
+        document.getElementById('credits-count').textContent = s.reveal_credits || 0;
+
+        var nextReward = 3 - (s.current_streak % 3);
+        if (nextReward === 3 && s.current_streak > 0 && s.current_streak % 3 === 0) {
+            document.getElementById('streak-next').textContent = '🎉 Bugün reveal kazandın!';
+        } else {
+            document.getElementById('streak-next').textContent = 'Sonraki ödül: ' + nextReward + ' günde';
+        }
+    }
+
+    // ─── GÜNLÜK EŞLEŞME RENDER ──────────────────────────────
+    function renderDailyMatch(match, streak) {
+        document.getElementById('match-loading').style.display = 'none';
+
+        if (!match || !match.matched) {
+            document.getElementById('match-empty').style.display = 'flex';
+            return;
+        }
+
+        var m = match.matched;
+        var score = match.match_score || 0;
+        var revealed = match.revealed;
+        var credits = streak ? (streak.reveal_credits || 0) : 0;
+
+        document.getElementById('match-content').style.display = 'block';
+
+        // LP badge
+        document.getElementById('match-lp').textContent = m.life_path || '?';
+
+        // Score
+        document.getElementById('match-score').textContent = score + '%';
+        setTimeout(function() {
+            document.getElementById('match-bar').style.width = score + '%';
+        }, 300);
+
+        // Bond
+        document.getElementById('match-bond').textContent = window.discovery.bondLabel(score);
+
+        // Archetype
+        var arch = window.discovery.ARCHETYPES[m.life_path] || 'Ruh';
+        document.getElementById('match-archetype').textContent = 'Life Path ' + (m.life_path||'?') + ' · ' + arch;
+
+        if (revealed) {
+            // Açılmış eşleşme
+            showRevealed(m);
+        } else {
+            // Bulanık eşleşme
+            document.getElementById('match-name').textContent = maskName(m.full_name);
+            document.getElementById('match-avatar').innerHTML = '<span class="text-cosmic-violet text-4xl font-black">' + initial(m.full_name) + '</span>';
+            document.getElementById('match-card').classList.add('match-card-blur');
+            document.getElementById('match-card').classList.remove('match-card-revealed');
+
+            if (credits > 0) {
+                document.getElementById('btn-reveal').style.display = 'flex';
+                document.getElementById('no-credits-msg').style.display = 'none';
+            } else {
+                document.getElementById('btn-reveal').style.display = 'none';
+                document.getElementById('no-credits-msg').style.display = 'block';
+            }
+        }
+
+        // Reveal butonu
+        document.getElementById('btn-reveal').addEventListener('click', async function() {
+            // Premium gate — reveal sadece premium
+            if (window.premium && !window.premium.isPremium()) {
+                window.premium.showPaywall('Eşleşme açma (Reveal) Premium özelliğidir. Premium ile sınırsız reveal!', 'cosmic_match_reveal');
+                return;
+            }
+            this.disabled = true;
+            this.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span>';
+
+            var result = await window.discovery.revealMatch(userId, match.match_date);
+            if (result.success) {
+                showRevealed(m);
+                document.getElementById('credits-count').textContent = result.credits_remaining;
+            } else {
+                this.disabled = false;
+                this.innerHTML = '<span class="material-symbols-outlined">visibility</span> <span>Profili Aç (1 Reveal)</span>';
+            }
+        });
+    }
+
+    function showRevealed(m) {
+        document.getElementById('match-card').classList.remove('match-card-blur');
+        document.getElementById('match-card').classList.add('match-card-revealed');
+        document.getElementById('match-name').textContent = m.full_name || '???';
+        document.getElementById('match-avatar').innerHTML = '<img src="' + getPhoto(m.full_name, m.gender) + '" class="w-full h-full object-cover" alt="">';
+        document.getElementById('btn-reveal').style.display = 'none';
+        document.getElementById('no-credits-msg').style.display = 'none';
+        document.getElementById('revealed-info').style.display = 'block';
+    }
+
+    function maskName(name) {
+        if (!name) return '???';
+        var parts = name.split(' ');
+        return parts.map(function(p) {
+            return p.charAt(0) + '•'.repeat(Math.max(p.length - 1, 2));
+        }).join(' ');
+    }
+
+    // ─── RADAR RENDER ────────────────────────────────────────
+    function renderRadar(matches) {
+        var dotsEl = document.getElementById('radar-dots');
+        dotsEl.innerHTML = '';
+
+        if (!matches.length) {
+            document.getElementById('radar-empty').style.display = 'block';
+            document.getElementById('radar-info').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('radar-empty').style.display = 'none';
+        document.getElementById('radar-info').style.display = 'block';
+        document.getElementById('radar-count').textContent = matches.length;
+
+        var colors = ['#c084fc','#f472b6','#818cf8','#34d399','#fbbf24','#f87171','#22d3ee','#a78bfa'];
+
+        matches.forEach(function(item, idx) {
+            var p = item.profile;
+            var score = item.score;
+            // Yüksek skor = merkeze yakın
+            var distance = 120 - (score - 65) * 2; // 65% → 120px, 95% → 60px
+            distance = Math.max(45, Math.min(115, distance));
+            var angle = (idx / matches.length) * 2 * Math.PI - Math.PI/2;
+            var x = 130 + distance * Math.cos(angle) - 18;
+            var y = 130 + distance * Math.sin(angle) - 18;
+            var color = colors[idx % colors.length];
+
+            var dot = document.createElement('div');
+            dot.className = 'radar-dot';
+            dot.style.cssText = 'left:' + x + 'px;top:' + y + 'px;background:' + color + '22;border-color:' + color + '66;animation:float ' + (2.5 + idx*0.3) + 's ease-in-out infinite;animation-delay:' + (idx*0.2) + 's';
+            dot.innerHTML = '<span style="color:' + color + '">' + (p.life_path||'?') + '</span>';
+            dot.title = maskName(p.full_name) + ' · %' + score;
+            dotsEl.appendChild(dot);
+        });
+    }
+
+    // ─── GEÇMİŞ EŞLEŞMELER RENDER ──────────────────────────
+    function renderHistory(matches) {
+        var listEl = document.getElementById('history-list');
+        var emptyEl = document.getElementById('history-empty');
+
+        if (!matches || !matches.length) {
+            emptyEl.style.display = 'block';
+            return;
+        }
+
+        emptyEl.style.display = 'none';
+
+        matches.forEach(function(match) {
+            if (!match.matched) return;
+            var m = match.matched;
+            var revealed = match.revealed;
+            var displayName = revealed ? (m.full_name||'???') : maskName(m.full_name);
+            var score = match.match_score || 0;
+            var date = match.match_date || '';
+            var arch = window.discovery.ARCHETYPES[m.life_path] || '';
+
+            var card = document.createElement('div');
+            card.className = 'flex items-center gap-3 p-3.5 glass-cosmic rounded-2xl';
+            card.innerHTML =
+                '<div class="size-11 shrink-0 rounded-full overflow-hidden border-2 border-cosmic-violet/30 flex items-center justify-center bg-surface-dark">' +
+                    (revealed
+                        ? '<img src="' + getPhoto(m.full_name, m.gender) + '" class="w-full h-full object-cover" alt="">'
+                        : '<span class="text-cosmic-violet text-sm font-black">' + initial(m.full_name) + '</span>') +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                    '<p class="text-white text-sm font-bold truncate">' + displayName + '</p>' +
+                    '<p class="text-white/35 text-[10px]">LP ' + (m.life_path||'?') + (arch ? ' · '+arch : '') + '</p>' +
+                '</div>' +
+                '<div class="text-right shrink-0">' +
+                    '<p class="cosmic-gradient-text text-sm font-black">%' + score + '</p>' +
+                    '<p class="text-white/20 text-[10px]">' + formatDate(date) + '</p>' +
+                '</div>' +
+                (revealed ? '' : '<span class="material-symbols-outlined text-white/15 text-sm">lock</span>');
+
+            listEl.appendChild(card);
+        });
+    }
+
+    function formatDate(d) {
+        if (!d) return '';
+        try { return new Date(d+'T00:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short'}); } catch(e){ return d; }
+    }
+
+});
+</script>
+<script src="js/bottom-nav.js"></script>
+</body>
+</html>

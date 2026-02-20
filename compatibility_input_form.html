@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compatibility Input Form</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+    <script src="https://unpkg.com/@revenuecat/purchases-js/dist/index.js"></script>
+    <script src="js/premium.js"></script>
+    <script src="js/gamification-engine.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#de434b", "background-light": "#f8f6f6", "background-dark": "#201213", "romantic-pink": "#ff85a1"}, fontFamily: {display: "Plus Jakarta Sans"}, borderRadius: {DEFAULT: "1rem", lg: "2rem", xl: "3rem", full: "9999px"}}}};</script>
+<style>
+        .glow-pulse {
+            box-shadow: 0 0 0 0 rgba(147, 17, 212, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(147, 17, 212, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(147, 17, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(147, 17, 212, 0); }
+        }
+        .bg-mystic-gradient {
+            background: radial-gradient(circle at top right, rgba(255, 133, 161, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(147, 17, 212, 0.15), transparent 40%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white transition-colors duration-300">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-mystic-gradient">
+<!-- Top App Bar -->
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 backdrop-blur-md bg-background-light/80 dark:bg-background-dark/80">
+<div onclick="window.location.href='mystic_numerology_home_1.html'" class="text-primary flex size-12 shrink-0 items-center justify-start cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-12">Relationship Compatibility</h2>
+</div>
+<div class="flex-1 px-4 pb-12 flex flex-col max-w-lg mx-auto w-full">
+<!-- Headline -->
+<div class="pt-8 pb-4">
+<h3 class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight text-center">Discover your cosmic alignment</h3>
+<p class="text-slate-500 dark:text-[#b09db9] text-center mt-2 text-sm">Enter details below to reveal the spiritual bond between two souls.</p>
+</div>
+<!-- Main Input Container -->
+<div class="space-y-6 mt-4">
+<!-- Section 1: YOU (kilitli - ana kullanıcı) -->
+<div class="bg-primary/5 dark:bg-[#1e1a10] rounded-3xl p-6 border border-primary/30 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-6xl">person</span>
+</div>
+<!-- Kilit rozeti -->
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-primary text-xs font-bold leading-normal tracking-[0.2em] uppercase">You</h4>
+<div class="flex items-center gap-1.5 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
+<span class="material-symbols-outlined text-primary text-sm">lock</span>
+<span class="text-primary text-[10px] font-bold uppercase tracking-wider">Ana Hesap</span>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Name (readonly) -->
+<div class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-white/60 text-sm font-medium leading-normal pb-2 ml-1">Your Name</p>
+<div class="relative">
+<input id="p1-name" readonly
+  class="form-input flex w-full rounded-2xl text-slate-900 dark:text-white/70 border border-primary/20 bg-primary/5 dark:bg-primary/5 h-14 px-4 text-base font-bold leading-normal cursor-not-allowed select-none"
+  placeholder="Profil bilgisi yükleniyor..." value=""/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 text-lg pointer-events-none">lock</span>
+</div>
+</div>
+<!-- Date (readonly) -->
+<div class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-white/60 text-sm font-medium leading-normal pb-2 ml-1">Your Birthdate</p>
+<div class="relative">
+<input id="p1-date" type="date" readonly
+  class="form-input flex w-full rounded-2xl text-slate-900 dark:text-white/70 border border-primary/20 bg-primary/5 dark:bg-primary/5 h-14 px-4 text-base font-bold leading-normal cursor-not-allowed"
+  max="2010-12-31" min="1920-01-01"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 text-lg pointer-events-none">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Symmetrical Divider -->
+<div class="flex justify-center items-center py-2 relative">
+<div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+<div class="mx-4 bg-primary/10 p-3 rounded-full border border-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary fill-1">favorite</span>
+</div>
+<div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+</div>
+<!-- Section 2: PARTNER -->
+<div class="bg-white/50 dark:bg-[#231c27] rounded-3xl p-6 border border-slate-200 dark:border-[#4b3b54] relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-6xl">favorite</span>
+</div>
+<h4 class="text-romantic-pink text-xs font-bold leading-normal tracking-[0.2em] mb-4 uppercase">Partner</h4>
+<div class="space-y-4">
+<!-- TextField Name -->
+<div class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Partner's Name</p>
+<input id="p2-name" class="form-input flex w-full rounded-2xl text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-[#4b3b54] bg-white dark:bg-[#1c1022] h-14 placeholder:text-slate-400 dark:placeholder:text-[#b09db9] px-4 text-base font-normal leading-normal" placeholder="Enter their full name"/>
+</div>
+<!-- TextField Date -->
+<div class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Partner's Birthdate</p>
+<div class="relative">
+<input id="p2-date" type="date"
+  class="form-input flex w-full rounded-2xl text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-[#4b3b54] bg-white dark:bg-[#1c1022] h-14 px-4 text-base font-normal leading-normal"
+  max="2010-12-31" min="1920-01-01"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Note -->
+<p class="text-slate-400 dark:text-[#b09db9]/60 text-xs text-center mt-8 px-8">
+                Calculations are based on numerological principles and astrological alignments. Data is processed locally.
+            </p>
+<!-- Bottom CTA -->
+<div class="mt-10 px-4 pb-6">
+<button class="glow-pulse w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-full flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/40">
+<span class="material-symbols-outlined">auto_awesome</span>
+                    Check Compatibility
+                </button>
+</div>
+</div>
+<!-- Decorative Background Elements -->
+<div class="fixed top-20 -left-20 w-64 h-64 bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="fixed bottom-20 -right-20 w-64 h-64 bg-romantic-pink/5 blur-[120px] rounded-full pointer-events-none"></div>
+</div>
+
+<script>
+// ─── Form: Ön doldurma + kayıt ───────────────────────────────
+(async function() {
+  var p1Name = '', p1BirthDate = '';
+  
+  // 1. kader_user_data'dan al
+  try {
+    var ud = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+    p1Name = ud.name || '';
+    p1BirthDate = ud.birthDate || '';
+  } catch(e) {}
+  
+  // 2. birthDate yoksa Supabase'den çek
+  if (p1Name && !p1BirthDate && window.supabaseClient) {
+    try {
+      var { data: { user } } = await window.supabaseClient.auth.getUser();
+      if (user) {
+        var { data: prof } = await window.supabaseClient
+          .from('profiles')
+          .select('birth_date, full_name')
+          .eq('id', user.id)
+          .single();
+        if (prof) {
+          p1BirthDate = prof.birth_date || '';
+          if (!p1Name) p1Name = prof.full_name || '';
+          // kader_user_data'yı güncelle
+          if (p1BirthDate) {
+            try {
+              var existing = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+              existing.birthDate = p1BirthDate;
+              if (!existing.name) existing.name = p1Name;
+              localStorage.setItem('kader_user_data', JSON.stringify(existing));
+            } catch(e2) {}
+          }
+        }
+      }
+    } catch(e) {
+      console.log('[Compat Form] Supabase fetch error:', e);
+    }
+  }
+  
+  // 3. Hala yoksa kader_connections'dan ara
+  if (p1Name && !p1BirthDate) {
+    try {
+      Object.keys(localStorage).filter(function(k){ return k.startsWith('kader_connections_'); }).forEach(function(k) {
+        if (p1BirthDate) return;
+        var conns = JSON.parse(localStorage.getItem(k) || '[]');
+        conns.forEach(function(c) {
+          if (!p1BirthDate && c.fullName && c.fullName.toLowerCase().trim() === p1Name.toLowerCase().trim() && c.birthDate) {
+            p1BirthDate = c.birthDate;
+          }
+        });
+      });
+    } catch(e) {}
+  }
+  
+  // Form alanlarını doldur - SADECE ANA KULLANICI
+  var p1n = document.getElementById('p1-name');
+  var p1d = document.getElementById('p1-date');
+  if (p1n && p1Name) p1n.value = p1Name;
+  if (p1d && p1BirthDate) p1d.value = p1BirthDate;
+
+  // *** PARTNER ALANLARI HER ZAMAN BOŞ - ön doldurma yok ***
+
+  // Butona tıklandığında localStorage'a kaydet
+  document.addEventListener('click', function(e) {
+    var el = e.target;
+    var txt = (el.textContent || '') + (el.innerHTML || '');
+    if (!txt.includes('Check Compatibility') && !txt.includes('Calculate')) return;
+
+    var p1Name = (document.getElementById('p1-name') || {}).value || '';
+    var p1Date = (document.getElementById('p1-date') || {}).value || '';
+    var p2Name = (document.getElementById('p2-name') || {}).value || '';
+    var p2Date = (document.getElementById('p2-date') || {}).value || '';
+
+    // Validasyon
+    if (!p1Name.trim() || !p2Name.trim() || !p1Date || !p2Date) {
+      var err = document.getElementById('compat-error');
+      if (!err) {
+        err = document.createElement('div');
+        err.id = 'compat-error';
+        err.style.cssText = 'color:#e8454d;font-size:13px;text-align:center;margin-top:8px;font-weight:600;';
+        var btn = document.querySelector('button.glow-pulse') || document.querySelector('button');
+        if (btn && btn.parentNode) btn.parentNode.insertBefore(err, btn);
+      }
+      err.textContent = '✦ Lütfen tüm alanları doldurun.';
+      setTimeout(function(){ err.textContent = ''; }, 3000);
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+
+    // localStorage'a kaydet
+    // Premium gate — aylık uyumluluk limiti
+    if (window.premium && !window.premium.isPremium()) {
+      var compatCheck = window.premium.canUse('compatibility');
+      if (!compatCheck.allowed) {
+        window.premium.showPaywall(compatCheck.reason, 'compatibility');
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      }
+      window.premium.incrementUsage('compatibility');
+    }
+
+    try {
+      localStorage.setItem('kader_compat_data', JSON.stringify({
+        person1: { name: p1Name.trim(), birthDate: p1Date },
+        person2: { name: p2Name.trim(), birthDate: p2Date }
+      }));
+      // XP tracking
+      if (window.gamification) { window.gamification.addXP('compatibility', 0); window.gamification.trackAction('compatibility'); }
+      // Geçmiş listesine ekle
+      var history = JSON.parse(localStorage.getItem('kader_compat_history') || '[]');
+      var existIdx = history.findIndex(function(h){ return h.partnerName === p2Name.trim(); });
+      var entry = { partnerName: p2Name.trim(), partnerDate: p2Date, date: new Date().toISOString() };
+      if (existIdx >= 0) history[existIdx] = entry; else history.unshift(entry);
+      localStorage.setItem('kader_compat_history', JSON.stringify(history));
+      
+      // Partner'ı connections listesine de ekle (profile.js kullanarak)
+      if (window.profile && typeof window.profile.saveConnection === 'function') {
+        (async function() {
+          try {
+            // Önce duplicate kontrolü - aynı isim var mı?
+            var storageKey = await window.profile.getStorageKey();
+            var existingConns = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            var duplicate = existingConns.find(function(c) {
+              return c.fullName && c.fullName.toLowerCase().trim() === p2Name.trim().toLowerCase();
+            });
+            
+            if (!duplicate) {
+              // Yeni kişi - ekle
+              await window.profile.saveConnection({
+                fullName: p2Name.trim(),
+                birthDate: p2Date,
+                relationship: 'Partner', // veya 'Compatibility Analysis'
+                notes: 'Uyumluluk analizinden eklendi'
+              });
+              console.log('[Compat Form] Partner connections listesine eklendi:', p2Name.trim());
+            } else {
+              // Zaten var - sadece birthDate'i güncelle (yoksa)
+              if (!duplicate.birthDate && p2Date) {
+                duplicate.birthDate = p2Date;
+                localStorage.setItem(storageKey, JSON.stringify(existingConns));
+                console.log('[Compat Form] Mevcut kişinin doğum tarihi güncellendi:', p2Name.trim());
+              }
+            }
+          } catch(err) {
+            console.log('[Compat Form] Connection kayıt hatası:', err);
+          }
+        })();
+      }
+    } catch(err) {}
+  }, true); // capture phase — navigasyon JS'inden önce çalışsın
+})();
+</script>
+<script>
+// KADER APP - Navigation Helper
+(function() {
+    // Auto navigation için
+    var autoTarget = '';
+    var autoDelay = 2500;
+    
+    if (autoTarget) {
+        setTimeout(function() {
+            window.location.href = autoTarget;
+        }, autoDelay);
+    }
+    
+    // Bottom nav linkleri ekle
+    setTimeout(function() {
+        // Home button
+        var allBtns = document.querySelectorAll('button, a');
+        allBtns.forEach(function(btn) {
+            var text = btn.textContent || '';
+            var html = btn.innerHTML || '';
+            
+            // Home nav
+            if ((text.includes('Home') || html.includes('>home<')) && text.trim().length < 20) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'mystic_numerology_home_1.html';
+                });
+            }
+            // Crystal Store / Journal
+            if (text.includes('Crystal Store') || text.includes('Journal')) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'premium_crystal_store.html';
+                });
+            }
+            // Profile / Settings nav
+            if ((text.includes('Profile') || html.includes('>settings<')) && text.trim().length < 20) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = 'profile_soul_journey.html';
+                });
+            }
+        });
+    }, 500);
+})();
+
+    setTimeout(function() {
+
+    // Check Compatibility → relationship_compatibility_analysis.html
+    document.querySelectorAll('button, a, [class*="cursor"]').forEach(function(el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('Check Compatibility')) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+                window.location.href = 'soul_mate_loading.html';
+            });
+        }
+    });
+
+    // Calculate → relationship_compatibility_analysis.html
+    document.querySelectorAll('button, a, [class*="cursor"]').forEach(function(el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('Calculate')) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+                window.location.href = 'soul_mate_loading.html';
+            });
+        }
+    });
+
+    // arrow_back → mystic_numerology_home_1.html
+    document.querySelectorAll('button, a, [class*="cursor"]').forEach(function(el) {
+        var txt = (el.textContent || '') + (el.innerHTML || '');
+        if (txt.includes('arrow_back')) {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+                window.location.href = 'mystic_numerology_home_1.html';
+            });
+        }
+    });
+
+    }, 100);
+</script>
+
+
+<script src="js/bottom-nav.js"></script>
+</body></html>
