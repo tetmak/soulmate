@@ -1,19 +1,17 @@
 /**
- * KADER — Premium Abonelik Sistemi (RevenueCat Web Billing)
+ * KADER — Premium Abonelik Sistemi (Paddle Billing)
  *
- * RevenueCat entegrasyonu:
- *   - Web SDK (@revenuecat/purchases-js) ile entitlement kontrolü
- *   - Web Purchase Links ile ödeme (hosted checkout)
- *   - Stripe altyapısı (kart bilgileri RevenueCat/Stripe tarafında)
+ * Paddle entegrasyonu:
+ *   - Paddle.js v2 SDK ile overlay checkout
+ *   - Paddle Merchant of Record (vergi/KDV otomatik)
+ *   - Webhook ile Supabase senkronizasyonu
  *
  * KURULUM:
- *   1. https://app.revenuecat.com → Proje oluştur
- *   2. Web Billing platformu ekle (Stripe bağla)
- *   3. Ürünler oluştur: kader_monthly (₺79.99/ay), kader_yearly (₺599.99/yıl)
- *   4. Entitlement: "premium" oluştur, her iki ürünü bağla
- *   5. Offering: "default" oluştur, paketleri ekle
- *   6. Web Purchase Link oluştur → URL'yi aşağıda RC_PURCHASE_LINK'e yaz
- *   7. API Key'i aşağıda RC_API_KEY'e yaz
+ *   1. https://vendors.paddle.com → Hesap oluştur
+ *   2. Catalog → Products → Ürün oluştur: "Kader Premium"
+ *   3. Ürüne 2 fiyat ekle: Aylık (₺79.99/ay), Yıllık (₺599.99/yıl)
+ *   4. Developer Tools → Authentication → Client-side token al
+ *   5. Aşağıdaki PADDLE_* değerlerini doldur
  *
  * FREE:  Temel numeroloji, 1 arkadaş, 1 uyumluluk/ay, Deep Insight sayfa 1
  * PREMIUM: Sınırsız her şey, AI analizler, Cosmic Match reveal, 3 sayfa breakdown
@@ -22,11 +20,12 @@
     'use strict';
 
     // ═══════════════════════════════════════════════════════════
-    //    YAPILANDIRMA — RevenueCat Dashboard'dan al
+    //    YAPILANDIRMA — Paddle Dashboard'dan al
     // ═══════════════════════════════════════════════════════════
-    var RC_API_KEY = 'sk_VUfQqHnfjQeLnFygOCGCcQnYyTnIv';
-    var RC_PURCHASE_LINK = '';
-    var RC_ENTITLEMENT = 'premium';
+    var PADDLE_CLIENT_TOKEN = '';           // Paddle → Developer Tools → Authentication → Client-side token
+    var PADDLE_PRICE_MONTHLY = '';          // Paddle → Catalog → Prices → aylık fiyat ID (pri_...)
+    var PADDLE_PRICE_YEARLY = '';           // Paddle → Catalog → Prices → yıllık fiyat ID (pri_...)
+    var PADDLE_ENV = 'sandbox';             // 'sandbox' veya 'production'
 
     // ─── FREE LİMİTLER ──────────────────────────────────────
     var FREE_LIMITS = {
@@ -42,68 +41,105 @@
 
     var PREMIUM_PRICE = { monthly: 79.99, yearly: 599.99, currency: 'TRY' };
 
-    // ─── REVENUECAT SDK ──────────────────────────────────────
-    var rcInstance = null;
-    var rcReady = false;
-    var customerInfo = null;
+    // ─── PADDLE SDK ────────────────────────────────────────────
+    var paddleReady = false;
 
-    function loadRCSDK() {
+    function loadPaddleSDK() {
         return new Promise(function(resolve) {
-            if (window.Purchases) { resolve(); return; }
+            if (window.Paddle) { resolve(); return; }
             var script = document.createElement('script');
-            script.src = 'https://unpkg.com/@revenuecat/purchases-js@latest/dist/index.umd.js';
+            script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
             script.onload = resolve;
             script.onerror = function() {
-                console.warn('[Premium] RevenueCat SDK yüklenemedi, fallback moda geçiliyor');
+                console.warn('[Premium] Paddle SDK yüklenemedi');
                 resolve();
             };
             document.head.appendChild(script);
         });
     }
 
-    async function initRC(appUserId) {
-        if (RC_API_KEY === 'sk_WvjBmSPIwaOUODxTUkiCIxkcRcyyI') {
-            console.info('[Premium] RevenueCat API key ayarlanmamış — localStorage fallback aktif');
+    async function initPaddle() {
+        if (!PADDLE_CLIENT_TOKEN) {
+            console.info('[Premium] Paddle client token ayarlanmamış — localStorage fallback aktif');
             return;
         }
         try {
-            await loadRCSDK();
-            if (!window.Purchases) return;
-            rcInstance = window.Purchases.Purchases.configure({ apiKey: RC_API_KEY, appUserId: appUserId || null });
-            rcReady = true;
-            console.log('[Premium] RevenueCat başlatıldı');
-            await refreshCustomerInfo();
-        } catch(e) { console.warn('[Premium] RC init error:', e); }
+            await loadPaddleSDK();
+            if (!window.Paddle) return;
+
+            var initConfig = {
+                token: PADDLE_CLIENT_TOKEN,
+                eventCallback: handlePaddleEvent
+            };
+            if (PADDLE_ENV === 'sandbox') {
+                initConfig.environment = 'sandbox';
+            }
+            window.Paddle.Initialize(initConfig);
+            paddleReady = true;
+            console.log('[Premium] Paddle başlatıldı (' + PADDLE_ENV + ')');
+        } catch(e) { console.warn('[Premium] Paddle init error:', e); }
     }
 
-    async function refreshCustomerInfo() {
-        if (!rcReady || !rcInstance) return null;
-        try {
-            customerInfo = await rcInstance.getCustomerInfo();
-            var hasPremium = customerInfo && customerInfo.entitlements && customerInfo.entitlements.active && customerInfo.entitlements.active[RC_ENTITLEMENT];
-            if (hasPremium) {
-                var ent = customerInfo.entitlements.active[RC_ENTITLEMENT];
-                localStorage.setItem('kader_premium', JSON.stringify({
-                    active: true,
-                    plan: ent.productIdentifier && ent.productIdentifier.includes('yearly') ? 'yearly' : 'monthly',
-                    expires_at: ent.expirationDate || null,
-                    source: 'revenuecat',
-                    cached_at: new Date().toISOString()
-                }));
-            } else {
-                var existing = null;
-                try { existing = JSON.parse(localStorage.getItem('kader_premium') || 'null'); } catch(e) {}
-                if (existing && existing.source === 'revenuecat') localStorage.removeItem('kader_premium');
+    // ─── PADDLE EVENT HANDLER ──────────────────────────────────
+    function handlePaddleEvent(event) {
+        if (!event || !event.name) return;
+        console.log('[Premium] Paddle event:', event.name);
+
+        if (event.name === 'checkout.completed') {
+            var data = event.data;
+            // Checkout başarılı — premium aktif et
+            var priceId = '';
+            if (data && data.items && data.items.length > 0) {
+                priceId = data.items[0].price_id || '';
             }
-            return customerInfo;
-        } catch(e) { console.warn('[Premium] Customer info error:', e); return null; }
+            var plan = priceId === PADDLE_PRICE_YEARLY ? 'yearly' : 'monthly';
+            var days = plan === 'yearly' ? 365 : 30;
+            var expires = new Date();
+            expires.setDate(expires.getDate() + days);
+
+            localStorage.setItem('kader_premium', JSON.stringify({
+                active: true,
+                plan: plan,
+                expires_at: expires.toISOString(),
+                source: 'paddle',
+                cached_at: new Date().toISOString()
+            }));
+
+            // Supabase'e de kaydet
+            syncToSupabase(plan, expires.toISOString(), data);
+
+            console.log('[Premium] Ödeme başarılı! Plan:', plan);
+
+            // Kısa gecikme ile sayfayı yenile (checkout overlay kapansın)
+            setTimeout(function() { window.location.reload(); }, 1500);
+        }
+
+        if (event.name === 'checkout.closed') {
+            console.log('[Premium] Checkout kapatıldı');
+        }
+    }
+
+    async function syncToSupabase(plan, expiresAt, checkoutData) {
+        try {
+            var session = await window.auth.getSession();
+            if (!session || !session.user) return;
+            await window.supabaseClient.from('subscriptions').upsert({
+                user_id: session.user.id,
+                plan: plan,
+                status: 'active',
+                starts_at: new Date().toISOString(),
+                expires_at: expiresAt,
+                amount: plan === 'yearly' ? 59999 : 7999,
+                currency: 'TRY',
+                payment_provider: 'paddle',
+                payment_ref: checkoutData && checkoutData.transaction_id ? checkoutData.transaction_id : null,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+        } catch(e) { console.warn('[Premium] Supabase sync error:', e); }
     }
 
     // ─── PREMIUM DURUMU ──────────────────────────────────────
     function isPremium() {
-        if (rcReady && customerInfo) {
-            return !!(customerInfo.entitlements && customerInfo.entitlements.active && customerInfo.entitlements.active[RC_ENTITLEMENT]);
-        }
         try {
             var cache = JSON.parse(localStorage.getItem('kader_premium') || 'null');
             if (cache && cache.active) {
@@ -116,15 +152,18 @@
     }
 
     async function checkPremiumStatus() {
-        if (rcReady) { await refreshCustomerInfo(); return isPremium(); }
         if (isPremium()) return true;
         try {
             var session = await window.auth.getSession();
             if (!session || !session.user) return false;
-            var res = await window.supabaseClient.from('subscriptions').select('*').eq('user_id', session.user.id).eq('status', 'active').single();
+            var res = await window.supabaseClient.from('subscriptions').select('*').eq('user_id', session.user.id).in('status', ['active', 'cancelled']).single();
             if (res.data) {
-                localStorage.setItem('kader_premium', JSON.stringify({ active: true, plan: res.data.plan || 'monthly', expires_at: res.data.expires_at, source: 'supabase', cached_at: new Date().toISOString() }));
-                return true;
+                // İptal edilmiş ama süresi dolmamış abonelik hâlâ aktif sayılır
+                var isActive = res.data.status === 'active' || (res.data.expires_at && new Date(res.data.expires_at) > new Date());
+                if (isActive) {
+                    localStorage.setItem('kader_premium', JSON.stringify({ active: true, plan: res.data.plan || 'monthly', expires_at: res.data.expires_at, source: 'supabase', cached_at: new Date().toISOString() }));
+                    return true;
+                }
             }
         } catch(e) {}
         return false;
@@ -142,9 +181,8 @@
             case 'add_connection':
                 var cc = 0;
                 try { var ks = Object.keys(localStorage); for (var i=0;i<ks.length;i++) { if (ks[i].indexOf('kader_connections_')===0) { cc = JSON.parse(localStorage.getItem(ks[i])||'[]').length; break; } } } catch(e) {}
-                // İlk kayıt (kendisi) sayılmaz — gerçek arkadaş sayısı = cc - 1
                 var friendCount = Math.max(0, cc - 1);
-                var friendLimit = FREE_LIMITS.connections - 1; // kendi profili hariç
+                var friendLimit = FREE_LIMITS.connections - 1;
                 return friendCount < friendLimit ? { allowed: true } : { allowed: false, reason: 'Ücretsiz planda ' + friendLimit + ' arkadaş ekleyebilirsin. Premium ile sınırsız!' };
             case 'compatibility':
                 var compUsed = getUsageCount('compatibility');
@@ -163,37 +201,52 @@
         }
     }
 
-    // ─── ÖDEME BAŞLAT ────────────────────────────────────────
+    // ─── ÖDEME BAŞLAT (Paddle Overlay Checkout) ──────────────
     function startPurchase(plan) {
         plan = plan || 'yearly';
 
-        // 1. RevenueCat Web Purchase Link
-        if (RC_PURCHASE_LINK) {
-            var url = RC_PURCHASE_LINK;
-            var uid = localStorage.getItem('kader_rc_user_id') || '';
-            if (uid) url += (url.includes('?') ? '&' : '?') + 'rc_customer_id=' + encodeURIComponent(uid);
-            window.location.href = url;
+        if (!paddleReady || !window.Paddle) {
+            console.warn('[Premium] Paddle SDK hazır değil');
+            // Checkout sayfasına yönlendir, orada tekrar denenecek
+            window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
             return;
         }
 
-        // 2. RevenueCat Web SDK purchase
-        if (rcReady && rcInstance) {
-            rcInstance.getOfferings().then(function(off) {
-                if (off && off.current) {
-                    var pkg = plan === 'yearly' ? off.current.annual : off.current.monthly;
-                    if (pkg) return rcInstance.purchase({ rcPackage: pkg });
-                }
-                window.location.href = 'premium_checkout_summary.html?plan=' + plan;
-            }).then(function(r) {
-                if (r) { refreshCustomerInfo(); window.location.reload(); }
-            }).catch(function() {
-                window.location.href = 'premium_checkout_summary.html?plan=' + plan;
-            });
+        var priceId = plan === 'yearly' ? PADDLE_PRICE_YEARLY : PADDLE_PRICE_MONTHLY;
+
+        if (!priceId) {
+            console.warn('[Premium] Paddle fiyat ID ayarlanmamış');
+            window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
             return;
         }
 
-        // 3. Fallback checkout
-        window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
+        // Kullanıcı bilgilerini al
+        var checkoutConfig = {
+            items: [{ priceId: priceId, quantity: 1 }]
+        };
+
+        // Kullanıcı email'i varsa ekle
+        try {
+            var session = null;
+            if (window.auth && window.auth.getSession) {
+                window.auth.getSession().then(function(s) {
+                    if (s && s.user && s.user.email) {
+                        checkoutConfig.customer = { email: s.user.email };
+                    }
+                    // customData ile user_id gönder (webhook'ta kullanılacak)
+                    if (s && s.user) {
+                        checkoutConfig.customData = { user_id: s.user.id };
+                    }
+                    window.Paddle.Checkout.open(checkoutConfig);
+                }).catch(function() {
+                    window.Paddle.Checkout.open(checkoutConfig);
+                });
+            } else {
+                window.Paddle.Checkout.open(checkoutConfig);
+            }
+        } catch(e) {
+            window.Paddle.Checkout.open(checkoutConfig);
+        }
     }
 
     // ─── PAYWALL UI ──────────────────────────────────────────
@@ -271,12 +324,7 @@
     function clearPremium() { localStorage.removeItem('kader_premium'); console.log('[Premium] Cleared'); window.location.reload(); }
 
     // ─── INIT ────────────────────────────────────────────────
-    (async function() {
-        try {
-            var s = await window.auth.getSession();
-            if (s && s.user) { localStorage.setItem('kader_rc_user_id', s.user.id); await initRC(s.user.id); }
-        } catch(e) {}
-    })();
+    initPaddle();
 
     // ─── GLOBAL EXPORT ───────────────────────────────────────
     window.premium = {
@@ -285,11 +333,7 @@
         showPaywall: showPaywall, showBadge: showPremiumBadge,
         startPurchase: startPurchase,
         incrementUsage: incrementUsage, getUsageCount: getUsageCount,
-        refreshRC: refreshCustomerInfo,
-        isReady: function() { return rcReady; },
-        init: async function() { try { var s = await window.auth.getSession(); if(s&&s.user){await initRC(s.user.id);} } catch(e){} return rcReady; },
-        getPackageByPlan: async function(plan) { if(!rcReady||!rcInstance) return null; try { var off = await rcInstance.getOfferings(); if(!off.current) return null; var pkgs = off.current.availablePackages||[]; return pkgs.find(function(p){return p.identifier.toLowerCase().indexOf(plan)!==-1;})||pkgs[0]||null; } catch(e){return null;} },
-        purchasePackage: async function(pkg, container) { if(!rcReady||!rcInstance||!pkg) return {success:false}; try { var result = await rcInstance.purchase({rcPackage:pkg}); customerInfo = result.customerInfo; return {success:isPremium()}; } catch(e){return {success:false,error:e.message};} },
+        isReady: function() { return paddleReady; },
         PRICE: PREMIUM_PRICE, FREE_LIMITS: FREE_LIMITS,
         simulate: simulatePremium, clear: clearPremium
     };
