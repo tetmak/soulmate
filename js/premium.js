@@ -23,8 +23,8 @@
     //    YAPILANDIRMA — Paddle Dashboard'dan al
     // ═══════════════════════════════════════════════════════════
     var PADDLE_CLIENT_TOKEN = 'live_59edd8bebc28b6a13576a572172';           // Paddle → Developer Tools → Authentication → Client-side token
-    var PADDLE_PRICE_MONTHLY = 'pri_01khyjaczgd78ad1qnjhn344ph';          // Paddle → Catalog → Prices → aylık fiyat ID (pri_...)
-    var PADDLE_PRICE_YEARLY = 'pri_01khyj8vyqh159d29723wzv3tc';           // Paddle → Catalog → Prices → yıllık fiyat ID (pri_...)
+    var PADDLE_PRICE_MONTHLY = 'pri_01khyj8vyqh159d29723wzv3tc';          // TRY 79.99/Monthly
+    var PADDLE_PRICE_YEARLY = 'pri_01khyjaczgd78ad1qnjhn344ph';           // $599.99/Yearly (⚠️ USD — TRY'ye çevrilmeli)
     var PADDLE_ENV = 'production';             // 'sandbox' veya 'production'
 
     // ─── FREE LİMİTLER ──────────────────────────────────────
