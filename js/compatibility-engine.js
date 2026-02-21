@@ -171,8 +171,11 @@ YAZI KURALLARI:
         'Tüm sayılar:\n' +
         ctx.p1.name + ': Kader=' + ctx.p1.lifePath + ', Ruh=' + ctx.p1.soulUrge + ', Kişilik=' + ctx.p1.personality + ', İfade=' + ctx.p1.expression + '\n' +
         ctx.p2.name + ': Kader=' + ctx.p2.lifePath + ', Ruh=' + ctx.p2.soulUrge + ', Kişilik=' + ctx.p2.personality + ', İfade=' + ctx.p2.expression + '\n\n' +
-        'Bu iki insanın tüm sayılarını bütüncül olarak değerlendirerek aralarındaki karmik bağı, geçmişten gelen kökleri ve bu ilişkinin ruhsal amacını anlat.\n' +
-        '3 paragraf, 150-170 kelime, mistik ve derin ton.';
+        'ZORUNLU FORMAT — aşağıdaki 3 başlığı aynen ve bu sırayla kullan:\n\n' +
+        '**Geçmiş Yaşam Bağı**\n[Bu iki ruhun geçmişten gelen karmik köklerini anlat — 1 paragraf]\n\n' +
+        '**Ruhsal Amaç**\n[Bu ilişkinin ruhsal amacını ve birlikte öğrenecekleri dersi anlat — 1 paragraf]\n\n' +
+        '**Karmik Denge**\n[Aralarındaki enerji dengesini, çatışma ve uyum noktalarını anlat — 1 paragraf]\n\n' +
+        'Toplam 150-170 kelime, mistik ve derin ton. Başlıkları DEĞİŞTİRME, aynen yaz.';
     },
 
     communication: function(ctx) {
@@ -206,7 +209,7 @@ YAZI KURALLARI:
     var names = [ctx.p1.name, ctx.p2.name]
       .map(function(n){ return n.toLowerCase().trim().replace(/\s+/g,'_'); })
       .sort();
-    return 'kader_compat_ai__' + names[0] + '__' + names[1] + '__' + type;
+    return 'kader_compat_ai_v2__' + names[0] + '__' + names[1] + '__' + type;
   }
 
   // Sync cache getter — loading animasyonunu atlamak için
@@ -307,7 +310,8 @@ YAZI KURALLARI:
   }
 
   function renderText(text) {
-    return text.split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2cc0d;font-weight:800;">$1</strong>')
+      .split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){
       return '<p style="margin-bottom:14px;font-size:14px;line-height:1.85;">' + p.trim() + '</p>';
     }).join('');
   }

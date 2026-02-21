@@ -879,7 +879,7 @@
             if (badgeEl) badgeEl.textContent = 'ANALİZ ET';
 
             // Cache key
-            var cacheKey = 'kader_karmic_v11__' + name.toLowerCase().replace(/\s+/g,'_') + '__' + (birthDate||'').replace(/-/g,'') + '__' + (primaryDebt||0);
+            var cacheKey = 'kader_karmic_v12__' + name.toLowerCase().replace(/\s+/g,'_') + '__' + (birthDate||'').replace(/-/g,'') + '__' + (primaryDebt||0);
 
             // Accordion tıklama
             var btn = document.getElementById('karmic-bond-btn');
@@ -931,9 +931,9 @@
                             body: JSON.stringify({
                                 model: 'gpt-4o-mini',
                                 messages: [
-                                    { role: 'system', content: 'Sen Pisagor numerolojisi karmik borç uzmanısın. Türkçe yaz, net ve pratik ol. Karmik borç sayıları SADECE 13,14,16,19. Gün sayısını ASLA indirgeme.' },
+                                    { role: 'system', content: 'Sen Pisagor numerolojisi karmik borç uzmanısın. Türkçe yaz, net ve pratik ol. Karmik borç sayıları SADECE 13,14,16,19. Gün sayısını ASLA indirgeme.\n\nZORUNLU FORMAT — her yanıtta aşağıdaki 5 başlığı **kalın** işaretiyle (**) ve tam bu sırayla kullan. Başlıkları DEĞİŞTİRME, aynen yaz:\n\n**Karmik Borç Tespiti**\n[Tespit edilen borç sayısı ve 1-2 cümle açıklama]\n\n**Neden Bu Karma?**\n[Numerolojik sebep — neden bu sayı, neyin işareti]\n\n**Pratik Etkileri**\n* [en az 4, en fazla 6 madde]\n\n**Bu Karmanın Dersi**\n* [en az 3, en fazla 4 madde]\n\n**Net Gerçek**\n[Tek cümle, sert ve gerçekçi]\n\nBaşlıklar HER KULLANICI İÇİN AYNI olmalı. Sadece içerikler kişiye göre değişmeli.' },
                                     { role: 'user', content: '19/10/1997 için en baskın ve yorucu karma' },
-                                    { role: 'assistant', content: '19/10/1997 icin en baskin ve yorucu karma: 19/1 karmik borcu.\nNeden 19/1?\nNumerolojide 19; gucun, otoritenin ve bireyselligin yanlis kullanimiyla iliskilendirilen klasik bir karmik borc sayisidir.\n\n19/1 karmik borcunun pratik etkileri\n* Yalniz ilerlemek zorunda kalma.\n* Ego-tevazu catismasi.\n* Otoriteyle surtusme.\n* Erken sorumluluk.\n* Basari gecikmesi.\n\nBu karmanin dersi\n* Gucu baskalariyla paylasarak kullanmak.\n* Yardim istemeyi zayiflik gormemek.\n* Liderligi ornek olarak gostermek.\n\nNet gercek: Bu karma sanssizlik degil; yanlis guc kullanimini duzeltmeye zorlayan bir mekanizma.' },
+                                    { role: 'assistant', content: '**Karmik Borç Tespiti**\n19/1 karmik borcu tespit edildi. Doğum tarihindeki 19 sayısı, güç ve otoritenin yanlış kullanımına işaret eden klasik bir karmik borç sayısıdır.\n\n**Neden Bu Karma?**\nNumerolojide 19; güçün, otoritenin ve bireyselliğin yanlış kullanımıyla ilişkilendirilen karmik borç sayısıdır. Geçmiş yaşamda bencil liderlik ve başkalarını yok sayma kalıpları bu borca yol açmıştır.\n\n**Pratik Etkileri**\n* Yalnız ilerlemek zorunda kalma\n* Ego-tevazu çatışması\n* Otoriteyle sürtüşme\n* Erken sorumluluk yüklenme\n* Başarı gecikmesi\n\n**Bu Karmanın Dersi**\n* Gücü başkalarıyla paylaşarak kullanmak\n* Yardım istemeyi zayıflık görmemek\n* Liderliği örnek olarak göstermek\n\n**Net Gerçek**\nBu karma şanssızlık değil; yanlış güç kullanımını düzeltmeye zorlayan bir mekanizma.' },
                                     { role: 'user', content: prompt }
                                 ],
                                 temperature: 0.75,
@@ -978,7 +978,7 @@
         }
 
         function renderKarmicText(el, text) {
-            // Markdown-lite: **bold**, - maddeler, \n\n paragraf
+            // Markdown-lite: **bold**, - veya * maddeler, \n\n paragraf
             var html = text
                 .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2cc0d;">$1</strong>')
                 .split('\n\n')
@@ -987,11 +987,11 @@
                     if (!block) return '';
                     // Satırları işle
                     var lines = block.split('\n');
-                    var hasBullets = lines.some(function(l){ return l.trim().startsWith('-'); });
+                    var hasBullets = lines.some(function(l){ var t = l.trim(); return t.startsWith('-') || t.startsWith('*'); });
                     if (hasBullets) {
                         var items = lines.map(function(l) {
                             l = l.trim();
-                            if (l.startsWith('-')) {
+                            if (l.startsWith('-') || l.startsWith('*')) {
                                 return '<li style="margin-bottom:6px;list-style:none;padding-left:16px;position:relative;">' +
                                     '<span style="position:absolute;left:0;color:#c0392b;">✦</span>' +
                                     l.slice(1).trim() + '</li>';
