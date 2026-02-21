@@ -31,7 +31,7 @@
     }
 
     var tabs = [
-        { icon: 'home', label: 'Home', href: 'mystic_numerology_home_1.html', active: isActive(['mystic_numerology_home_1', 'cosmic_energy_calendar', 'daily_spiritual_guide', 'daily_number_deep_dive', 'cosmic_manifest_portal', 'numerology_meaning_chart', 'kader_app_ui_design_system', 'cosmic_match', 'numerology_quiz', 'leaderboard']) },
+        { icon: 'home', label: 'Home', href: 'mystic_numerology_home_1.html', active: isActive(['mystic_numerology_home_1', 'cosmic_energy_calendar', 'daily_spiritual_guide', 'daily_number_deep_dive', 'cosmic_manifest_portal', 'numerology_meaning_chart', 'kader_app_ui_design_system', 'cosmic_match']) },
         { icon: 'diversity_3', label: 'Bağlantılar', href: 'connections_shared_readings.html', active: isActive(['connections', 'kisi_profil', 'friendship_dynamics', 'name_numerology_breakdown', 'past_reading_archive', 'letter_vibration']) },
         { icon: 'ADD_BUTTON', label: '', href: '', active: false },
         { icon: 'workspace_premium', label: 'Premium', href: 'premium_crystal_store.html', active: isActive(['premium_crystal_store']) },
@@ -40,11 +40,9 @@
 
     // ─── BUBBLE MENU İTEMLERİ ───────────────────────────────
     var bubbleItems = [
-        { icon: 'swords',       label: 'Quiz Arena',      href: 'numerology_quiz.html',          color: '#34d399', bg: 'rgba(16,185,129,0.25)', border: 'rgba(16,185,129,0.5)' },
         { icon: 'auto_awesome', label: 'Cosmic Match', href: 'cosmic_match.html',              color: '#c084fc', bg: 'rgba(139,92,246,0.25)', border: 'rgba(139,92,246,0.5)' },
         { icon: 'favorite',      label: 'Ruh Eşi',        href: 'compatibility_input_form.html', color: '#fb7185', bg: 'rgba(225,29,72,0.25)', border: 'rgba(225,29,72,0.5)' },
         { icon: 'calculate',     label: 'Yeni Analiz',     href: 'data-ready_birth_form.html?newperson=1',    color: '#fac638', bg: 'rgba(250,198,56,0.2)',  border: 'rgba(250,198,56,0.5)' },
-        { icon: 'leaderboard',   label: 'Kozmik Lig',     href: 'leaderboard.html',              color: '#f59e0b', bg: 'rgba(245,158,11,0.2)',  border: 'rgba(245,158,11,0.5)' },
         { icon: 'self_improvement', label: 'Günlük Rehber', href: 'daily_spiritual_guide.html',   color: '#a78bfa', bg: 'rgba(139,92,246,0.2)',  border: 'rgba(139,92,246,0.5)' },
         { icon: 'nights_stay',   label: 'Ay Fazı',         href: 'lunar_phase_energy_tracker.html',color: '#93c5fd', bg: 'rgba(59,130,246,0.2)',  border: 'rgba(59,130,246,0.5)' },
         { icon: 'casino',        label: 'Kader Çarkı',     href: 'wheel_of_destiny.html',         color: '#fb923c', bg: 'rgba(251,146,60,0.2)',  border: 'rgba(251,146,60,0.5)' },
@@ -82,6 +80,7 @@
         '#kader-bubble-menu.open .bubble-item:nth-child(4){animation-delay:0.14s}',
         '#kader-bubble-menu.open .bubble-item:nth-child(5){animation-delay:0.18s}',
         '#kader-bubble-menu.open .bubble-item:nth-child(6){animation-delay:0.22s}',
+        '#kader-bubble-menu.open .bubble-item:nth-child(7){animation-delay:0.26s}',
         '#kader-bubble-overlay.open{display:block}'
     ].join('\n');
     document.head.appendChild(style);

@@ -181,26 +181,6 @@ body{min-height:max(884px,100dvh)}
                 </div>
             </div>
 
-            <!-- Quiz Arena Card -->
-            <div id="card-quiz-arena"
-                class="relative overflow-hidden rounded-2xl h-48 flex items-end p-6 border border-white/10 group active:scale-[0.98] transition-all cursor-pointer"
-                style="background:linear-gradient(135deg,#065f46 0%,#059669 40%,#34d399 100%);position:relative;overflow:hidden">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#022c22] via-transparent to-transparent opacity-80"></div>
-                <div class="relative z-10 w-full">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="material-symbols-outlined text-emerald-200 text-sm">swords</span>
-                        <p class="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em]">Quiz Arena</p>
-                    </div>
-                    <h4 class="text-white text-xl font-bold mb-1">Bilgini Test Et</h4>
-                    <p class="text-white/70 text-xs font-medium leading-relaxed max-w-[80%]">Quiz çöz, düello yap, rütbe kazan, ligde yüksel!</p>
-                </div>
-                <div class="absolute top-4 right-4 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20">
-                    <span class="material-symbols-outlined text-white text-sm">chevron_right</span>
-                </div>
-                <div id="home-rank-badge" class="absolute top-4 left-4 backdrop-blur-md rounded-full px-2.5 py-1 border" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)">
-                    <span class="text-white/80 text-[9px] font-black uppercase tracking-widest" id="home-rank-text">—</span>
-                </div>
-            </div>
         </div>
 
         <!-- Günlük Görevler Mini -->
@@ -237,16 +217,8 @@ body{min-height:max(884px,100dvh)}
         document.getElementById('card-lunar').onclick = function () { window.location.href = 'lunar_phase_energy_tracker.html'; };
         document.getElementById('card-soulmate').onclick = function () { window.location.href = 'compatibility_input_form.html'; };
         document.getElementById('card-cosmic-match').onclick = function () { window.location.href = 'cosmic_match.html'; };
-        document.getElementById('card-quiz-arena').onclick = function () { window.location.href = 'numerology_quiz.html'; };
-
         // Gamification home entegrasyonu
         if (window.gamification) {
-            var rp = window.gamification.getRankProgress();
-            var rb = document.getElementById('home-rank-text');
-            if (rb) {
-                rb.textContent = rp.current.name;
-                rb.style.color = rp.current.color;
-            }
             var badge = document.getElementById('home-rank-badge');
             if (badge) badge.style.borderColor = rp.current.color + '40';
 
