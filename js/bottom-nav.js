@@ -43,7 +43,7 @@
         { icon: 'swords',       label: 'Quiz Arena',      href: 'numerology_quiz.html',          color: '#34d399', bg: 'rgba(16,185,129,0.25)', border: 'rgba(16,185,129,0.5)' },
         { icon: 'auto_awesome', label: 'Cosmic Match', href: 'cosmic_match.html',              color: '#c084fc', bg: 'rgba(139,92,246,0.25)', border: 'rgba(139,92,246,0.5)' },
         { icon: 'favorite',      label: 'Ruh Eşi',        href: 'compatibility_input_form.html', color: '#fb7185', bg: 'rgba(225,29,72,0.25)', border: 'rgba(225,29,72,0.5)' },
-        { icon: 'calculate',     label: 'Yeni Analiz',     href: 'data-ready_birth_form.html',    color: '#fac638', bg: 'rgba(250,198,56,0.2)',  border: 'rgba(250,198,56,0.5)' },
+        { icon: 'calculate',     label: 'Yeni Analiz',     href: 'data-ready_birth_form.html?newperson=1',    color: '#fac638', bg: 'rgba(250,198,56,0.2)',  border: 'rgba(250,198,56,0.5)' },
         { icon: 'leaderboard',   label: 'Kozmik Lig',     href: 'leaderboard.html',              color: '#f59e0b', bg: 'rgba(245,158,11,0.2)',  border: 'rgba(245,158,11,0.5)' },
         { icon: 'self_improvement', label: 'Günlük Rehber', href: 'daily_spiritual_guide.html',   color: '#a78bfa', bg: 'rgba(139,92,246,0.2)',  border: 'rgba(139,92,246,0.5)' },
         { icon: 'nights_stay',   label: 'Ay Fazı',         href: 'lunar_phase_energy_tracker.html',color: '#93c5fd', bg: 'rgba(59,130,246,0.2)',  border: 'rgba(59,130,246,0.5)' },

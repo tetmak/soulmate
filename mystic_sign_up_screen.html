@@ -227,36 +227,44 @@
                         if (isLoginMode) {
                             await window.auth.signIn(email, password);
                             
-                            // Supabase'den profil verisini çek
+                            // 1. Önce localStorage kontrol et
                             var hasProfile = false;
                             try {
-                                var sess = await window.auth.getSession();
-                                if (sess && sess.user && window.supabaseClient) {
-                                    var { data: prof } = await window.supabaseClient
-                                        .from('profiles')
-                                        .select('full_name, birth_date, birth_time, birth_place, gender')
-                                        .eq('id', sess.user.id)
-                                        .single();
-                                    if (prof && prof.full_name && prof.birth_date) {
-                                        // Supabase'de veri var — localStorage'a yaz ve ana sayfaya git
-                                        localStorage.setItem('kader_user_data', JSON.stringify({
-                                            name: prof.full_name,
-                                            birthDate: prof.birth_date,
-                                            birthTime: prof.birth_time || '',
-                                            birthPlace: prof.birth_place || '',
-                                            gender: prof.gender || 'male'
-                                        }));
-                                        hasProfile = true;
-                                        console.log('[Login] Supabase profil bulundu, ana sayfaya yönlendiriliyor');
-                                    }
+                                var localData = JSON.parse(localStorage.getItem('kader_user_data'));
+                                if (localData && localData.name && localData.birthDate) {
+                                    hasProfile = true;
+                                    console.log('[Login] localStorage profil bulundu');
                                 }
-                            } catch(profErr) { console.warn('[Login] Profil çekme hatası:', profErr); }
-                            
+                            } catch(e) {}
+
+                            // 2. localStorage'da yoksa Supabase'den çek
+                            if (!hasProfile) {
+                                try {
+                                    var sess = await window.auth.getSession();
+                                    if (sess && sess.user && window.supabaseClient) {
+                                        var { data: prof, error: profError } = await window.supabaseClient
+                                            .from('profiles')
+                                            .select('*')
+                                            .eq('id', sess.user.id)
+                                            .single();
+                                        if (!profError && prof && (prof.full_name || prof.name) && prof.birth_date) {
+                                            localStorage.setItem('kader_user_data', JSON.stringify({
+                                                name: prof.full_name || prof.name,
+                                                birthDate: prof.birth_date,
+                                                birthTime: prof.birth_time || '',
+                                                birthPlace: prof.birth_place || '',
+                                                gender: prof.gender || 'male'
+                                            }));
+                                            hasProfile = true;
+                                            console.log('[Login] Supabase profil bulundu, localStorage güncellendi');
+                                        }
+                                    }
+                                } catch(profErr) { console.warn('[Login] Profil çekme hatası:', profErr); }
+                            }
+
                             if (hasProfile) {
                                 window.location.href = 'mystic_numerology_home_1.html';
                             } else {
-                                // Profil yok — form doldurması lazım
-                                localStorage.removeItem('kader_user_data');
                                 window.location.href = 'data-ready_birth_form.html';
                             }
                         } else {

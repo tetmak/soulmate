@@ -22,10 +22,10 @@
     // ═══════════════════════════════════════════════════════════
     //    YAPILANDIRMA — Paddle Dashboard'dan al
     // ═══════════════════════════════════════════════════════════
-    var PADDLE_CLIENT_TOKEN = 'live_59edd8bebc28b6a13576a572172';           // Paddle → Developer Tools → Authentication → Client-side token
-    var PADDLE_PRICE_MONTHLY = 'pri_01khyjaczgd78ad1qnjhn344ph';          // Paddle → Catalog → Prices → aylık fiyat ID (pri_...)
-    var PADDLE_PRICE_YEARLY = 'pri_01khyj8vyqh159d29723wzv3tc';           // Paddle → Catalog → Prices → yıllık fiyat ID (pri_...)
-    var PADDLE_ENV = 'production';             // 'sandbox' veya 'production'
+    var PADDLE_CLIENT_TOKEN = 'test_1917c8739eeec42ab948b39da0d';           // Paddle Sandbox → Developer Tools → Authentication → Client-side token
+    var PADDLE_PRICE_MONTHLY = 'pri_01khyq04yfrd52w6qn8bar13q1';          // Sandbox Aylık
+    var PADDLE_PRICE_YEARLY = 'pri_01khyq0rwvw8cttc184xas0h5t';           // Sandbox Yıllık
+    var PADDLE_ENV = 'sandbox';             // 'sandbox' veya 'production'
 
     // ─── FREE LİMİTLER ──────────────────────────────────────
     var FREE_LIMITS = {
@@ -82,7 +82,7 @@
     // ─── PADDLE EVENT HANDLER ──────────────────────────────────
     function handlePaddleEvent(event) {
         if (!event || !event.name) return;
-        console.log('[Premium] Paddle event:', event.name);
+        console.log('[Premium] Paddle event:', event.name, event.data || '', event.type || '');
 
         if (event.name === 'checkout.completed') {
             var data = event.data;

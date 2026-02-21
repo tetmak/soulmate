@@ -84,13 +84,13 @@ var auth = {
                     if (userId && window.supabaseClient) {
                         var profResult = await window.supabaseClient
                             .from('profiles')
-                            .select('full_name, birth_date, birth_time, birth_place, gender')
+                            .select('*')
                             .eq('id', userId)
                             .single();
                         var prof = profResult.data;
-                        if (prof && prof.full_name && prof.birth_date) {
+                        if (prof && (prof.full_name || prof.name) && prof.birth_date) {
                             localStorage.setItem('kader_user_data', JSON.stringify({
-                                name: prof.full_name,
+                                name: prof.full_name || prof.name,
                                 birthDate: prof.birth_date,
                                 birthTime: prof.birth_time || '',
                                 birthPlace: prof.birth_place || '',

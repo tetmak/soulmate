@@ -225,22 +225,37 @@
         // Calculate Button Logic
         setTimeout(async function () {
 
+            // URL'de ?newperson parametresi yoksa ve localStorage'da profil varsa → ana sayfaya yönlendir
+            var urlParams = new URLSearchParams(window.location.search);
+            var isNewPerson = urlParams.has('newperson');
+            if (!isNewPerson) {
+                try {
+                    var localCheck = JSON.parse(localStorage.getItem('kader_user_data'));
+                    if (localCheck && localCheck.name && localCheck.birthDate) {
+                        console.log('[Form] Profil zaten var, ana sayfaya yönlendiriliyor');
+                        window.location.href = 'mystic_numerology_home_1.html';
+                        return;
+                    }
+                } catch(e) {}
+            }
+
             // Supabase'den profil verisi çek ve formu doldur
             try {
                 var sess = await window.auth.getSession();
                 if (sess && sess.user && window.supabaseClient) {
-                    var { data: prof } = await window.supabaseClient
+                    var { data: prof, error: profErr } = await window.supabaseClient
                         .from('profiles')
-                        .select('full_name, birth_date, birth_time, birth_place, gender')
+                        .select('*')
                         .eq('id', sess.user.id)
                         .single();
-                    if (prof && prof.full_name && prof.birth_date) {
+                    if (!profErr && prof && (prof.full_name || prof.name) && prof.birth_date) {
                         // Supabase'de veri var — formu doldur
                         var nameInput = document.getElementById('input-name');
                         var dobInput = document.getElementById('input-dob');
                         var tobInput = document.getElementById('input-tob');
                         var pobInput = document.getElementById('input-pob');
-                        if (nameInput && !nameInput.value) nameInput.value = prof.full_name;
+                        var profName = prof.full_name || prof.name;
+                        if (nameInput && !nameInput.value) nameInput.value = profName;
                         if (dobInput && !dobInput.value) dobInput.value = prof.birth_date;
                         if (tobInput && !tobInput.value && prof.birth_time) tobInput.value = prof.birth_time;
                         if (pobInput && !pobInput.value && prof.birth_place) pobInput.value = prof.birth_place;
@@ -249,14 +264,19 @@
                             if (genderRadio) genderRadio.checked = true;
                         }
                         // localStorage'ı da güncelle
+                        // Supabase'de profil var ama localStorage'da yok — kaydet ve ana sayfaya yönlendir
                         localStorage.setItem('kader_user_data', JSON.stringify({
-                            name: prof.full_name,
+                            name: profName,
                             birthDate: prof.birth_date,
                             birthTime: prof.birth_time || '',
                             birthPlace: prof.birth_place || '',
                             gender: prof.gender || 'male'
                         }));
-                        console.log('[Form] Supabase profili formu doldurdu');
+                        console.log('[Form] Supabase profili bulundu, ana sayfaya yönlendiriliyor');
+                        if (!isNewPerson) {
+                            window.location.href = 'mystic_numerology_home_1.html';
+                            return;
+                        }
                     }
                 }
             } catch(supErr) { console.warn('[Form] Supabase auto-fill hatası:', supErr); }
