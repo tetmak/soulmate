@@ -1,17 +1,10 @@
 /**
- * KADER — Premium Abonelik Sistemi (Paddle Billing)
+ * KADER — Premium Abonelik Sistemi (Çoklu Platform)
  *
- * Paddle entegrasyonu:
- *   - Paddle.js v2 SDK ile overlay checkout
- *   - Paddle Merchant of Record (vergi/KDV otomatik)
- *   - Webhook ile Supabase senkronizasyonu
- *
- * KURULUM:
- *   1. https://vendors.paddle.com → Hesap oluştur
- *   2. Catalog → Products → Ürün oluştur: "Kader Premium"
- *   3. Ürüne 2 fiyat ekle: Aylık (₺79.99/ay), Yıllık (₺599.99/yıl)
- *   4. Developer Tools → Authentication → Client-side token al
- *   5. Aşağıdaki PADDLE_* değerlerini doldur
+ * Platform bazlı ödeme:
+ *   - Web: Paddle.js v2 SDK ile overlay checkout
+ *   - iOS: RevenueCat → Apple In-App Purchase (StoreKit)
+ *   - Android: RevenueCat → Google Play Billing
  *
  * FREE:  Temel numeroloji, 1 arkadaş, 1 uyumluluk/ay, Deep Insight sayfa 1
  * PREMIUM: Sınırsız her şey, AI analizler, Cosmic Match reveal, 3 sayfa breakdown
@@ -157,12 +150,19 @@
 
     async function checkPremiumStatus() {
         if (isPremium()) return true;
+
+        // Native platform → RevenueCat'ten kontrol et
+        if (window.revenuecat && window.revenuecat.isNative() && window.revenuecat.isReady()) {
+            var rcPremium = await window.revenuecat.checkEntitlements();
+            if (rcPremium) return true;
+        }
+
+        // Supabase'den kontrol et (tüm platformlar)
         try {
             var session = await window.auth.getSession();
             if (!session || !session.user) return false;
             var res = await window.supabaseClient.from('subscriptions').select('*').eq('user_id', session.user.id).in('status', ['active', 'cancelled']).single();
             if (res.data) {
-                // İptal edilmiş ama süresi dolmamış abonelik hâlâ aktif sayılır
                 var isActive = res.data.status === 'active' || (res.data.expires_at && new Date(res.data.expires_at) > new Date());
                 if (isActive) {
                     localStorage.setItem('kader_premium', JSON.stringify({ active: true, plan: res.data.plan || 'monthly', expires_at: res.data.expires_at, source: 'supabase', cached_at: new Date().toISOString() }));
@@ -205,13 +205,50 @@
         }
     }
 
-    // ─── ÖDEME BAŞLAT (Paddle Overlay Checkout) ──────────────
+    // ─── ÖDEME BAŞLAT (Platform bazlı) ──────────────────────
     function startPurchase(plan) {
         plan = plan || 'yearly';
 
+        // Native platform → RevenueCat kullan
+        if (window.revenuecat && window.revenuecat.isNative()) {
+            startNativePurchase(plan);
+            return;
+        }
+
+        // Web platform → Paddle kullan
+        startPaddlePurchase(plan);
+    }
+
+    async function startNativePurchase(plan) {
+        console.log('[Premium] Native satın alma başlatılıyor:', plan);
+
+        if (!window.revenuecat || !window.revenuecat.isReady()) {
+            console.warn('[Premium] RevenueCat hazır değil, init deneniyor...');
+            if (window.revenuecat) {
+                await window.revenuecat.init();
+            }
+            if (!window.revenuecat || !window.revenuecat.isReady()) {
+                alert('Satın alma servisi başlatılamadı. Lütfen tekrar deneyin.');
+                return;
+            }
+        }
+
+        var result = await window.revenuecat.purchase(plan);
+
+        if (result.success) {
+            console.log('[Premium] Native satın alma başarılı!');
+            setTimeout(function() { window.location.reload(); }, 500);
+        } else if (result.error === 'cancelled') {
+            console.log('[Premium] Kullanıcı satın almayı iptal etti');
+        } else {
+            console.error('[Premium] Satın alma hatası:', result.error);
+            alert('Satın alma sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+        }
+    }
+
+    function startPaddlePurchase(plan) {
         if (!paddleReady || !window.Paddle) {
             console.warn('[Premium] Paddle SDK hazır değil');
-            // Checkout sayfasına yönlendir, orada tekrar denenecek
             window.location.href = 'premium_checkout_summary.html?plan=' + plan + '&return=' + encodeURIComponent(window.location.href);
             return;
         }
@@ -224,8 +261,7 @@
             return;
         }
 
-        // Kullanıcı bilgilerini al
-        console.log('[Premium] Checkout açılıyor, priceId:', priceId, 'plan:', plan);
+        console.log('[Premium] Paddle checkout açılıyor, priceId:', priceId, 'plan:', plan);
         var checkoutConfig = {
             items: [{ priceId: priceId, quantity: 1 }],
             settings: {
@@ -234,15 +270,12 @@
             }
         };
 
-        // Kullanıcı email'i varsa ekle
         try {
-            var session = null;
             if (window.auth && window.auth.getSession) {
                 window.auth.getSession().then(function(s) {
                     if (s && s.user && s.user.email) {
                         checkoutConfig.customer = { email: s.user.email };
                     }
-                    // customData ile user_id gönder (webhook'ta kullanılacak)
                     if (s && s.user) {
                         checkoutConfig.customData = { user_id: s.user.id };
                     }
@@ -256,6 +289,11 @@
         } catch(e) {
             window.Paddle.Checkout.open(checkoutConfig);
         }
+    }
+
+    // ─── PLATFORM HELPER ─────────────────────────────────────
+    function isNativeApp() {
+        return window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
     }
 
     // ─── PAYWALL UI ──────────────────────────────────────────
@@ -288,7 +326,8 @@
                 '<div id="pw-y" style="flex:1;padding:14px;border-radius:16px;border:2px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.08);text-align:center;cursor:pointer;transition:all 0.2s;position:relative"><div style="position:absolute;top:-8px;right:8px;background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:8px;padding:2px 8px"><span style="color:white;font-size:9px;font-weight:800">%37 TASARRUF</span></div><p style="color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px">Yıllık</p><p style="color:white;font-size:22px;font-weight:800;font-family:Space Grotesk">₺49<span style="font-size:13px;color:rgba(255,255,255,0.4)">.99/ay</span></p></div>' +
             '</div>' +
             '<button id="pw-btn" style="width:100%;padding:16px;border-radius:9999px;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:white;font-size:16px;font-weight:700;font-family:Space Grotesk,sans-serif;border:none;cursor:pointer;box-shadow:0 0 20px rgba(139,92,246,0.3)">Premium\'a Geç</button>' +
-            '<p id="pw-close" style="text-align:center;color:rgba(255,255,255,0.25);font-size:12px;margin-top:14px;cursor:pointer;font-family:Space Grotesk,sans-serif">Şimdilik geç</p>';
+            (isNativeApp() ? '<p id="pw-restore" style="text-align:center;color:rgba(139,92,246,0.6);font-size:12px;margin-top:12px;cursor:pointer;font-family:Space Grotesk,sans-serif;text-decoration:underline">Satın alımları geri yükle</p>' : '') +
+            '<p id="pw-close" style="text-align:center;color:rgba(255,255,255,0.25);font-size:12px;margin-top:' + (isNativeApp() ? '8' : '14') + 'px;cursor:pointer;font-family:Space Grotesk,sans-serif">Şimdilik geç</p>';
 
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
@@ -303,6 +342,19 @@
         function close() { modal.style.transform='translateY(100%)'; setTimeout(function(){overlay.remove();paywallVisible=false;},400); }
         modal.querySelector('#pw-close').addEventListener('click', close);
         overlay.addEventListener('click', function(e) { if(e.target===overlay) close(); });
+
+        // Native: Restore Purchases butonu
+        var restoreBtn = modal.querySelector('#pw-restore');
+        if (restoreBtn) {
+            restoreBtn.addEventListener('click', async function() {
+                restoreBtn.textContent = 'Geri yükleniyor...';
+                var ok = await restorePurchases();
+                if (!ok) {
+                    restoreBtn.textContent = 'Aktif abonelik bulunamadı';
+                    setTimeout(function() { restoreBtn.textContent = 'Satın alımları geri yükle'; }, 2000);
+                }
+            });
+        }
     }
 
     function perkRow(icon, title) {
@@ -333,7 +385,39 @@
     function clearPremium() { localStorage.removeItem('kader_premium'); console.log('[Premium] Cleared'); window.location.reload(); }
 
     // ─── INIT ────────────────────────────────────────────────
-    initPaddle();
+    // Platform bazlı init: native → RevenueCat, web → Paddle
+    (async function platformInit() {
+        var isNative = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+
+        if (isNative && window.revenuecat) {
+            console.log('[Premium] Native platform — RevenueCat başlatılıyor');
+            var rcOk = await window.revenuecat.init();
+            if (rcOk) {
+                // Mevcut entitlement'ları kontrol et
+                await window.revenuecat.checkEntitlements();
+                console.log('[Premium] RevenueCat hazır');
+            } else {
+                console.warn('[Premium] RevenueCat başlatılamadı — Paddle fallback');
+                await initPaddle();
+            }
+        } else {
+            console.log('[Premium] Web platform — Paddle başlatılıyor');
+            await initPaddle();
+        }
+    })();
+
+    // ─── RESTORE (native) ────────────────────────────────────
+    async function restorePurchases() {
+        if (window.revenuecat && window.revenuecat.isNative()) {
+            var result = await window.revenuecat.restore();
+            if (result.success && result.premium) {
+                window.location.reload();
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
 
     // ─── GLOBAL EXPORT ───────────────────────────────────────
     window.premium = {
@@ -341,8 +425,13 @@
         canUse: canUseFeature, gate: gate,
         showPaywall: showPaywall, showBadge: showPremiumBadge,
         startPurchase: startPurchase,
+        restorePurchases: restorePurchases,
         incrementUsage: incrementUsage, getUsageCount: getUsageCount,
-        isReady: function() { return paddleReady; },
+        isReady: function() {
+            if (window.revenuecat && window.revenuecat.isNative()) return window.revenuecat.isReady();
+            return paddleReady;
+        },
+        isNative: function() { return window.revenuecat && window.revenuecat.isNative(); },
         PRICE: PREMIUM_PRICE, FREE_LIMITS: FREE_LIMITS,
         simulate: simulatePremium, clear: clearPremium
     };
