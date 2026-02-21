@@ -227,7 +227,11 @@
         // Kullanıcı bilgilerini al
         console.log('[Premium] Checkout açılıyor, priceId:', priceId, 'plan:', plan);
         var checkoutConfig = {
-            items: [{ priceId: priceId, quantity: 1 }]
+            items: [{ priceId: priceId, quantity: 1 }],
+            settings: {
+                successUrl: window.location.origin + '/mystic_numerology_home_1.html?checkout=success',
+                allowLogout: false
+            }
         };
 
         // Kullanıcı email'i varsa ekle
