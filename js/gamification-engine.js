@@ -1,9 +1,9 @@
 /**
- * KADER — Gamification Engine v1.0
- * XP, Rütbe, Quiz, Günlük Görev, Ödül, Leaderboard, Kozmik Görünürlük
+ * KADER — Gamification Engine v1.1
+ * XP, Rütbe, Günlük Görev, Ödül, Sayısal Görünürlük
  *
  * Kullanım:
- *   gamification.addXP('quiz_correct', 10)
+ *   gamification.addXP('daily_reading', 10)
  *   gamification.getRank()
  *   gamification.getDailyQuests()
  *   gamification.getVisibilityMultiplier()
@@ -18,10 +18,10 @@
         { id: 'novice',     name: 'Çaylak Kaşif',      minNBP: 0,    color: '#9ca3af', icon: 'explore',        visibility: 1, radarSize: 6,  premiumDays: 0, frame: null },
         { id: 'student',    name: 'Yıldız Öğrencisi',  minNBP: 100,  color: '#22c55e', icon: 'school',         visibility: 2, radarSize: 8,  premiumDays: 0, frame: 'glow-green' },
         { id: 'warrior',    name: 'Sayı Savaşçısı',    minNBP: 300,  color: '#3b82f6', icon: 'shield',         visibility: 3, radarSize: 10, premiumDays: 0, frame: 'glow-blue' },
-        { id: 'guide',      name: 'Kozmik Rehber',      minNBP: 600,  color: '#a855f7', icon: 'assistant_navigation', visibility: 4, radarSize: 12, premiumDays: 0, frame: 'glow-purple' },
+        { id: 'guide',      name: 'Sayısal Rehber',      minNBP: 600,  color: '#a855f7', icon: 'assistant_navigation', visibility: 4, radarSize: 12, premiumDays: 0, frame: 'glow-purple' },
         { id: 'master',     name: 'Usta Numerolog',     minNBP: 1000, color: '#f59e0b', icon: 'auto_awesome',   visibility: 5, radarSize: 14, premiumDays: 1, frame: 'glow-gold' },
         { id: 'sage',       name: 'Yıldız Bilgesi',    minNBP: 2000, color: '#e2e8f0', icon: 'diamond',        visibility: 7, radarSize: 16, premiumDays: 1, frame: 'glow-platinum' },
-        { id: 'oracle',     name: 'Kozmik Kahin',       minNBP: 3500, color: '#ec4899', icon: 'blur_on',        visibility: 10, radarSize: 20, premiumDays: 3, frame: 'glow-galaxy' }
+        { id: 'oracle',     name: 'Sayısal Kahin',       minNBP: 3500, color: '#ec4899', icon: 'blur_on',        visibility: 10, radarSize: 20, premiumDays: 3, frame: 'glow-galaxy' }
     ];
 
     // ═══════════════════════════════════════════════════════════
@@ -30,10 +30,6 @@
     var XP_ACTIONS = {
         app_open:          5,    // günde 1 kez
         daily_reading:     10,   // günlük titreşim oku
-        quiz_correct:      15,   // quiz doğru cevap
-        quiz_wrong:        3,    // quiz yanlış (katılım ödülü)
-        duel_win:          50,   // düello kazan
-        duel_lose:         10,   // düello katılım
         compatibility:     20,   // uyumluluk analizi yap
         add_connection:    25,   // arkadaş ekle
         cosmic_match_view: 10,   // günlük eşleşme bak
@@ -57,57 +53,9 @@
         { id: 'streak_fire',    name: 'Streak Ateşi',        desc: '7 gün üst üste giriş',         icon: 'local_fire_department', condition: function(s) { return s.max_streak >= 7; } },
         { id: 'streak_blaze',   name: 'Söndürülmez Alev',    desc: '30 gün streak',                 icon: 'whatshot',         condition: function(s) { return s.max_streak >= 30; } },
         { id: 'streak_eternal', name: 'Sonsuz Ateş',         desc: '100 gün streak',                icon: 'emergency_heat',         condition: function(s) { return s.max_streak >= 100; } },
-        { id: 'quiz_5',         name: 'Meraklı Zihin',       desc: '5 quiz doğru cevapla',          icon: 'psychology',       condition: function(s) { return s.quiz_correct >= 5; } },
-        { id: 'quiz_50',        name: 'Bilgi Makinesi',      desc: '50 quiz doğru cevapla',         icon: 'neurology',        condition: function(s) { return s.quiz_correct >= 50; } },
-        { id: 'duel_3',         name: 'Yenilmez',            desc: '3 düello üst üste kazan',       icon: 'swords',           condition: function(s) { return s.duel_win_streak >= 3; } },
-        { id: 'duel_legend',    name: 'Düello Efsanesi',     desc: '10 düello üst üste kazan',      icon: 'military_tech',    condition: function(s) { return s.duel_win_streak >= 10; } },
-        { id: 'soul_hunter',    name: 'Ruh İkizi Avcısı',   desc: '10 Cosmic Match reveal',        icon: 'favorite',         condition: function(s) { return s.reveals >= 10; } },
-        { id: 'galaxy_cap',     name: 'Galaksi Kaptanı',     desc: 'Elmas lige ulaş',              icon: 'emoji_events',     condition: function(s) { return s.league_tier >= 5; } },
+        { id: 'soul_hunter',    name: 'Uyum Avcısı',   desc: '10 Eşleşme reveal',        icon: 'favorite',         condition: function(s) { return s.reveals >= 10; } },
         { id: 'all_quests_7',   name: 'Görev Avcısı',        desc: '7 gün üst üste tüm görevleri tamamla', icon: 'task_alt', condition: function(s) { return s.all_quests_streak >= 7; } },
-        { id: 'oracle_rank',    name: 'Kozmik Uyanış',       desc: 'Kozmik Kahin rütbesine ulaş',  icon: 'blur_on',          condition: function(s) { return s.nbp >= 3500; } }
-    ];
-
-    // ═══════════════════════════════════════════════════════════
-    // QUIZ SORU BANKASI
-    // ═══════════════════════════════════════════════════════════
-    var QUIZ_BANK = [
-        // ── KOLAY ──
-        { q: '1 sayısının enerjisi nedir?', opts: ['Liderlik & Bağımsızlık', 'Uyum & Denge', 'Yaratıcılık & İfade', 'Disiplin & Düzen'], correct: 0, diff: 1 },
-        { q: '2 sayısının temel özelliği nedir?', opts: ['Güç & Otorite', 'Diplomasi & Denge', 'Macera & Özgürlük', 'Analiz & Gizem'], correct: 1, diff: 1 },
-        { q: '3 sayısı neyi temsil eder?', opts: ['Disiplin', 'İletişim & Yaratıcılık', 'Güvenlik', 'Mükemmelcilik'], correct: 1, diff: 1 },
-        { q: '7 sayısının enerjisi nedir?', opts: ['Sosyallik', 'Maneviyat & Analiz', 'Maddi başarı', 'Romantizm'], correct: 1, diff: 1 },
-        { q: 'Hangi sayı "Şifacı" arketipini taşır?', opts: ['3', '5', '6', '9'], correct: 2, diff: 1 },
-        { q: '5 sayısı neyi simgeler?', opts: ['Düzen & Güvenlik', 'Değişim & Özgürlük', 'Ev & Aile', 'Güç & Otorite'], correct: 1, diff: 1 },
-        { q: '9 sayısı hangi enerjiyi taşır?', opts: ['Bencillik', 'Evrensel Sevgi & Bilgelik', 'Kaos & Karmaşa', 'Korku & Şüphe'], correct: 1, diff: 1 },
-        { q: '4 sayısının anahtar kelimesi nedir?', opts: ['Macera', 'Hayal gücü', 'Yapı & Disiplin', 'Duygu'], correct: 2, diff: 1 },
-        { q: '8 sayısı neyle ilişkilidir?', opts: ['Sanat & Müzik', 'Maddi Bolluk & Güç', 'Yalnızlık', 'Hayal & Fantezi'], correct: 1, diff: 1 },
-        { q: 'Yaşam Yolu sayısı nasıl hesaplanır?', opts: ['İsmin harflerinden', 'Doğum tarihinin toplamından', 'Ay burcundan', 'Rastgele atanır'], correct: 1, diff: 1 },
-
-        // ── ORTA ──
-        { q: '11 neden "Usta Sayı" kabul edilir?', opts: ['En büyük tek haneli sayıdır', 'Yüksek sezgisel & spiritüel enerji taşır', 'Şans getirir', 'Çift sayıdır'], correct: 1, diff: 2 },
-        { q: 'Hangi iki sayı en yüksek uyuma sahiptir?', opts: ['1 ve 4', '2 ve 6', '3 ve 7', '5 ve 8'], correct: 1, diff: 2 },
-        { q: 'Soul Urge (Ruh Dürtüsü) sayısı nasıl bulunur?', opts: ['Doğum gününden', 'İsmin sesli harflerinden', 'İsmin sessiz harflerinden', 'Yıl sayısından'], correct: 1, diff: 2 },
-        { q: 'Kişilik (Personality) sayısı neyi gösterir?', opts: ['İç dünyanı', 'Başkalarının seni nasıl gördüğünü', 'Hayat amacını', 'Ruh eşini'], correct: 1, diff: 2 },
-        { q: 'Hangi sayı çifti doğal gerilim yaratır?', opts: ['1 ve 3', '4 ve 5', '6 ve 9', '2 ve 4'], correct: 1, diff: 2 },
-        { q: '22 usta sayısı hangi arketiptir?', opts: ['İlhamcı', 'Mistik', 'Usta Mimar', 'Şifacı'], correct: 2, diff: 2 },
-        { q: '33 usta sayısının enerjisi nedir?', opts: ['Güç & Kontrol', 'Koşulsuz Sevgi & Öğretmenlik', 'Macera & Risk', 'Analiz & Mantık'], correct: 1, diff: 2 },
-        { q: 'Kişisel Yıl sayısı ne belirler?', opts: ['Hayat amacını', 'O yılın enerji temasını', 'Ruh eşini', 'Şans gününü'], correct: 1, diff: 2 },
-        { q: 'Expression (İfade) sayısı neden önemlidir?', opts: ['Doğum gününü gösterir', 'Doğal yetenekleri ve potansiyeli gösterir', 'Ay burcunu belirler', 'Gelecek yılı tahmin eder'], correct: 1, diff: 2 },
-        { q: '1 ve 8 neden güçlü uyum sağlar?', opts: ['İkisi de çift sayıdır', 'Liderlik ve güç enerjileri birbirini besler', 'Aynı element grubundadır', 'İkisi de usta sayıdır'], correct: 1, diff: 2 },
-
-        // ── ZOR ──
-        { q: '15 Ağustos 1990 doğumlu birinin Yaşam Yolu sayısı kaçtır?', opts: ['5', '6', '7', '33'], correct: 1, diff: 3 },
-        { q: 'Karmic borç sayıları hangileridir?', opts: ['11, 22, 33', '13, 14, 16, 19', '1, 5, 7, 9', '2, 4, 6, 8'], correct: 1, diff: 3 },
-        { q: 'Pisagor sisteminde "Ş" harfinin değeri kaçtır?', opts: ['1', '3', '6', '8'], correct: 0, diff: 3 },
-        { q: 'Kişisel Ay sayısı nasıl hesaplanır?', opts: ['Doğum ayı + güncel ay', 'Kişisel Yıl + güncel ay', 'Yaşam Yolu × 2', 'İfade + Ruh Dürtüsü'], correct: 1, diff: 3 },
-        { q: '6 ve 9 neden "kozmik ikizler" kabul edilir?', opts: ['Toplamları 15 yapar', 'Biri veren biri alan; sevgi döngüsü tamamlanır', 'Aynı gezegen yönetir', 'İkisi de tek sayıdır'], correct: 1, diff: 3 },
-        { q: 'Missing Number (eksik sayı) analizi ne gösterir?', opts: ['İsimde olmayan harfleri', 'İsimde hiç bulunmayan sayı titreşimlerini — gelişim alanını', 'Doğum gününde olmayan rakamları', 'Yanlış hesaplanmış sayıları'], correct: 1, diff: 3 },
-        { q: 'Bridge Number ne işe yarar?', opts: ['İki kişiyi köprüler', 'İki temel sayı arasındaki farkı gösterir, uyum ipucu verir', 'Yeni sayı üretir', 'Gelecek tahmini yapar'], correct: 1, diff: 3 },
-        { q: 'Pinnacle ve Challenge döngüleri kaç yaşlarında değişir?', opts: ['Her 10 yılda', '~27-36-45 yaşlarında (LP bazlı)', 'Her 5 yılda', 'Değişmez, sabittir'], correct: 1, diff: 3 },
-
-        // ── UZMAN ──
-        { q: 'Doğum tarihi 29/11/1994 olan birinin tüm temel sayıları düşünüldüğünde, bu kişi hangi enerji kümesindedir?', opts: ['Lider-Yapıcı (1-4-8)', 'Sezgisel-Spiritüel (2-7-11)', 'Yaratıcı-Sosyal (3-5-9)', 'Usta Sayı taşıyıcısı (11-22)'], correct: 3, diff: 4 },
-        { q: 'Maturity Number ne zaman etkili olmaya başlar ve nasıl hesaplanır?', opts: ['Doğumdan itibaren, LP+Expression', '35-40 yaş civarı, LP+Expression toplamı', 'Her yıl değişir, Kişisel Yıl bazlı', '50 yaş sonrası, Soul+Personality'], correct: 1, diff: 4 },
+        { id: 'oracle_rank',    name: 'Sayısal Uyanış',       desc: 'Sayısal Kahin rütbesine ulaş',  icon: 'blur_on',          condition: function(s) { return s.nbp >= 3500; } }
     ];
 
     // ═══════════════════════════════════════════════════════════
@@ -115,15 +63,13 @@
     // ═══════════════════════════════════════════════════════════
     var QUEST_TEMPLATES = [
         { id: 'read_daily',      name: 'Günlük Titreşimini Oku',  icon: 'auto_stories',  xp: 10, action: 'daily_reading' },
-        { id: 'quiz_1',          name: '1 Quiz Sorusu Cevapla',   icon: 'quiz',           xp: 15, action: 'quiz_attempt' },
-        { id: 'view_match',      name: 'Cosmic Match\'ine Bak',   icon: 'favorite',       xp: 10, action: 'cosmic_match_view' },
+        { id: 'view_match',      name: 'Eşleşmene Bak',   icon: 'favorite',       xp: 10, action: 'cosmic_match_view' },
         { id: 'check_compat',    name: 'Uyumluluk Analizi Yap',   icon: 'compare_arrows', xp: 20, action: 'compatibility' },
         { id: 'set_manifest',    name: 'Bir Niyet Belirle',       icon: 'self_improvement',xp: 10, action: 'manifest_set' },
-        { id: 'share_card',      name: 'Kozmik Kartını Paylaş',   icon: 'share',          xp: 20, action: 'share_card' },
-        { id: 'quiz_3',          name: '3 Quiz Doğru Cevapla',    icon: 'psychology',     xp: 30, action: 'quiz_3_correct' },
+        { id: 'share_card',      name: 'Analiz Kartını Paylaş',   icon: 'share',          xp: 20, action: 'share_card' },
         { id: 'spin_wheel',      name: 'Kader Çarkını Çevir',     icon: 'casino',         xp: 10, action: 'wheel_spin' },
         { id: 'add_friend',      name: 'Yeni Arkadaş Ekle',       icon: 'person_add',     xp: 25, action: 'add_connection' },
-        { id: 'visit_calendar',  name: 'Kozmik Takvimi Ziyaret Et', icon: 'calendar_month', xp: 10, action: 'calendar_visit' }
+        { id: 'visit_calendar',  name: 'Karar Takvimini Ziyaret Et', icon: 'calendar_month', xp: 10, action: 'calendar_visit' }
     ];
 
     // ═══════════════════════════════════════════════════════════
@@ -176,12 +122,6 @@
                 nbp: s.nbp,
                 total_xp: s.total_xp,
                 rank_id: rank.id,
-                quiz_correct: s.quiz_correct,
-                quiz_total: s.quiz_total,
-                duel_wins: s.duel_wins,
-                duel_losses: s.duel_losses,
-                duel_win_streak: s.duel_win_streak,
-                duel_best_streak: s.duel_best_streak,
                 current_streak: s.current_streak,
                 max_streak: s.max_streak,
                 total_analyses: s.total_analyses,
@@ -191,7 +131,6 @@
                 bonus_reveals: s.bonus_reveals,
                 unlocked_badges: s.unlocked_badges,
                 equipped_frame: s.equipped_frame,
-                league_tier: s.league_tier || 1,
                 weekly_xp: s.daily_xp_earned,
                 week_start: weekStart,
                 updated_at: new Date().toISOString()
@@ -230,15 +169,8 @@
                 if (res.data.nbp > s.nbp) {
                     s.nbp = res.data.nbp;
                     s.total_xp = res.data.total_xp;
-                    s.quiz_correct = res.data.quiz_correct;
-                    s.quiz_total = res.data.quiz_total;
-                    s.duel_wins = res.data.duel_wins;
-                    s.duel_losses = res.data.duel_losses;
-                    s.duel_win_streak = res.data.duel_win_streak;
-                    s.duel_best_streak = res.data.duel_best_streak;
                     s.max_streak = res.data.max_streak;
                     s.reveals = res.data.reveals_count;
-                    s.league_tier = res.data.league_tier;
                     s.unlocked_badges = res.data.unlocked_badges || [];
                     try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch(e) {}
                     console.log('[Gamification] State loaded from Supabase, NBP:', s.nbp);
@@ -254,19 +186,11 @@
             total_xp: 0,         // toplam XP
             level: 1,
             // İstatistikler
-            quiz_correct: 0,
-            quiz_wrong: 0,
-            quiz_total: 0,
-            duel_wins: 0,
-            duel_losses: 0,
-            duel_win_streak: 0,
-            duel_best_streak: 0,
             total_analyses: 0,
             connections: 0,
             reveals: 0,
             max_streak: 0,
             current_streak: 0,
-            league_tier: 0,
             all_quests_streak: 0,
             // Günlük
             daily_quests: [],
@@ -313,11 +237,6 @@
         s.daily_xp_earned += xp;
 
         // Stat güncelle
-        if (action === 'quiz_correct') s.quiz_correct++;
-        if (action === 'quiz_wrong') s.quiz_wrong++;
-        if (action === 'quiz_correct' || action === 'quiz_wrong') s.quiz_total++;
-        if (action === 'duel_win') { s.duel_wins++; s.duel_win_streak++; if (s.duel_win_streak > s.duel_best_streak) s.duel_best_streak = s.duel_win_streak; }
-        if (action === 'duel_lose') { s.duel_losses++; s.duel_win_streak = 0; }
         if (action === 'compatibility') s.total_analyses++;
         if (action === 'add_connection') s.connections++;
         if (action === 'reveal_match') s.reveals++;
@@ -452,7 +371,7 @@
             s.nbp += Math.round(bonus * 0.7);
             s.all_quests_streak++;
 
-            // Kozmik Sandık ödülü
+            // Bonus Sandık ödülü
             var chest = generateChestReward(s);
             s.pending_rewards.push(chest);
         }
@@ -505,225 +424,8 @@
             var cardNum = Math.floor(Math.random() * 12) + 1; // 1-12
             if (cardNum > 9 && cardNum <= 11) cardNum = 11;
             if (cardNum > 11) cardNum = 22;
-            return { type: 'chest', rarity: 'common', reward: 'card', label: cardNum + ' Kozmik Kartı', icon: 'style', color: '#ec4899', cardNumber: cardNum };
+            return { type: 'chest', rarity: 'common', reward: 'card', label: cardNum + ' Analiz Kartı', icon: 'style', color: '#ec4899', cardNumber: cardNum };
         }
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // QUIZ SİSTEMİ
-    // ═══════════════════════════════════════════════════════════
-    function getQuizQuestion(difficulty) {
-        var s = getState();
-        var rank = getCurrentRank();
-
-        // Rütbeye göre zorluk ayarla
-        var maxDiff = 1;
-        if (rank.minNBP >= 100) maxDiff = 2;
-        if (rank.minNBP >= 600) maxDiff = 3;
-        if (rank.minNBP >= 2000) maxDiff = 4;
-
-        var targetDiff = difficulty || Math.min(maxDiff, 1 + Math.floor(Math.random() * maxDiff));
-
-        var pool = QUIZ_BANK.filter(function(q) { return q.diff <= targetDiff + 1 && q.diff >= targetDiff - 1; });
-        if (pool.length === 0) pool = QUIZ_BANK;
-
-        // Rastgele seç
-        var idx = Math.floor(Math.random() * pool.length);
-        return pool[idx];
-    }
-
-    function answerQuiz(questionIndex, selectedOpt, question) {
-        var isCorrect = selectedOpt === question.correct;
-        if (isCorrect) {
-            // Zorluk bonusu
-            var bonus = (question.diff - 1) * 5;
-            addXP('quiz_correct', bonus);
-            trackAction('quiz_attempt');
-
-            // 3 doğru peşpeşe?
-            var s = getState();
-            trackAction('quiz_3_correct');
-        } else {
-            addXP('quiz_wrong', 0);
-            trackAction('quiz_attempt');
-        }
-        return isCorrect;
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // DÜELLO
-    // ═══════════════════════════════════════════════════════════
-    function startDuel() {
-        // 5 soru ile düello
-        var questions = [];
-        for (var i = 0; i < 5; i++) {
-            var diff = 1 + Math.floor(i / 2); // giderek zorlaşır
-            questions.push(getQuizQuestion(diff));
-        }
-        return { questions: questions, playerScore: 0, opponentScore: 0 };
-    }
-
-    function finishDuel(playerCorrect, totalQuestions) {
-        // Rakip AI simülasyonu (rütbeye göre zorluk)
-        var rank = getCurrentRank();
-        var aiDifficulty = Math.min(0.8, 0.4 + (rank.minNBP / 5000));
-        var opponentCorrect = 0;
-        for (var i = 0; i < totalQuestions; i++) {
-            if (Math.random() < aiDifficulty) opponentCorrect++;
-        }
-
-        var won = playerCorrect > opponentCorrect;
-        var tied = playerCorrect === opponentCorrect;
-
-        if (won) {
-            addXP('duel_win', 0);
-        } else if (!tied) {
-            addXP('duel_lose', 0);
-        } else {
-            addXP('quiz_correct', 10); // berabere
-        }
-
-        var s = getState();
-        var rewards = [];
-
-        // Win streak kontrolleri
-        if (won) {
-            if (s.duel_win_streak === 3) {
-                rewards.push({ type: 'badge', id: 'duel_3', name: 'Yenilmez Rozeti! (24 saat profilde)' });
-            }
-            if (s.duel_win_streak === 5) {
-                rewards.push({ type: 'card', name: 'Nadir Koleksiyon Kartı!' });
-            }
-            if (s.duel_win_streak === 10) {
-                rewards.push({ type: 'premium', days: 1, name: '1 Gün Premium + Düello Efsanesi Rozeti!' });
-                s.premium_days_earned++;
-                saveState(s);
-            }
-        }
-
-        return {
-            won: won,
-            tied: tied,
-            playerScore: playerCorrect,
-            opponentScore: opponentCorrect,
-            winStreak: s.duel_win_streak,
-            rewards: rewards
-        };
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // LEADERBOARD
-    // ═══════════════════════════════════════════════════════════
-    var LEAGUES = [
-        { tier: 1, name: 'Bronz Ay',      color: '#cd7f32', icon: 'dark_mode' },
-        { tier: 2, name: 'Gümüş Yıldız',  color: '#c0c0c0', icon: 'star' },
-        { tier: 3, name: 'Altın Güneş',    color: '#ffd700', icon: 'light_mode' },
-        { tier: 4, name: 'Platin Nebula',  color: '#e5e7eb', icon: 'blur_circular' },
-        { tier: 5, name: 'Elmas Galaksi',  color: '#60a5fa', icon: 'diamond' }
-    ];
-
-    function getCurrentLeague() {
-        var s = getState();
-        var tier = s.league_tier || 1;
-        if (tier < 1) tier = 1;
-        if (tier > LEAGUES.length) tier = LEAGUES.length;
-        return LEAGUES[tier - 1];
-    }
-
-    // Gerçek leaderboard — Supabase'den çek
-    async function getLeaderboardAsync() {
-        var s = getState();
-        var league = getCurrentLeague();
-
-        try {
-            if (!window.supabaseClient) throw new Error('No Supabase');
-
-            var res = await window.supabaseClient
-                .from('user_gamification')
-                .select('user_id, display_name, weekly_xp, nbp, rank_id, league_tier')
-                .eq('league_tier', league.tier)
-                .order('weekly_xp', { ascending: false })
-                .limit(20);
-
-            if (res.data && res.data.length > 0) {
-                var session = null;
-                try { session = await window.auth.getSession(); } catch(e) {}
-                var myId = session && session.user ? session.user.id : null;
-
-                var board = res.data.map(function(row) {
-                    var rank = getRankByNBP(row.nbp || 0);
-                    return {
-                        name: row.display_name || 'Kaşif',
-                        weeklyXP: row.weekly_xp || 0,
-                        rank: rank,
-                        isUser: row.user_id === myId
-                    };
-                });
-
-                // Kendimi bulamadıysam ekle
-                var found = board.some(function(b) { return b.isUser; });
-                if (!found && myId) {
-                    var userData = null;
-                    try { userData = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
-                    var myName = (userData && userData.name) ? userData.name : 'Sen';
-                    board.push({ name: myName, weeklyXP: s.daily_xp_earned || 0, rank: getCurrentRank(), isUser: true });
-                    board.sort(function(a, b) { return b.weeklyXP - a.weeklyXP; });
-                }
-
-                return board.slice(0, 20);
-            }
-        } catch(e) {
-            console.warn('[Gamification] Leaderboard fetch failed, using local:', e);
-        }
-
-        // Fallback: simüle leaderboard (henüz DB'de kimse yokken)
-        return getLeaderboardSimulated();
-    }
-
-    // Simüle leaderboard (offline / boş DB fallback)
-    function getLeaderboardSimulated() {
-        var s = getState();
-        var today = todayStr();
-        var seed = hashDate(today);
-
-        var userData = null;
-        try { userData = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
-        var myName = (userData && userData.name) ? userData.name : 'Sen';
-
-        var names = ['Elif A.', 'Ahmet K.', 'Zeynep M.', 'Can B.', 'Ayşe T.', 'Emre Ö.', 'Selin Y.', 'Berk D.', 'Deniz G.', 'Nisa R.', 'Kaan S.', 'Ece F.', 'Mert Ç.', 'Defne H.', 'Yusuf İ.', 'İrem L.', 'Oğuz N.', 'Hira P.', 'Alp V.'];
-        var league = getCurrentLeague();
-        var baseXP = league.tier * 200;
-
-        var board = names.map(function(n, i) {
-            var xp = baseXP + Math.floor((seed * (i + 7)) % 500) + Math.floor(Math.random() * 50);
-            var rIdx = Math.min(RANKS.length - 1, Math.floor(xp / 400));
-            return { name: n, weeklyXP: xp, rank: RANKS[rIdx], isUser: false };
-        });
-        board.push({ name: myName, weeklyXP: s.daily_xp_earned + Math.floor(s.nbp * 0.1), rank: getCurrentRank(), isUser: true });
-        board.sort(function(a, b) { return b.weeklyXP - a.weeklyXP; });
-        return board.slice(0, 20);
-    }
-
-    // Senkron versiyon (eski uyumluluk)
-    function getLeaderboard() {
-        return getLeaderboardSimulated();
-    }
-
-    // Quiz sonucunu Supabase'e kaydet
-    async function saveQuizResult(mode, correct, total, xp, duelWon) {
-        try {
-            if (!window.supabaseClient || !window.auth) return;
-            var session = await window.auth.getSession();
-            if (!session || !session.user) return;
-            await window.supabaseClient.from('quiz_results').insert({
-                user_id: session.user.id,
-                mode: mode,
-                correct_count: correct,
-                total_count: total,
-                xp_earned: xp,
-                duel_won: duelWon
-            });
-        } catch(e) { console.warn('[Quiz] Save error:', e); }
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -770,7 +472,7 @@
         var title = '';
         var subtitle = '';
         if (reward.type === 'chest') {
-            title = '🎁 Kozmik Sandık!';
+            title = '🎁 Bonus Sandık!';
             subtitle = reward.label;
         } else if (reward.type === 'rank_up') {
             title = '⭐ Rütbe Yükseldi!';
@@ -860,21 +562,6 @@
         completeQuest: completeQuest,
         trackAction: trackAction,
 
-        // Quiz
-        getQuestion: getQuizQuestion,
-        answerQuiz: answerQuiz,
-        QUIZ_BANK: QUIZ_BANK,
-
-        // Düello
-        startDuel: startDuel,
-        finishDuel: finishDuel,
-
-        // Leaderboard
-        getLeaderboard: getLeaderboard,
-        getLeaderboardAsync: getLeaderboardAsync,
-        getLeague: getCurrentLeague,
-        LEAGUES: LEAGUES,
-
         // Rozetler
         getUnlockedBadges: getUnlockedBadges,
         getLockedBadges: getLockedBadges,
@@ -887,7 +574,6 @@
         // Supabase
         syncToSupabase: function() { syncToSupabase(getState()); },
         loadFromSupabase: loadFromSupabase,
-        saveQuizResult: saveQuizResult,
 
         // Dev
         resetState: function() { localStorage.removeItem(STATE_KEY); window.location.reload(); },

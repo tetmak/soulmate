@@ -8,6 +8,14 @@
 
   // ─── PİSAGOR TABLOSU ─────────────────────────────────────────
   // 1:A,J,S,Ş | 2:B,K,T | 3:C,Ç,L,U,Ü | 4:D,M,V | 5:E,N,W | 6:F,O,Ö,X | 7:G,Ğ,P,Y | 8:H,Q,Z | 9:I,İ,R
+  // Native app (Capacitor) ise Vercel production URL'sini kullan
+  var _isNative = window.location.protocol === 'capacitor:' ||
+                  window.location.protocol === 'ionic:' ||
+                  window.location.hostname === 'localhost' ||
+                  window.location.protocol === 'file:' ||
+                  (typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  var API_BASE = _isNative ? 'https://soulmate-kohl.vercel.app' : '';
+
   var TABLE = {
     A:1, B:2, C:3, D:4, E:5, F:6, G:7, H:8, I:9,
     J:1, K:2, L:3, M:4, N:5, O:6, P:7, Q:8, R:9,
@@ -159,12 +167,19 @@ YAZI KURALLARI:
     },
 
     karmic: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Karmik Bağ analizi.\n\n' +
+      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Derinlemesine Karmik Bağ analizi.\n\n' +
         'Tüm sayılar:\n' +
         ctx.p1.name + ': Kader=' + ctx.p1.lifePath + ', Ruh=' + ctx.p1.soulUrge + ', Kişilik=' + ctx.p1.personality + ', İfade=' + ctx.p1.expression + '\n' +
         ctx.p2.name + ': Kader=' + ctx.p2.lifePath + ', Ruh=' + ctx.p2.soulUrge + ', Kişilik=' + ctx.p2.personality + ', İfade=' + ctx.p2.expression + '\n\n' +
-        'Bu iki insanın tüm sayılarını bütüncül olarak değerlendirerek aralarındaki karmik bağı, geçmişten gelen kökleri ve bu ilişkinin ruhsal amacını anlat.\n' +
-        '3 paragraf, 150-170 kelime, mistik ve derin ton.';
+        'ZORUNLU FORMAT — aşağıdaki 7 başlığı aynen ve bu sırayla kullan:\n\n' +
+        '**Geçmiş Yaşam Bağı**\n[Bu iki ruhun geçmişten gelen karmik köklerini, hangi yaşamlarda karşılaştıklarını ve tamamlanmamış işlerini anlat — 2 paragraf]\n\n' +
+        '**Ruhsal Amaç**\n[Bu ilişkinin ruhsal amacını, birlikte öğrenecekleri karmik dersi ve evren tarafından neden bir araya getirildiklerini anlat — 2 paragraf]\n\n' +
+        '**Karmik Denge**\n[Aralarındaki enerji dengesini, çatışma noktalarını, tetikleyici kalıpları ve uyum alanlarını detaylı anlat — 2 paragraf]\n\n' +
+        '**Para & Maddi Dünya**\n[Bu karmik bağın para, bolluk ve maddi konulardaki etkisini analiz et. Birlikte finansal kararlar alırken hangi dinamikler devreye girer, parayla ilişkileri birbirini nasıl etkiler, ortak maddi hedeflerde uyum veya çatışma noktaları neler — 2 paragraf]\n\n' +
+        '**İlişki & Duygusal Alan**\n[Bu iki ruhun duygusal bağını, aşk dillerini, güven dinamiklerini, bağlanma biçimlerini ve ilişkide tekrar eden karmik kalıpları analiz et. Birbirlerinin hangi duygusal yaralarını tetikler, nasıl iyileştirirler — 2 paragraf]\n\n' +
+        '**Sağlık & Enerji Bedeni**\n[Bu karmik bağın fiziksel ve enerjetik sağlık üzerindeki etkisini analiz et. Birlikte hangi chakralar aktifleşir, hangi enerji blokajları çözülür, birbirlerinin fiziksel ve ruhsal enerjisini nasıl etkilerler — 2 paragraf]\n\n' +
+        '**Kariyer & Yaşam Misyonu**\n[Bu karmik bağın kariyer, iş hayatı ve yaşam misyonu üzerindeki etkisini analiz et. Profesyonel alanda birbirlerini nasıl destekler veya engellerler, ortak bir misyonları var mı, kariyer yollarında bu bağ nasıl yansır — 2 paragraf]\n\n' +
+        'Toplam 500-600 kelime, mistik ve derin ton. Her başlık altında gerçekten sayısal enerjilere dayanan somut analiz yap. Başlıkları DEĞİŞTİRME, aynen yaz.';
     },
 
     communication: function(ctx) {
@@ -198,7 +213,7 @@ YAZI KURALLARI:
     var names = [ctx.p1.name, ctx.p2.name]
       .map(function(n){ return n.toLowerCase().trim().replace(/\s+/g,'_'); })
       .sort();
-    return 'kader_compat_ai__' + names[0] + '__' + names[1] + '__' + type;
+    return 'kader_compat_ai_v2__' + names[0] + '__' + names[1] + '__' + type;
   }
 
   // Sync cache getter — loading animasyonunu atlamak için
@@ -219,10 +234,10 @@ YAZI KURALLARI:
     var promptFn = COMPAT_PROMPTS[type];
     if (!promptFn) return null;
 
-    var maxTokens = (type === 'full_compat') ? 1000 : 350;
+    var maxTokens = (type === 'full_compat') ? 1000 : (type === 'karmic') ? 900 : 350;
 
     try {
-      var res = await fetch('/api/openai', {
+      var res = await fetch(API_BASE + '/api/openai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -299,7 +314,8 @@ YAZI KURALLARI:
   }
 
   function renderText(text) {
-    return text.split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2cc0d;font-weight:800;">$1</strong>')
+      .split(/\n\n+/).filter(function(p){ return p.trim(); }).map(function(p){
       return '<p style="margin-bottom:14px;font-size:14px;line-height:1.85;">' + p.trim() + '</p>';
     }).join('');
   }

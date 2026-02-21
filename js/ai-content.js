@@ -9,6 +9,14 @@
   var PAGE = window.location.pathname.split('/').pop() || '';
   var CACHE_PREFIX = 'kader_ai_';
 
+  // Native app (Capacitor) ise Vercel production URL'sini kullan
+  var isNative = window.location.protocol === 'capacitor:' ||
+                 window.location.protocol === 'ionic:' ||
+                 window.location.hostname === 'localhost' ||
+                 window.location.protocol === 'file:' ||
+                 (typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  var API_BASE = isNative ? 'https://soulmate-kohl.vercel.app' : '';
+
   // ─── Skeleton loading stili ────────────────────────────────────────
   var skeletonStyle = document.createElement('style');
   skeletonStyle.textContent = `
@@ -48,7 +56,7 @@ Sadece istenen metni yaz, başlık veya açıklama ekleme.`;
     var cached = sessionStorage.getItem(CACHE_PREFIX + btoa(prompt).slice(0,40));
     if (cached) return cached;
 
-    var r = await fetch('/api/openai', {
+    var r = await fetch(API_BASE + '/api/openai', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,12 +98,28 @@ Sadece istenen metni yaz, başlık veya açıklama ekleme.`;
     var today = new Date();
     var days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
     var months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+    // Kullanıcı verilerini localStorage'dan al (data attribute'lardan daha güvenilir)
+    var userName = 'Değerli ruh';
+    var lifePathNumber = '7';
+    try {
+      var ud = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+      if (ud.name) userName = ud.name.split(' ')[0]; // sadece ilk isim
+      if (ud.lifePath) lifePathNumber = String(ud.lifePath);
+    } catch(e) {}
+
+    // Fallback: DOM'dan kontrol et
+    var lpEl = document.querySelector('[data-life-path]');
+    if (lpEl && lpEl.dataset.lifePath) lifePathNumber = lpEl.dataset.lifePath;
+    var unEl = document.querySelector('[data-user-name]');
+    if (unEl && unEl.dataset.userName) userName = unEl.dataset.userName;
+
     return {
       date: today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear(),
       day: days[today.getDay()],
       dayNum: today.getDate(),
-      lifePathNumber: document.querySelector('[data-life-path]')?.dataset.lifePath || '7',
-      userName: document.querySelector('[data-user-name]')?.dataset.userName || 'Değerli ruh',
+      lifePathNumber: lifePathNumber,
+      userName: userName,
     };
   }
 
