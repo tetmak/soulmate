@@ -15,7 +15,7 @@
         while(n>9){ n=String(n).split('').reduce(function(a,d){return a+parseInt(d);},0); if(n===11||n===22||n===33) break; }
         return n;
     }
-    function calcLP(d) { if(!d) return 7; return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0)); }
+    function calcLP(d) { if(!d) return null; return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0)); }
     function calcExp(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++) s+=(TABLE[c[i]]||0); return reduce(s); }
     function calcSoul(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++){ if(VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0); } return reduce(s); }
     function calcPers(name) { var s=0,c=(name||'').toUpperCase().replace(/[^A-ZÇĞİIÖŞÜ]/g,''); for(var i=0;i<c.length;i++){ if(!VOWELS.includes(c[i])) s+=(TABLE[c[i]]||0); } return reduce(s); }
@@ -26,11 +26,24 @@
     function getScore(a, b) { var k=a<=b?a+'-'+b:b+'-'+a; return CM[k]||70; }
 
     function calcFullMatch(user, other) {
-        var lp = getScore(user.life_path||7, other.life_path||7);
-        var soul = getScore(user.soul_urge||5, other.soul_urge||5);
-        var pers = getScore(user.personality_num||3, other.personality_num||3);
-        var exp = getScore(user.expression_num||1, other.expression_num||1);
-        return Math.round(lp*0.35 + soul*0.30 + pers*0.20 + exp*0.15);
+        var dims = [];
+        var uLP = user.life_path || calcLP(user.birth_date);
+        var oLP = other.life_path || calcLP(other.birth_date);
+        var uSoul = user.soul_urge || calcSoul(user.full_name);
+        var oSoul = other.soul_urge || calcSoul(other.full_name);
+        var uPers = user.personality_num || calcPers(user.full_name);
+        var oPers = other.personality_num || calcPers(other.full_name);
+        var uExp = user.expression_num || calcExp(user.full_name);
+        var oExp = other.expression_num || calcExp(other.full_name);
+
+        if (uLP && oLP) dims.push({ score: getScore(uLP, oLP), w: 0.35 });
+        if (uSoul && oSoul) dims.push({ score: getScore(uSoul, oSoul), w: 0.30 });
+        if (uPers && oPers) dims.push({ score: getScore(uPers, oPers), w: 0.20 });
+        if (uExp && oExp) dims.push({ score: getScore(uExp, oExp), w: 0.15 });
+
+        if (!dims.length) return 70; // fallback
+        var totalW = dims.reduce(function(a,d){return a+d.w;},0);
+        return Math.round(dims.reduce(function(a,d){return a + d.score*(d.w/totalW);},0));
     }
 
     // ─── ARKETIP ETİKETLERİ ──────────────────────────────────
@@ -175,7 +188,9 @@
                     .maybeSingle();
 
                 if (profileRes.data) {
-                    existing.data.matched = profileRes.data;
+                    var mp = profileRes.data;
+                    if (mp.birth_date) mp.life_path = calcLP(mp.birth_date);
+                    existing.data.matched = mp;
                     return existing.data;
                 }
             }
@@ -184,6 +199,16 @@
         // Yoksa yeni eşleşme hesapla
         var profiles = await fetchDiscoverableProfiles(userId);
         if (!profiles.length) return null;
+
+        // Recalculate life_path from birth_date
+        profiles.forEach(function(p) {
+            if (p.birth_date) p.life_path = calcLP(p.birth_date);
+            if (p.full_name) {
+                if (!p.expression_num) p.expression_num = calcExp(p.full_name);
+                if (!p.soul_urge) p.soul_urge = calcSoul(p.full_name);
+                if (!p.personality_num) p.personality_num = calcPers(p.full_name);
+            }
+        });
 
         // Geçmiş eşleşmeleri al (son 30 gün tekrar etmesin)
         var pastIds = [];
@@ -273,6 +298,18 @@
         var profiles = await fetchDiscoverableProfiles(userId);
         if (!profiles.length) return [];
 
+        // Recalculate life_path from birth_date for profiles with missing/wrong data
+        profiles.forEach(function(p) {
+            if (p.birth_date) {
+                p.life_path = calcLP(p.birth_date);
+            }
+            if (p.full_name) {
+                if (!p.expression_num) p.expression_num = calcExp(p.full_name);
+                if (!p.soul_urge) p.soul_urge = calcSoul(p.full_name);
+                if (!p.personality_num) p.personality_num = calcPers(p.full_name);
+            }
+        });
+
         var scored = profiles.map(function(p) {
             return { profile: p, score: calcFullMatch(userProfile, p) };
         });
@@ -301,12 +338,41 @@
                     .in('user_id', matchedIds);
 
                 var profileMap = {};
-                (profilesRes.data || []).forEach(function(p) { profileMap[p.user_id] = p; });
+                (profilesRes.data || []).forEach(function(p) {
+                    // Recalculate life_path from birth_date
+                    if (p.birth_date) p.life_path = calcLP(p.birth_date);
+                    if (p.full_name) {
+                        if (!p.expression_num) p.expression_num = calcExp(p.full_name);
+                        if (!p.soul_urge) p.soul_urge = calcSoul(p.full_name);
+                        if (!p.personality_num) p.personality_num = calcPers(p.full_name);
+                    }
+                    profileMap[p.user_id] = p;
+                });
                 matches.forEach(function(m) { m.matched = profileMap[m.matched_user_id] || null; });
             }
 
             return matches;
         } catch(e) { return []; }
+    }
+
+    // ─── PROFIL YENİLE (mevcut kullanıcının verilerini düzelt) ─
+    async function refreshOwnProfile(userId) {
+        var ud = null;
+        try { ud = JSON.parse(localStorage.getItem('numerael_user_data')||'null'); } catch(e){}
+        if (!ud || !ud.name || !ud.birthDate) return;
+
+        var lp = calcLP(ud.birthDate);
+        if (!lp) return;
+
+        try {
+            await window.supabaseClient.from('discovery_profiles').update({
+                life_path: lp,
+                expression_num: calcExp(ud.name),
+                soul_urge: calcSoul(ud.name),
+                personality_num: calcPers(ud.name),
+                updated_at: new Date().toISOString()
+            }).eq('user_id', userId);
+        } catch(e) {}
     }
 
     // ─── GLOBAL EXPORT ───────────────────────────────────────
@@ -327,6 +393,7 @@
         // Opt-in/out
         optIn: optIn,
         optOut: optOut,
+        refreshOwnProfile: refreshOwnProfile,
 
         // Eşleşme
         findDailyMatch: findDailyMatch,

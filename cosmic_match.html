@@ -384,6 +384,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // ─── ANA İÇERİK YÜKLEME ─────────────────────────────────
     async function initMain() {
+        // Mevcut kullanıcının profilini doğru değerlerle güncelle
+        await window.discovery.refreshOwnProfile(userId);
+
         // Streak güncelle
         var streak = await window.discovery.updateStreak(userId);
         renderStreak(streak);
@@ -556,13 +559,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         emptyEl.style.display = 'none';
 
         matches.forEach(function(match) {
-            if (!match.matched) return;
-            var m = match.matched;
+            var m = match.matched || { full_name: 'Bilinmeyen', life_path: null };
             var revealed = match.revealed;
-            var displayName = revealed ? (m.full_name||'???') : maskName(m.full_name);
+            var displayName = revealed ? (m.full_name||'Bilinmeyen') : maskName(m.full_name||'Bilinmeyen');
             var score = match.match_score || 0;
             var date = match.match_date || '';
-            var arch = window.discovery.ARCHETYPES[m.life_path] || '';
+            var arch = m.life_path ? (window.discovery.ARCHETYPES[m.life_path] || '') : '';
 
             var card = document.createElement('div');
             card.className = 'flex items-center gap-3 p-3.5 glass-cosmic rounded-2xl';
