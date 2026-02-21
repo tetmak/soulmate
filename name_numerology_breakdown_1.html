@@ -325,7 +325,7 @@
 
 
     <!-- ═══ NUMEROLOJİ USTASI CHAT MODAL ═══ -->
-    <div id="master-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);flex-direction:column;">
+    <div id="master-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);flex-direction:column;">
         <div style="display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;position:relative;">
             <!-- Modal Header -->
             <div style="background:linear-gradient(135deg,#1a0808,#2d1010);border-bottom:1px solid rgba(192,57,43,0.3);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
@@ -1021,6 +1021,9 @@
             chatHistory = [];
             var modal = document.getElementById('master-modal');
             modal.style.display = 'flex';
+            // Bottom nav'ı gizle — chat input'u kapatmasın
+            var nav = document.getElementById('kader-bottom-nav');
+            if (nav) nav.style.display = 'none';
             var msgEl = document.getElementById('master-messages');
             msgEl.innerHTML = '';
 
@@ -1083,6 +1086,9 @@ SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
 
         window.closeMasterModal = function() {
             document.getElementById('master-modal').style.display = 'none';
+            // Bottom nav'ı geri getir
+            var nav = document.getElementById('kader-bottom-nav');
+            if (nav) nav.style.display = 'flex';
         };
 
         function addMessage(role, text) {
