@@ -1,5 +1,5 @@
 /**
- * KADER — Decision Timing Engine v1.0
+ * NUMERAEL — Decision Timing Engine v1.0
  * Deterministik karar zamanlama motoru.
  * Aynı giriş HER ZAMAN aynı çıkışı üretir. Rastgelelik yok.
  *

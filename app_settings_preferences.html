@@ -359,7 +359,7 @@
     </div>
 
     <script>
-            // KADER APP - Navigation Helper
+            // NUMERAEL APP - Navigation Helper
             (function () {
                 // Auto navigation için
                 var autoTarget = '';
@@ -453,7 +453,7 @@
             var isPremiumUser = false;
             var premiumData = null;
             try {
-                var cache = JSON.parse(localStorage.getItem('kader_premium') || 'null');
+                var cache = JSON.parse(localStorage.getItem('numerael_premium') || 'null');
                 if (cache && cache.active) {
                     if (!cache.expires_at || new Date(cache.expires_at) > new Date()) {
                         isPremiumUser = true;
@@ -466,7 +466,7 @@
             if (!isPremiumUser && window.premium) {
                 isPremiumUser = await window.premium.checkStatus();
                 if (isPremiumUser) {
-                    try { premiumData = JSON.parse(localStorage.getItem('kader_premium') || 'null'); } catch(e) {}
+                    try { premiumData = JSON.parse(localStorage.getItem('numerael_premium') || 'null'); } catch(e) {}
                 }
             }
 
@@ -477,7 +477,7 @@
                                   premiumData.source === 'revenuecat' ? (premiumData.store === 'ios' ? 'App Store' : 'Google Play') :
                                   premiumData.source === 'supabase' ? 'Sunucu' : 'Aktif';
 
-                subTitle.textContent = 'Kader Premium';
+                subTitle.textContent = 'Numerael Premium';
                 subDetail.textContent = planLabel + ' · ' + sourceLabel;
 
                 subBadge.textContent = 'AKTİF';
@@ -547,7 +547,7 @@
             }
 
             // Premium değişikliği dinle
-            window.addEventListener('kader:premium-changed', function() {
+            window.addEventListener('numerael:premium-changed', function() {
                 window.location.reload();
             });
 

@@ -1,4 +1,4 @@
-# Kader Premium — Paddle Kurulum Rehberi
+# Numerael Premium — Paddle Kurulum Rehberi
 
 ## 1. Paddle Hesabı
 1. https://vendors.paddle.com adresinde hesap oluştur
@@ -9,7 +9,7 @@
 
 ## 2. Ürün Oluştur
 1. Paddle Dashboard → **Catalog** → **Products** → **+ New Product**
-2. Ürün adı: **Kader Premium**
+2. Ürün adı: **Numerael Premium**
 3. Açıklama: Sınırsız AI analiz, Cosmic Match, tam numeroloji
 
 ## 3. Fiyatlar Oluştur
@@ -17,8 +17,8 @@
 
 | Fiyat Adı | Tutar | Periyot | Para Birimi |
 |---|---|---|---|
-| Kader Premium Aylık | ₺79.99 | Aylık (monthly) | TRY |
-| Kader Premium Yıllık | ₺599.99 | Yıllık (yearly) | TRY |
+| Numerael Premium Aylık | ₺79.99 | Aylık (monthly) | TRY |
+| Numerael Premium Yıllık | ₺599.99 | Yıllık (yearly) | TRY |
 
 Her fiyatın **Price ID**'sini kopyala (`pri_` ile başlar).
 

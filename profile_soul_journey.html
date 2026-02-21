@@ -232,7 +232,7 @@
 
     // ─── Veri ─────────────────────────────────────────────────
     var ud = null;
-    try { ud = JSON.parse(localStorage.getItem('kader_user_data')||'null'); } catch(e){}
+    try { ud = JSON.parse(localStorage.getItem('numerael_user_data')||'null'); } catch(e){}
     if (!ud || !ud.name) { window.location.href='data-ready_birth_form.html'; return; }
 
     var name=ud.name, bd=ud.birthDate||'';
@@ -280,7 +280,7 @@
 
     // ─── Uyumluluk Geçmişi ───────────────────────────────────
     var hist = [];
-    try { hist = JSON.parse(localStorage.getItem('kader_compat_history')||'[]'); } catch(e){}
+    try { hist = JSON.parse(localStorage.getItem('numerael_compat_history')||'[]'); } catch(e){}
     var listEl = document.getElementById('compat-history-list');
     var emptyEl = document.getElementById('compat-empty');
 
@@ -311,7 +311,7 @@
 
             div.addEventListener('click', function() {
                 try {
-                    localStorage.setItem('kader_compat_data', JSON.stringify({
+                    localStorage.setItem('numerael_compat_data', JSON.stringify({
                         person1: { name: name, birthDate: bd },
                         person2: { name: pName, birthDate: pDate }
                     }));
@@ -324,7 +324,7 @@
 
     // ─── Cosmic Match Keşfedilebilirlik Toggle ────────────────
     var toggleEl = document.getElementById('toggle-discoverable');
-    var isOptedIn = localStorage.getItem('kader_discovery_opted_in') === 'true';
+    var isOptedIn = localStorage.getItem('numerael_discovery_opted_in') === 'true';
     toggleEl.checked = isOptedIn;
 
     toggleEl.addEventListener('change', async function() {
@@ -348,12 +348,12 @@
         var keys = Object.keys(localStorage);
         var cleared = 0;
         keys.forEach(function(k) {
-            if (k.indexOf('kader_karmic') !== -1 && k.indexOf(slug) !== -1) {
+            if (k.indexOf('numerael_karmic') !== -1 && k.indexOf(slug) !== -1) {
                 localStorage.removeItem(k);
                 cleared++;
             }
             // accordion-ai cache'leri de temizle
-            if (k.indexOf('kader_accord_') !== -1 && k.indexOf(slug) !== -1) {
+            if (k.indexOf('numerael_accord_') !== -1 && k.indexOf(slug) !== -1) {
                 localStorage.removeItem(k);
                 cleared++;
             }
@@ -367,9 +367,9 @@
     // ─── Logout ───────────────────────────────────────────────
     document.getElementById('btn-logout').addEventListener('click', async function() {
         try {
-            // kader_user_data SİLİNMEZ — tekrar login'de form sormasın diye
-            localStorage.removeItem('kader_compat_data');
-            localStorage.removeItem('kader_active_analysis');
+            // numerael_user_data SİLİNMEZ — tekrar login'de form sormasın diye
+            localStorage.removeItem('numerael_compat_data');
+            localStorage.removeItem('numerael_active_analysis');
             await window.auth.signOut();
         } catch(e){}
         window.location.href = 'mystic_splash_screen.html';

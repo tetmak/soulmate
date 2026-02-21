@@ -1,5 +1,5 @@
 /**
- * KADER — Numerology Context Engine v1.0
+ * NUMERAEL — Numerology Context Engine v1.0
  * Context-aware weighting + modular interpretation assembly
  *
  * Mevcut hesaplamaları DEĞİŞTİRMEZ. Üstüne bağlam katmanı ekler.
@@ -443,7 +443,7 @@
   // ═══════════════════════════════════════════════════════════
   // CACHE
   // ═══════════════════════════════════════════════════════════
-  var CACHE_PREFIX = 'kader_ctx_';
+  var CACHE_PREFIX = 'numerael_ctx_';
 
   function getCacheKey(input) {
     var d = new Date();

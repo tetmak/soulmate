@@ -1,7 +1,7 @@
 {
-  "name": "kader-soulmate",
+  "name": "numerael-soulmate",
   "version": "1.0.0",
-  "description": "Kader - Mistik Numeroloji ve Ruh Eşi Uygulaması",
+  "description": "Numerael - Mistik Numeroloji ve Ruh Eşi Uygulaması",
   "main": "index.html",
   "scripts": {
     "build": "bash scripts/build.sh",
@@ -10,7 +10,7 @@
     "cap:open:ios": "npx cap open ios",
     "cap:open:android": "npx cap open android"
   },
-  "author": "Kader App",
+  "author": "Numerael App",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {

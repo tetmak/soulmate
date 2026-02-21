@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     try { friend = await window.profile.getConnectionDetail(kisiName); } catch(e) {}
     if (!friend) {
         // Temp data from kisi_profil
-        try { friend = JSON.parse(localStorage.getItem('kader_kisi_temp')); } catch(e) {}
+        try { friend = JSON.parse(localStorage.getItem('numerael_kisi_temp')); } catch(e) {}
     }
 
     var friendName = friend ? (friend.fullName || kisiName) : decodeURIComponent(kisiName);
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // localStorage fallback
     if (!mainUser) {
         try {
-            var stored = localStorage.getItem('kader_user_profile');
+            var stored = localStorage.getItem('numerael_user_profile');
             if (stored) mainUser = JSON.parse(stored);
         } catch(e) {}
     }
@@ -642,7 +642,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function friendCacheKey(type) {
         var names = [user.name, fri.name].map(function(n) { return n.toLowerCase().trim().replace(/\s+/g,'_'); }).sort();
-        return 'kader_friend_ai__' + names[0] + '__' + names[1] + '__' + type;
+        return 'numerael_friend_ai__' + names[0] + '__' + names[1] + '__' + type;
     }
 
     function renderText(text) {
@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!promptFn) return;
 
         try {
-            var res = await fetch((window.__KADER_API_BASE||'') + '/api/openai', {
+            var res = await fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

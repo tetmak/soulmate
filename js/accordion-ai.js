@@ -1,5 +1,5 @@
 /**
- * KADER — Accordion AI Motor
+ * NUMERAEL — Accordion AI Motor
  * name_numerology_breakdown_1.html için
  * Sadece bu dosyayı ekle, başka hiçbir şeye dokunma.
  */
@@ -151,7 +151,7 @@
     // Kullanıcı verisi
     var params = new URLSearchParams(window.location.search);
     var ud = {};
-    try { ud = JSON.parse(localStorage.getItem('kader_user_data') || '{}'); } catch (e) { }
+    try { ud = JSON.parse(localStorage.getItem('numerael_user_data') || '{}'); } catch (e) { }
 
     var name = params.get('kisi') || ud.name || '';
     var bDate = params.get('dt') || ud.birthDate || '';

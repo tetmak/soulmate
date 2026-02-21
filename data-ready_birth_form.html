@@ -167,7 +167,7 @@
     </div>
 
     <script>
-            // KADER APP - Navigation Helper
+            // NUMERAEL APP - Navigation Helper
             (function () {
                 // Auto navigation için
                 var autoTarget = '';
@@ -228,7 +228,7 @@
             var isNewPerson = urlParams.has('newperson');
             if (!isNewPerson) {
                 try {
-                    var localCheck = JSON.parse(localStorage.getItem('kader_user_data'));
+                    var localCheck = JSON.parse(localStorage.getItem('numerael_user_data'));
                     if (localCheck && localCheck.name && localCheck.birthDate) {
                         console.log('[Form] Profil zaten var, ana sayfaya yönlendiriliyor');
                         window.location.href = 'mystic_numerology_home_1.html';
@@ -263,7 +263,7 @@
                         }
                         // localStorage'ı da güncelle
                         // Supabase'de profil var ama localStorage'da yok — kaydet ve ana sayfaya yönlendir
-                        localStorage.setItem('kader_user_data', JSON.stringify({
+                        localStorage.setItem('numerael_user_data', JSON.stringify({
                             name: profName,
                             birthDate: prof.birth_date,
                             birthTime: prof.birth_time || '',
@@ -281,7 +281,7 @@
 
             // Signup'tan gelen adı input'a doldur — SADECE ilk kayıtta
             try {
-                var existing = JSON.parse(localStorage.getItem('kader_user_data') || 'null');
+                var existing = JSON.parse(localStorage.getItem('numerael_user_data') || 'null');
                 var isFirstTime = !existing || !existing.name;
                 if (isFirstTime) {
                     // Signup'ta kaydedilen isim varsa doldur
@@ -310,7 +310,7 @@
 
                     // Kayıt işlemi
                     try {
-                        const existing = (() => { try { return JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) { return null; } })();
+                        const existing = (() => { try { return JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) { return null; } })();
                         const isFirstTime = !existing || !existing.name;
 
                         const personData = {
@@ -323,7 +323,7 @@
 
                         if (isFirstTime) {
                             // İLK KAYIT — ana kullanıcı profili kalıcı olarak set edilir
-                            localStorage.setItem('kader_user_data', JSON.stringify(personData));
+                            localStorage.setItem('numerael_user_data', JSON.stringify(personData));
                             
                             // Supabase profiles tablosuna da kaydet
                             try {
@@ -351,7 +351,7 @@
                         }
 
                         // Aktif analiz (her seferinde güncellenir — profil etkilenmez)
-                        localStorage.setItem('kader_active_analysis', JSON.stringify(personData));
+                        localStorage.setItem('numerael_active_analysis', JSON.stringify(personData));
 
                         await window.profile.saveConnection({
                             fullName: name.trim(),

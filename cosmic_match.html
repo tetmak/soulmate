@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (!userId) { window.location.href = 'mystic_sign_up_screen.html'; return; }
 
     var ud = null;
-    try { ud = JSON.parse(localStorage.getItem('kader_user_data')||'null'); } catch(e){}
+    try { ud = JSON.parse(localStorage.getItem('numerael_user_data')||'null'); } catch(e){}
     if (!ud || !ud.name) { window.location.href = 'data-ready_birth_form.html'; return; }
 
     // User numerology profile
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // ─── OPT-IN KONTROLÜ ─────────────────────────────────────
-    var optedIn = localStorage.getItem('kader_discovery_opted_in') === 'true';
+    var optedIn = localStorage.getItem('numerael_discovery_opted_in') === 'true';
 
     if (!optedIn) {
         document.getElementById('optin-screen').style.display = 'flex';

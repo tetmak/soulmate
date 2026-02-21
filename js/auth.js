@@ -76,7 +76,7 @@ var auth = {
         // Session var ama localStorage boş — Supabase'den doldur
         if (session && publicPages.indexOf(currentPage) === -1) {
             var existingData = null;
-            try { existingData = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+            try { existingData = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
             
             if (!existingData || !existingData.name || !existingData.birthDate) {
                 try {
@@ -89,7 +89,7 @@ var auth = {
                             .single();
                         var prof = profResult.data;
                         if (prof && (prof.full_name || prof.name) && prof.birth_date) {
-                            localStorage.setItem('kader_user_data', JSON.stringify({
+                            localStorage.setItem('numerael_user_data', JSON.stringify({
                                 name: prof.full_name || prof.name,
                                 birthDate: prof.birth_date,
                                 birthTime: prof.birth_time || '',

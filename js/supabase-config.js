@@ -8,7 +8,7 @@ try {
                 persistSession: true,
                 autoRefreshToken: true,
                 detectSessionInUrl: true,
-                storageKey: 'kader-auth-token',
+                storageKey: 'numerael-auth-token',
                 storage: window.localStorage
             }
         });

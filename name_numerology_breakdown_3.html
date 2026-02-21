@@ -266,7 +266,7 @@
   </div>
 
   <script>
-    // KADER APP - Navigation Helper
+    // NUMERAEL APP - Navigation Helper
     (function () {
       // Auto navigation için
       var autoTarget = '';
@@ -392,7 +392,7 @@
               style="font-size:12px;color:#0a0907;pointer-events:none">favorite</span>
           </div>
           <span
-            style="font-size:10px;text-transform:uppercase;letter-spacing:0.2em;font-weight:800;color:#cfa117;font-family:Manrope,sans-serif">Kader
+            style="font-size:10px;text-transform:uppercase;letter-spacing:0.2em;font-weight:800;color:#cfa117;font-family:Manrope,sans-serif">Numerael
             Soulmate</span>
         </div>
         <!-- Main content -->
@@ -427,7 +427,7 @@
         <!-- Footer -->
         <div
           style="position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:9px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.1em;font-family:Manrope,sans-serif">
-          kader.app</div>
+          numerael.app</div>
       </div>
 
       <p
@@ -495,7 +495,7 @@
   <script src="js/decision-timing-engine.js"></script>
   <script src="js/numerology-ai.js"></script>
   <script>
-    // KADER APP - Navigation & Dynamic Logic
+    // NUMERAEL APP - Navigation & Dynamic Logic
     window.addEventListener('DOMContentLoaded', async function () {
       // Premium gate — sayfa 3 sadece premium
       if (window.premium && !window.premium.isPremium()) {
@@ -503,13 +503,13 @@
         return;
       }
       const params = new URLSearchParams(window.location.search);
-      // Partner ismini URL veya kader_compat_data'dan al
+      // Partner ismini URL veya numerael_compat_data'dan al
       let kisiName = params.get('kisi');
       let userData = null;
       let compatData = null;
 
-      try { userData = JSON.parse(localStorage.getItem('kader_user_data')); } catch (e) { }
-      try { compatData = JSON.parse(localStorage.getItem('kader_compat_data')); } catch (e) { }
+      try { userData = JSON.parse(localStorage.getItem('numerael_user_data')); } catch (e) { }
+      try { compatData = JSON.parse(localStorage.getItem('numerael_compat_data')); } catch (e) { }
 
       const userName = (userData && userData.name) ? userData.name : 'User';
 
@@ -648,7 +648,7 @@
         toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#cfa117;color:#0a0907;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:800;z-index:999;white-space:nowrap;font-family:Manrope,sans-serif';
         document.body.appendChild(toast); setTimeout(function () { toast.remove() }, 2000);
       }
-      if (t === 'other' && navigator.share) { navigator.share({ title: 'Ruh Esinim', text: 'Kader ile ruh bagimizi kesfettim!', url: window.location.href }); }
+      if (t === 'other' && navigator.share) { navigator.share({ title: 'Ruh Esinim', text: 'Numerael ile ruh bagimizi kesfettim!', url: window.location.href }); }
     }
   </script>
   <script src="js/compatibility-engine.js"></script>

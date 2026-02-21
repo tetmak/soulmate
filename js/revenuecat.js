@@ -1,12 +1,12 @@
 /**
- * KADER — RevenueCat Entegrasyonu (iOS & Android In-App Purchase)
+ * NUMERAEL — RevenueCat Entegrasyonu (iOS & Android In-App Purchase)
  *
  * Apple App Store ve Google Play Store için native ödeme sistemi.
  * Web'de Paddle, native uygulamalarda RevenueCat kullanılır.
  *
  * KURULUM:
  *   1. https://app.revenuecat.com → Hesap oluştur
- *   2. Projects → New Project → "Kader" oluştur
+ *   2. Projects → New Project → "Numerael" oluştur
  *   3. Apple App Store Connect ve Google Play Console bağla
  *   4. Products → Entitlements → "premium" oluştur
  *   5. Offerings → "default" offering oluştur (monthly + yearly package)
@@ -113,7 +113,7 @@
                     if (active && active[RC_ENTITLEMENT_ID]) {
                         var ent = active[RC_ENTITLEMENT_ID];
                         console.log('[RevenueCat] Premium durumu değişti → aktif');
-                        localStorage.setItem('kader_premium', JSON.stringify({
+                        localStorage.setItem('numerael_premium', JSON.stringify({
                             active: true,
                             plan: ent.productIdentifier && ent.productIdentifier.indexOf('yearly') !== -1 ? 'yearly' : 'monthly',
                             expires_at: ent.expirationDate || null,
@@ -123,11 +123,11 @@
                         }));
                         syncPremiumToSupabase(ent);
                         // UI'ı bilgilendir
-                        window.dispatchEvent(new CustomEvent('kader:premium-changed', { detail: { active: true } }));
+                        window.dispatchEvent(new CustomEvent('numerael:premium-changed', { detail: { active: true } }));
                     } else {
                         console.log('[RevenueCat] Premium durumu değişti → pasif');
-                        localStorage.removeItem('kader_premium');
-                        window.dispatchEvent(new CustomEvent('kader:premium-changed', { detail: { active: false } }));
+                        localStorage.removeItem('numerael_premium');
+                        window.dispatchEvent(new CustomEvent('numerael:premium-changed', { detail: { active: false } }));
                     }
                 }
             });
@@ -151,7 +151,7 @@
                     console.log('[RevenueCat] Premium aktif! Son kullanma:', entitlement.expirationDate);
 
                     // localStorage'ı güncelle (premium.js ile uyumlu)
-                    localStorage.setItem('kader_premium', JSON.stringify({
+                    localStorage.setItem('numerael_premium', JSON.stringify({
                         active: true,
                         plan: entitlement.productIdentifier && entitlement.productIdentifier.indexOf('yearly') !== -1 ? 'yearly' : 'monthly',
                         expires_at: entitlement.expirationDate || null,

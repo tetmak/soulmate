@@ -222,9 +222,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 await window.profile.deleteConnection(fullName);
             } else {
                 // Fallback: localStorage'dan sil
-                var userData = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+                var userData = JSON.parse(localStorage.getItem('numerael_user_data') || '{}');
                 var userId = userData.userId || 'default';
-                var key = 'kader_connections_' + userId;
+                var key = 'numerael_connections_' + userId;
                 var conns = JSON.parse(localStorage.getItem(key) || '[]');
                 conns = conns.filter(function(c) {
                     return c.fullName !== fullName;

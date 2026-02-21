@@ -1,5 +1,5 @@
 /**
- * KADER — Premium Abonelik Sistemi (Çoklu Platform)
+ * NUMERAEL — Premium Abonelik Sistemi (Çoklu Platform)
  *
  * Platform bazlı ödeme:
  *   - Web: Paddle.js v2 SDK ile overlay checkout
@@ -94,7 +94,7 @@
             var expires = new Date();
             expires.setDate(expires.getDate() + days);
 
-            localStorage.setItem('kader_premium', JSON.stringify({
+            localStorage.setItem('numerael_premium', JSON.stringify({
                 active: true,
                 plan: plan,
                 expires_at: expires.toISOString(),
@@ -138,11 +138,11 @@
     // ─── PREMIUM DURUMU ──────────────────────────────────────
     function isPremium() {
         try {
-            var cache = JSON.parse(localStorage.getItem('kader_premium') || 'null');
+            var cache = JSON.parse(localStorage.getItem('numerael_premium') || 'null');
             if (cache && cache.active) {
                 if (cache.expires_at && new Date(cache.expires_at) > new Date()) return true;
                 if (!cache.expires_at) return true;
-                localStorage.removeItem('kader_premium');
+                localStorage.removeItem('numerael_premium');
             }
         } catch(e) {}
         return false;
@@ -165,7 +165,7 @@
             if (res.data) {
                 var isActive = res.data.status === 'active' || (res.data.expires_at && new Date(res.data.expires_at) > new Date());
                 if (isActive) {
-                    localStorage.setItem('kader_premium', JSON.stringify({ active: true, plan: res.data.plan || 'monthly', expires_at: res.data.expires_at, source: 'supabase', cached_at: new Date().toISOString() }));
+                    localStorage.setItem('numerael_premium', JSON.stringify({ active: true, plan: res.data.plan || 'monthly', expires_at: res.data.expires_at, source: 'supabase', cached_at: new Date().toISOString() }));
                     return true;
                 }
             }
@@ -174,7 +174,7 @@
     }
 
     // ─── KULLANIM LİMİTLERİ ─────────────────────────────────
-    function getUsageKey(f) { return 'kader_usage_' + f + '_' + new Date().toISOString().slice(0, 7); }
+    function getUsageKey(f) { return 'numerael_usage_' + f + '_' + new Date().toISOString().slice(0, 7); }
     function getUsageCount(f) { try { return parseInt(localStorage.getItem(getUsageKey(f)) || '0'); } catch(e) { return 0; } }
     function incrementUsage(f) { var c = getUsageCount(f) + 1; try { localStorage.setItem(getUsageKey(f), c.toString()); } catch(e) {} return c; }
 
@@ -184,7 +184,7 @@
         switch (feature) {
             case 'add_connection':
                 var cc = 0;
-                try { var ks = Object.keys(localStorage); for (var i=0;i<ks.length;i++) { if (ks[i].indexOf('kader_connections_')===0) { cc = JSON.parse(localStorage.getItem(ks[i])||'[]').length; break; } } } catch(e) {}
+                try { var ks = Object.keys(localStorage); for (var i=0;i<ks.length;i++) { if (ks[i].indexOf('numerael_connections_')===0) { cc = JSON.parse(localStorage.getItem(ks[i])||'[]').length; break; } } } catch(e) {}
                 var friendCount = Math.max(0, cc - 1);
                 var friendLimit = FREE_LIMITS.connections - 1;
                 return friendCount < friendLimit ? { allowed: true } : { allowed: false, reason: 'Ücretsiz planda ' + friendLimit + ' arkadaş ekleyebilirsin. Premium ile sınırsız!' };
@@ -304,7 +304,7 @@
         paywallVisible = true;
 
         var overlay = document.createElement('div');
-        overlay.id = 'kader-paywall-overlay';
+        overlay.id = 'numerael-paywall-overlay';
         overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:flex-end;justify-content:center';
 
         var modal = document.createElement('div');
@@ -313,7 +313,7 @@
         modal.innerHTML =
             '<div style="display:flex;justify-content:center;margin-bottom:16px"><div style="width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px"></div></div>' +
             '<div style="display:flex;justify-content:center;margin-bottom:20px"><div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(139,92,246,0.4)"><span class="material-symbols-outlined" style="color:white;font-size:36px">workspace_premium</span></div></div>' +
-            '<h3 style="text-align:center;color:white;font-size:22px;font-weight:800;font-family:Space Grotesk,sans-serif;margin-bottom:6px">Kader Premium</h3>' +
+            '<h3 style="text-align:center;color:white;font-size:22px;font-weight:800;font-family:Space Grotesk,sans-serif;margin-bottom:6px">Numerael Premium</h3>' +
             '<p style="text-align:center;color:rgba(255,255,255,0.45);font-size:13px;font-family:Space Grotesk,sans-serif;margin-bottom:20px">' + (reason || 'Bu özellik Premium abonelik gerektirir.') + '</p>' +
             '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">' +
                 perkRow('all_inclusive', 'Sınırsız AI Analiz') +
@@ -447,10 +447,10 @@
     // ─── DEV TOOLS ───────────────────────────────────────────
     function simulatePremium(days) {
         var exp = new Date(); exp.setDate(exp.getDate()+(days||30));
-        localStorage.setItem('kader_premium', JSON.stringify({active:true,plan:'monthly',expires_at:exp.toISOString(),source:'simulated',cached_at:new Date().toISOString()}));
+        localStorage.setItem('numerael_premium', JSON.stringify({active:true,plan:'monthly',expires_at:exp.toISOString(),source:'simulated',cached_at:new Date().toISOString()}));
         console.log('[Premium] Simulated ' + (days||30) + ' days'); window.location.reload();
     }
-    function clearPremium() { localStorage.removeItem('kader_premium'); console.log('[Premium] Cleared'); window.location.reload(); }
+    function clearPremium() { localStorage.removeItem('numerael_premium'); console.log('[Premium] Cleared'); window.location.reload(); }
 
     // ─── INIT ────────────────────────────────────────────────
     // Platform bazlı init: native → RevenueCat, web → Paddle

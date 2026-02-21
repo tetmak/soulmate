@@ -1,5 +1,5 @@
 /**
- * KADER — Cosmic Match / Discovery Engine
+ * NUMERAEL — Cosmic Match / Discovery Engine
  * Kullanıcıları numerolojik uyuma göre eşleştirir.
  * Streak sistemi, günlük match, reveal kredileri.
  */
@@ -105,7 +105,7 @@
     // ─── OPT-IN: Profili Supabase'e kaydet ──────────────────
     async function optIn(userId) {
         var ud = null;
-        try { ud = JSON.parse(localStorage.getItem('kader_user_data')||'null'); } catch(e){}
+        try { ud = JSON.parse(localStorage.getItem('numerael_user_data')||'null'); } catch(e){}
         if (!ud || !ud.name) return false;
 
         var data = {
@@ -123,7 +123,7 @@
 
         try {
             await window.supabaseClient.from('discovery_profiles').upsert(data);
-            localStorage.setItem('kader_discovery_opted_in', 'true');
+            localStorage.setItem('numerael_discovery_opted_in', 'true');
             return true;
         } catch(e) {
             console.error('[Discovery] Opt-in error:', e);
@@ -134,7 +134,7 @@
     async function optOut(userId) {
         try {
             await window.supabaseClient.from('discovery_profiles').update({ discoverable: false }).eq('user_id', userId);
-            localStorage.setItem('kader_discovery_opted_in', 'false');
+            localStorage.setItem('numerael_discovery_opted_in', 'false');
             return true;
         } catch(e) { return false; }
     }
