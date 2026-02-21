@@ -167,15 +167,19 @@ YAZI KURALLARI:
     },
 
     karmic: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Karmik Bağ analizi.\n\n' +
+      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Derinlemesine Karmik Bağ analizi.\n\n' +
         'Tüm sayılar:\n' +
         ctx.p1.name + ': Kader=' + ctx.p1.lifePath + ', Ruh=' + ctx.p1.soulUrge + ', Kişilik=' + ctx.p1.personality + ', İfade=' + ctx.p1.expression + '\n' +
         ctx.p2.name + ': Kader=' + ctx.p2.lifePath + ', Ruh=' + ctx.p2.soulUrge + ', Kişilik=' + ctx.p2.personality + ', İfade=' + ctx.p2.expression + '\n\n' +
-        'ZORUNLU FORMAT — aşağıdaki 3 başlığı aynen ve bu sırayla kullan:\n\n' +
-        '**Geçmiş Yaşam Bağı**\n[Bu iki ruhun geçmişten gelen karmik köklerini anlat — 1 paragraf]\n\n' +
-        '**Ruhsal Amaç**\n[Bu ilişkinin ruhsal amacını ve birlikte öğrenecekleri dersi anlat — 1 paragraf]\n\n' +
-        '**Karmik Denge**\n[Aralarındaki enerji dengesini, çatışma ve uyum noktalarını anlat — 1 paragraf]\n\n' +
-        'Toplam 150-170 kelime, mistik ve derin ton. Başlıkları DEĞİŞTİRME, aynen yaz.';
+        'ZORUNLU FORMAT — aşağıdaki 7 başlığı aynen ve bu sırayla kullan:\n\n' +
+        '**Geçmiş Yaşam Bağı**\n[Bu iki ruhun geçmişten gelen karmik köklerini, hangi yaşamlarda karşılaştıklarını ve tamamlanmamış işlerini anlat — 2 paragraf]\n\n' +
+        '**Ruhsal Amaç**\n[Bu ilişkinin ruhsal amacını, birlikte öğrenecekleri karmik dersi ve evren tarafından neden bir araya getirildiklerini anlat — 2 paragraf]\n\n' +
+        '**Karmik Denge**\n[Aralarındaki enerji dengesini, çatışma noktalarını, tetikleyici kalıpları ve uyum alanlarını detaylı anlat — 2 paragraf]\n\n' +
+        '**Para & Maddi Dünya**\n[Bu karmik bağın para, bolluk ve maddi konulardaki etkisini analiz et. Birlikte finansal kararlar alırken hangi dinamikler devreye girer, parayla ilişkileri birbirini nasıl etkiler, ortak maddi hedeflerde uyum veya çatışma noktaları neler — 2 paragraf]\n\n' +
+        '**İlişki & Duygusal Alan**\n[Bu iki ruhun duygusal bağını, aşk dillerini, güven dinamiklerini, bağlanma biçimlerini ve ilişkide tekrar eden karmik kalıpları analiz et. Birbirlerinin hangi duygusal yaralarını tetikler, nasıl iyileştirirler — 2 paragraf]\n\n' +
+        '**Sağlık & Enerji Bedeni**\n[Bu karmik bağın fiziksel ve enerjetik sağlık üzerindeki etkisini analiz et. Birlikte hangi chakralar aktifleşir, hangi enerji blokajları çözülür, birbirlerinin fiziksel ve ruhsal enerjisini nasıl etkilerler — 2 paragraf]\n\n' +
+        '**Kariyer & Yaşam Misyonu**\n[Bu karmik bağın kariyer, iş hayatı ve yaşam misyonu üzerindeki etkisini analiz et. Profesyonel alanda birbirlerini nasıl destekler veya engellerler, ortak bir misyonları var mı, kariyer yollarında bu bağ nasıl yansır — 2 paragraf]\n\n' +
+        'Toplam 500-600 kelime, mistik ve derin ton. Her başlık altında gerçekten sayısal enerjilere dayanan somut analiz yap. Başlıkları DEĞİŞTİRME, aynen yaz.';
     },
 
     communication: function(ctx) {
@@ -230,7 +234,7 @@ YAZI KURALLARI:
     var promptFn = COMPAT_PROMPTS[type];
     if (!promptFn) return null;
 
-    var maxTokens = (type === 'full_compat') ? 1000 : 350;
+    var maxTokens = (type === 'full_compat') ? 1000 : (type === 'karmic') ? 900 : 350;
 
     try {
       var res = await fetch(API_BASE + '/api/openai', {
