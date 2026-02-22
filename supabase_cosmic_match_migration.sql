@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════
--- KADER — Cosmic Match Tabloları
+-- NUMERAEL — Cosmic Match Tabloları
 -- Bu SQL'i Supabase Dashboard → SQL Editor'de çalıştırın.
 -- ═══════════════════════════════════════════════════════════
 
@@ -126,7 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_matches_user_date ON daily_matches(user_id, match
 ALTER TABLE daily_matches ADD CONSTRAINT daily_matches_user_date_unique UNIQUE (user_id, match_date);
 
 -- ═══════════════════════════════════════════════════════════
--- KADER — Premium Abonelik Tablosu
+-- NUMERAEL — Premium Abonelik Tablosu
 -- ═══════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS subscriptions (

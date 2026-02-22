@@ -1,4 +1,4 @@
-package com.kader.soulmate;
+package com.numerael.soulmate;
 
 import com.getcapacitor.BridgeActivity;
 

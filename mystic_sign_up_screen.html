@@ -124,7 +124,7 @@
     </div>
 
     <script>
-        // KADER APP - Navigation Helper
+        // NUMERAEL APP - Navigation Helper
         (function () {
             // Auto navigation için
             var autoTarget = '';
@@ -227,7 +227,7 @@
                             // 1. Önce localStorage kontrol et
                             var hasProfile = false;
                             try {
-                                var localData = JSON.parse(localStorage.getItem('kader_user_data'));
+                                var localData = JSON.parse(localStorage.getItem('numerael_user_data'));
                                 if (localData && localData.name && localData.birthDate) {
                                     hasProfile = true;
                                     console.log('[Login] localStorage profil bulundu');
@@ -245,7 +245,7 @@
                                             .eq('id', sess.user.id)
                                             .single();
                                         if (!profError && prof && (prof.full_name || prof.name) && prof.birth_date) {
-                                            localStorage.setItem('kader_user_data', JSON.stringify({
+                                            localStorage.setItem('numerael_user_data', JSON.stringify({
                                                 name: prof.full_name || prof.name,
                                                 birthDate: prof.birth_date,
                                                 birthTime: prof.birth_time || '',
@@ -271,7 +271,7 @@
                             }
                             await window.auth.signUp(email, password);
                             // Signup'ta adı hemen kaydet
-                            localStorage.setItem('kader_user_data', JSON.stringify({ name: fullName.trim() }));
+                            localStorage.setItem('numerael_user_data', JSON.stringify({ name: fullName.trim() }));
                             window.location.href = 'data-ready_birth_form.html';
                         }
                     } catch (e) {

@@ -204,12 +204,13 @@ body{min-height:max(884px,100dvh)}
     </main>
 
     <!-- Global Bottom Nav + Bubble Menu -->
+    <script src="js/notification-engine.js"></script>
     <script src="js/bottom-nav.js"></script>
 
     <script>
         document.getElementById('btn-deep-insight').onclick = function () { window.location.href = 'name_numerology_breakdown_1.html'; };
         document.getElementById('btn-details').onclick = function () { window.location.href = 'numerology_meaning_chart.html'; };
-        document.getElementById('btn-notif').onclick = function () { window.location.href = 'app_settings_preferences.html'; };
+
         document.getElementById('card-celestial').onclick = function () { window.location.href = 'cosmic_energy_calendar_2.html'; };
         document.getElementById('card-lunar').onclick = function () { window.location.href = 'lunar_phase_energy_tracker.html'; };
         document.getElementById('card-soulmate').onclick = function () { window.location.href = 'compatibility_input_form.html'; };
@@ -307,7 +308,7 @@ body{min-height:max(884px,100dvh)}
         var todayStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
         
         // ─── AGGRESSIVE CACHE BYPASS for Opera ────
-        var lastVisit = localStorage.getItem('kader_last_visit_date');
+        var lastVisit = localStorage.getItem('numerael_last_visit_date');
         
         // Eğer daha önce hiç ziyaret edilmediyse veya farklı bir günse
         if (!lastVisit || lastVisit !== todayStr) {
@@ -315,14 +316,14 @@ body{min-height:max(884px,100dvh)}
             
             // TÜM günlük vibration cache'lerini sil (eski tarihli olanlar dahil)
             Object.keys(localStorage).forEach(function(key) {
-                if (key.startsWith('kader_daily_vib__')) {
+                if (key.startsWith('numerael_daily_vib__')) {
                     console.log('[Cache Clear] Removing:', key);
                     localStorage.removeItem(key);
                 }
             });
             
             // Tarihi kaydet
-            localStorage.setItem('kader_last_visit_date', todayStr);
+            localStorage.setItem('numerael_last_visit_date', todayStr);
             
             // Eğer URL'de timestamp yoksa ekle ve reload yap
             var urlParams = new URLSearchParams(window.location.search);
@@ -336,14 +337,14 @@ body{min-height:max(884px,100dvh)}
         }
         
         // Tarihi her zaman güncel tut
-        localStorage.setItem('kader_last_visit_date', todayStr);
+        localStorage.setItem('numerael_last_visit_date', todayStr);
         
         // ─── DEBUG FUNCTION (Opera kullanıcıları için) ────────
         // Console'da "window.clearDailyCache()" yazarak çalıştırabilirsiniz
         window.clearDailyCache = function() {
             console.log('[Manual Cache Clear] Clearing all daily vibration cache...');
             Object.keys(localStorage).forEach(function(key) {
-                if (key.startsWith('kader_daily_vib__') || key === 'kader_last_visit_date') {
+                if (key.startsWith('numerael_daily_vib__') || key === 'numerael_last_visit_date') {
                     localStorage.removeItem(key);
                     console.log('[Manual Cache Clear] Removed:', key);
                 }
@@ -354,7 +355,7 @@ body{min-height:max(884px,100dvh)}
 
         // ─── Kullanıcı Verisi ─────────────────────────────────
         var ud = null;
-        try { ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null'); } catch(e) {}
+        try { ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null'); } catch(e) {}
 
         // İsmi her durumda set et
         var firstName = 'Alex'; // fallback
@@ -383,7 +384,7 @@ body{min-height:max(884px,100dvh)}
         });
 
         var theme = VIB_THEMES[pd] || VIB_THEMES[8];
-        var cacheKey = 'kader_daily_vib__' + todayStr + '__lp' + lp + '__pd' + pd;
+        var cacheKey = 'numerael_daily_vib__' + todayStr + '__lp' + lp + '__pd' + pd;
         
         console.log('[VIBRATION DEBUG] Cache key:', cacheKey);
         console.log('[VIBRATION DEBUG] Theme:', theme.title);
@@ -419,7 +420,7 @@ body{min-height:max(884px,100dvh)}
         // ─── AI ile kişiselleştirilmiş içerik ────────────────
         // API key /api/openai proxy'si tarafından server-side ekleniyor
 
-        var prompt = 'Sen Kader uygulamasının numeroloji yorumcususun. Türkçe yaz, 2 kısa cümle (max 25 kelime), mistik ve kişisel ton.' +
+        var prompt = 'Sen Numerael uygulamasının numeroloji yorumcususun. Türkçe yaz, 2 kısa cümle (max 25 kelime), mistik ve kişisel ton.' +
             ' Kullanıcı: ' + ud.name +
             '. Life Path: ' + lp +
             '. Kişisel Yıl: ' + py +
@@ -427,7 +428,7 @@ body{min-height:max(884px,100dvh)}
             '. Doğum tarihi: ' + ud.birthDate +
             '. Bugünün enerjisini bu kişiye özel anlat. Başlık yok, madde işareti yok.';
 
-        fetch((window.__KADER_API_BASE||'') + '/api/openai', {
+        fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

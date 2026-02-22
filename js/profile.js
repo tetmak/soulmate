@@ -51,7 +51,7 @@ const profile = {
     async getStorageKey() {
         const session = await window.auth.getSession();
         const userId = session ? session.user.id : 'guest';
-        return `kader_connections_${userId}`;
+        return `numerael_connections_${userId}`;
     },
 
     // Save a new connection (another person)

@@ -1,5 +1,5 @@
 /**
- * KADER — Gamification Engine v1.1
+ * NUMERAEL — Gamification Engine v1.1
  * XP, Rütbe, Günlük Görev, Ödül, Sayısal Görünürlük
  *
  * Kullanım:
@@ -75,7 +75,7 @@
     // ═══════════════════════════════════════════════════════════
     // STATE YÖNETİMİ (localStorage)
     // ═══════════════════════════════════════════════════════════
-    var STATE_KEY = 'kader_gamification';
+    var STATE_KEY = 'numerael_gamification';
 
     function getState() {
         try {
@@ -110,7 +110,7 @@
             var weekStart = getWeekStart();
 
             var userData = null;
-            try { userData = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+            try { userData = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
             var displayName = (userData && userData.name) ? userData.name : 'Kaşif';
             // İsmi kısalt (gizlilik): "Ahmet Yılmaz" → "Ahmet Y."
             var parts = displayName.trim().split(/\s+/);

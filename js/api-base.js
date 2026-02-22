@@ -1,5 +1,5 @@
 /**
- * KADER — API Base URL Helper
+ * NUMERAEL — API Base URL Helper
  * Native app (Capacitor) ortamında API çağrılarını Vercel'e yönlendirir.
  */
 (function() {
@@ -8,5 +8,5 @@
                  window.location.hostname === 'localhost' ||
                  window.location.protocol === 'file:' ||
                  (typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
-  window.__KADER_API_BASE = isNative ? 'https://soulmate-kohl.vercel.app' : '';
+  window.__NUMERAEL_API_BASE = isNative ? 'https://soulmate-kohl.vercel.app' : '';
 })();

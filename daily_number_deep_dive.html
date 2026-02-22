@@ -746,7 +746,7 @@ var DEFAULT_CONTENT = {
 // ═══ PERSONAL DAY HESAPLAMA ═══
 function calcPersonalDay() {
   var ud = null;
-  try { ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null'); } catch(e) {}
+  try { ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null'); } catch(e) {}
   
   if (!ud || !ud.birthDate) return 7; // Default
   
@@ -850,5 +850,6 @@ function updateContent() {
 window.addEventListener('load', updateContent);
 </script>
 
+<script src="js/notification-engine.js"></script>
 <script src="js/bottom-nav.js"></script>
 </body></html>

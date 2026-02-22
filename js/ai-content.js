@@ -1,5 +1,5 @@
 /**
- * KADER — AI İçerik Motoru
+ * NUMERAEL — AI İçerik Motoru
  * Tüm sayfalardaki analizleri, yorumları ve rehberleri OpenAI ile üretir
  */
 (function() {
@@ -7,7 +7,7 @@
 
   // API key artık /api/openai proxy'si tarafından server-side ekleniyor
   var PAGE = window.location.pathname.split('/').pop() || '';
-  var CACHE_PREFIX = 'kader_ai_';
+  var CACHE_PREFIX = 'numerael_ai_';
 
   // Native app (Capacitor) ise Vercel production URL'sini kullan
   var isNative = window.location.protocol === 'capacitor:' ||
@@ -47,7 +47,7 @@
 
   // ─── OpenAI çağrısı ───────────────────────────────────────────────
   async function askAI(prompt, systemMsg) {
-    var system = systemMsg || `Sen Kader uygulamasının Numeroloji Üstadısın. 
+    var system = systemMsg || `Sen Numerael uygulamasının Numeroloji Üstadısın. 
 Türkçe, mistik, etkileyici ve kişisel bir dilde yaz. 
 Sayılar, kozmik bağlantılar ve ruhsal anlamlar konusunda derin bilgeliğe sahipsin.
 Kısa ve çarpıcı yaz — gereksiz tekrar yapma.
@@ -103,7 +103,7 @@ Sadece istenen metni yaz, başlık veya açıklama ekleme.`;
     var userName = 'Değerli ruh';
     var lifePathNumber = '7';
     try {
-      var ud = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+      var ud = JSON.parse(localStorage.getItem('numerael_user_data') || '{}');
       if (ud.name) userName = ud.name.split(' ')[0]; // sadece ilk isim
       if (ud.lifePath) lifePathNumber = String(ud.lifePath);
     } catch(e) {}
@@ -504,7 +504,7 @@ Sadece istenen metni yaz, başlık veya açıklama ekleme.`;
       if (el.textContent.trim().length > 30 && !el.closest('nav') && count < 3) {
         count++;
         skeletonFill(el, askAI(
-          `Kader uygulamasının ${count}. ayar özelliği için kısa açıklama. 1 cümle, sade ve kullanışlı.`
+          `Numerael uygulamasının ${count}. ayar özelliği için kısa açıklama. 1 cümle, sade ve kullanışlı.`
         ));
       }
     });

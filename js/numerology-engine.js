@@ -450,9 +450,9 @@ PARAGRAF YAPISI (tam olarak bu 8 paragrafı yaz):
       } catch(e) {}
     }
 
-    // 2. URL'de kisi yoksa → her zaman ANA KULLANICI (kader_user_data)
+    // 2. URL'de kisi yoksa → her zaman ANA KULLANICI (numerael_user_data)
     if (!data) {
-      try { data = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+      try { data = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
     }
 
     // 3. Aktif analiz sadece kisi parametresiyle erişildiğinde kullanılır (yukarıda halledildi)
@@ -461,7 +461,7 @@ PARAGRAF YAPISI (tam olarak bu 8 paragrafı yaz):
     if (!data || !data.name) {
       // Mobilde localStorage geç yazılabiliyor — 500ms bekle ve tekrar dene
       await new Promise(function(r) { setTimeout(r, 500); });
-      try { data = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+      try { data = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
       if (!data || !data.name) {
         window.location.href = 'data-ready_birth_form.html';
         return;

@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('btn-name-analysis').addEventListener('click', function() {
         // Kişinin verisini breakdown sayfasına taşımak için temp key kullan
         try {
-            localStorage.setItem('kader_kisi_temp', JSON.stringify({
+            localStorage.setItem('numerael_kisi_temp', JSON.stringify({
                 name: name,
                 birthDate: bd,
                 isTemp: true  // Ana kullanıcı değil
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // ─── Arkadaşlık Dinamiği butonu ──────────────────────────
     document.getElementById('btn-friendship-dynamics').addEventListener('click', function() {
         try {
-            localStorage.setItem('kader_kisi_temp', JSON.stringify({
+            localStorage.setItem('numerael_kisi_temp', JSON.stringify({
                 fullName: name,
                 birthDate: bd,
                 isTemp: true
@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('friendship-label').textContent = name.split(' ')[0] + ' ile Arkadaşlık Dinamiği';
 });
 </script>
+<script src="js/notification-engine.js"></script>
 <script src="js/bottom-nav.js"></script>
 </body>
 </html>

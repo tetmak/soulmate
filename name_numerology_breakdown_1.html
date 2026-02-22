@@ -503,7 +503,7 @@
             // 1. Veri Hazırlığı
             var params = new URLSearchParams(window.location.search);
             var userData = {};
-            try { userData = JSON.parse(localStorage.getItem('kader_user_data') || '{}'); } catch (e) { }
+            try { userData = JSON.parse(localStorage.getItem('numerael_user_data') || '{}'); } catch (e) { }
 
             var name = params.get('kisi') || userData.name || 'Alexander';
             var birthDate = params.get('dt') || userData.birthDate || '1990-01-01';
@@ -814,9 +814,9 @@
             // Ana kullanıcı — 3 kaynaktan dene
             var name = '', birthDate = '';
 
-            // 1. kader_user_data
+            // 1. numerael_user_data
             try {
-                var ud = JSON.parse(localStorage.getItem('kader_user_data') || 'null');
+                var ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null');
                 if (ud) { name = ud.name || ''; birthDate = ud.birthDate || ''; }
             } catch(e) {}
 
@@ -835,13 +835,13 @@
                             birthDate = prof.birth_date || prof.birthDate || prof.dob || '';
                             if (!name) name = prof.full_name || prof.name || '';
                             console.log('[Karmic] Supabase prof:', prof, '→ birthDate:', birthDate);
-                            // kader_user_data'yı güncelle — bir daha sormasın
+                            // numerael_user_data'yı güncelle — bir daha sormasın
                             if (birthDate) {
                                 try {
-                                    var existing = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+                                    var existing = JSON.parse(localStorage.getItem('numerael_user_data') || '{}');
                                     existing.birthDate = birthDate;
                                     if (!existing.name) existing.name = name;
-                                    localStorage.setItem('kader_user_data', JSON.stringify(existing));
+                                    localStorage.setItem('numerael_user_data', JSON.stringify(existing));
                                 } catch(e2) {}
                             }
                         }
@@ -849,10 +849,10 @@
                 } catch(e) {}
             }
 
-            // 3. kader_connections'dan kendi kaydını bul (saveConnection'da da kaydediliyor)
+            // 3. numerael_connections'dan kendi kaydını bul (saveConnection'da da kaydediliyor)
             if (name && !birthDate) {
                 try {
-                    var allKeys = Object.keys(localStorage).filter(function(k){ return k.startsWith('kader_connections_'); });
+                    var allKeys = Object.keys(localStorage).filter(function(k){ return k.startsWith('numerael_connections_'); });
                     allKeys.forEach(function(k) {
                         var conns = JSON.parse(localStorage.getItem(k) || '[]');
                         conns.forEach(function(c) {
@@ -914,7 +914,7 @@
             if (badgeEl) badgeEl.textContent = 'ANALİZ ET';
 
             // Cache key
-            var cacheKey = 'kader_karmic_v12__' + name.toLowerCase().replace(/\s+/g,'_') + '__' + (birthDate||'').replace(/-/g,'') + '__' + (primaryDebt||0);
+            var cacheKey = 'numerael_karmic_v12__' + name.toLowerCase().replace(/\s+/g,'_') + '__' + (birthDate||'').replace(/-/g,'') + '__' + (primaryDebt||0);
 
             // Accordion tıklama
             var btn = document.getElementById('karmic-bond-btn');
@@ -959,7 +959,7 @@
                             loaded = false; // tekrar denenebilsin
                         }, 30000);
 
-                        fetch((window.__KADER_API_BASE||'') + '/api/openai', {
+                        fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                             method: 'POST',
                             signal: controller.signal,
                             headers: { 'Content-Type': 'application/json' },
@@ -1057,7 +1057,7 @@
             var modal = document.getElementById('master-modal');
             modal.style.display = 'flex';
             // Bottom nav'ı gizle — chat input'u kapatmasın
-            var nav = document.getElementById('kader-bottom-nav');
+            var nav = document.getElementById('numerael-bottom-nav');
             if (nav) nav.style.display = 'none';
             var msgEl = document.getElementById('master-messages');
             msgEl.innerHTML = '';
@@ -1122,7 +1122,7 @@ SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
         window.closeMasterModal = function() {
             document.getElementById('master-modal').style.display = 'none';
             // Bottom nav'ı geri getir
-            var nav = document.getElementById('kader-bottom-nav');
+            var nav = document.getElementById('numerael-bottom-nav');
             if (nav) nav.style.display = 'flex';
         };
 
@@ -1175,7 +1175,7 @@ SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
             }
 
             try {
-                var r = await fetch((window.__KADER_API_BASE||'') + '/api/openai', {
+                var r = await fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ model: 'gpt-4o-mini', messages: messagesWithExamples, temperature: 0.75, max_tokens: 600 })
@@ -1221,7 +1221,7 @@ SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
                 } catch(e) {}
             }
             if (!data) {
-                try { data = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+                try { data = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
             }
             if (!data || !data.name || !data.birthDate) return;
 
@@ -1341,6 +1341,7 @@ SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
     })();
     </script>
 
+<script src="js/notification-engine.js"></script>
 <script src="js/bottom-nav.js"></script>
 </body>
 

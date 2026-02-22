@@ -1,5 +1,5 @@
 /**
- * KADER — Compatibility Engine
+ * NUMERAEL — Compatibility Engine
  * İki kişi arasındaki numeroloji uyumu hesaplama ve AI analiz sistemi.
  * Pisagor sistemi kullanılır. Sadece çift analizi yapar — kişisel analiz değil.
  */
@@ -213,7 +213,7 @@ YAZI KURALLARI:
     var names = [ctx.p1.name, ctx.p2.name]
       .map(function(n){ return n.toLowerCase().trim().replace(/\s+/g,'_'); })
       .sort();
-    return 'kader_compat_ai_v2__' + names[0] + '__' + names[1] + '__' + type;
+    return 'numerael_compat_ai_v2__' + names[0] + '__' + names[1] + '__' + type;
   }
 
   // Sync cache getter — loading animasyonunu atlamak için
@@ -268,7 +268,7 @@ YAZI KURALLARI:
   // ─── VERİ OKUMA ──────────────────────────────────────────────
   function getCompatData() {
     var raw = null;
-    try { raw = JSON.parse(localStorage.getItem('kader_compat_data')); } catch(e) {}
+    try { raw = JSON.parse(localStorage.getItem('numerael_compat_data')); } catch(e) {}
     if (!raw) {
       raw = {
         person1: { name: 'Alex', birthDate: '1990-05-14' },

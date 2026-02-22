@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.kader.soulmate',
-  appName: 'Kader',
+  appId: 'com.numerael.soulmate',
+  appName: 'Numerael',
   webDir: 'www',
   server: {
     // Production: load from local files (default)
@@ -14,7 +14,7 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'automatic',
     preferredContentMode: 'mobile',
-    scheme: 'Kader'
+    scheme: 'Numerael'
   },
   android: {
     allowMixedContent: false,

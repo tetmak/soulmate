@@ -193,7 +193,7 @@
         // Ana kullanıcı veya veri bulunamadıysa
         if (!personData) {
             try {
-                var ud = JSON.parse(localStorage.getItem('kader_user_data') || '{}');
+                var ud = JSON.parse(localStorage.getItem('numerael_user_data') || '{}');
                 personData = {
                     fullName: ud.name || 'User',
                     birthDate: ud.birthDate || null
@@ -271,7 +271,7 @@
         if (lifePath && soulUrge && destiny) {
             var prompt = `Numeroloji okumasi: ${name} için Life Path ${lifePath}, Soul Urge ${soulUrge}, Destiny ${destiny}.\n\nİngilizce olarak 4 paragraf yaz (mistik ve derin bir üslupla):\n\n1. Life Path ${lifePath}'in anlamı ve ${name} için ne ifade ettiği\n2. Soul Urge ${soulUrge}'un kişilik ve iç dünyaya etkisi\n3. Destiny ${destiny}'nin Life Path ile dengesi\n4. Bu sayıların birleşiminin genel yorumu\n\nAyrıca bir alıntı cümlesi (quote) ekle.`;
             
-            fetch((window.__KADER_API_BASE||'') + '/api/openai', {
+            fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -336,7 +336,7 @@
     </script>
     
     <script>
-            // KADER APP - Navigation Helper
+            // NUMERAEL APP - Navigation Helper
             (function () {
                 // Auto navigation için
                 var autoTarget = '';
@@ -415,6 +415,7 @@
     <script src="js/numerology-context-engine.js"></script>
     <script src="js/decision-timing-engine.js"></script>
     <script src="js/numerology-ai.js"></script>
+<script src="js/notification-engine.js"></script>
 <script src="js/bottom-nav.js"></script>
 </body>
 

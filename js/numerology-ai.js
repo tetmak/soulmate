@@ -1,5 +1,5 @@
 /**
- * KADER — Decision Sphere
+ * NUMERAEL — Decision Sphere
  * Floating sphere + deterministic decision timing interface.
  * Chatbot EXPLAINS decisions, does NOT make them. All decisions come from DecisionTiming engine.
  */
@@ -412,7 +412,7 @@
   function loadPeriod() {
     if (window.NumerologyContext) {
       var data = null;
-      try { data = JSON.parse(localStorage.getItem('kader_user_data')); } catch(e) {}
+      try { data = JSON.parse(localStorage.getItem('numerael_user_data')); } catch(e) {}
       if (data && data.birthDate) {
         personalPeriod.year = window.NumerologyContext.calcPersonalYear(data.birthDate);
         personalPeriod.month = window.NumerologyContext.calcPersonalMonth(data.birthDate);
