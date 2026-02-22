@@ -108,6 +108,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // ─── Session ───────────────────────────────────────────
+    // Supabase session recover'ını bekle (race condition önleme)
+    if (window.auth && window.auth.whenReady) {
+        await window.auth.whenReady();
+    }
+
     var session = null;
     var userId = null;
     try {

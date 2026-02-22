@@ -110,6 +110,12 @@ var auth = {
     }
 };
 
+// authReady: Supabase session recover olduktan sonra resolve olan promise.
+// Diğer sayfalar (cosmic_match vb.) session kontrolünden önce bunu beklemeli.
+var _authResolve;
+auth._ready = new Promise(function(resolve) { _authResolve = resolve; });
+auth.whenReady = function() { return auth._ready; };
+
 window.auth = auth;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -124,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
+                _authResolve();
                 auth.checkSession();
             }
         });
@@ -132,10 +139,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!done) {
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
+                _authResolve();
                 auth.checkSession();
             }
         }, 3000);
     } else {
+        _authResolve();
         auth.checkSession();
     }
 });
