@@ -224,6 +224,16 @@
       warning = WARNING_TEMPLATES.year_9_start();
     }
 
+    // --- Aksiyon direktifi ---
+    var action_directive;
+    if (score < 45) {
+      action_directive = 'Ertelenmesi önerilir';
+    } else if (score <= 65) {
+      action_directive = 'Sadece gerekliyse ilerle';
+    } else {
+      action_directive = 'İlerlenmesi önerilir';
+    }
+
     // --- Ana sebep ---
     var main_reason = reasons.join('');
 
@@ -231,6 +241,7 @@
       score: score,
       label: label,
       risk_level: risk_level,
+      action_directive: action_directive,
       main_reason: main_reason,
       warning: warning
     };
