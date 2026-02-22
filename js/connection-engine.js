@@ -12,6 +12,19 @@
     // ═══════════════════════════════════════════════════════
 
     /**
+     * Helper: get user's display name from discovery_profiles.
+     */
+    async function getUserName(userId) {
+        try {
+            var res = await sb().from('discovery_profiles')
+                .select('full_name')
+                .eq('user_id', userId)
+                .maybeSingle();
+            return (res.data && res.data.full_name) ? res.data.full_name : 'User';
+        } catch(e) { return 'User'; }
+    }
+
+    /**
      * Send a connection request from sender to receiver.
      * Returns { success, error?, data? }
      */
@@ -38,6 +51,16 @@
                 receiver_id: receiverId,
                 status: 'pending'
             }).select();
+
+            // Notify receiver
+            if (res.data && res.data[0] && window.notificationEngine) {
+                var senderName = await getUserName(senderId);
+                window.notificationEngine.createNotification(receiverId, 'connection_request', {
+                    sender_name: senderName,
+                    sender_id: senderId
+                });
+            }
+
             return { success: true, data: res.data ? res.data[0] : null };
         } catch(e) {
             return { success: false, error: e.message || 'insert_error' };
@@ -110,6 +133,15 @@
                 user_a: userA,
                 user_b: userB
             }, { onConflict: 'user_a,user_b' });
+
+            // Notify the original sender that their request was accepted
+            if (window.notificationEngine) {
+                var accepterName = await getUserName(receiverId);
+                window.notificationEngine.createNotification(req.sender_id, 'connection_accepted', {
+                    accepter_name: accepterName,
+                    accepter_id: receiverId
+                });
+            }
 
             return { success: true };
         } catch(e) {
@@ -229,6 +261,16 @@
                 receiver_id: receiverId,
                 content: content.trim()
             }).select();
+
+            // Notify receiver of new message
+            if (res.data && res.data[0] && window.notificationEngine) {
+                var senderName = await getUserName(senderId);
+                window.notificationEngine.createNotification(receiverId, 'new_message', {
+                    sender_name: senderName,
+                    sender_id: senderId
+                });
+            }
+
             return { success: true, data: res.data ? res.data[0] : null };
         } catch(e) {
             return { success: false, error: e.message || 'error' };

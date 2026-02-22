@@ -299,9 +299,22 @@
     // ─── PAYWALL UI ──────────────────────────────────────────
     var paywallVisible = false;
 
-    function showPaywall(reason) {
+    function showPaywall(reason, source) {
         if (paywallVisible) return;
         paywallVisible = true;
+
+        // Fire limit_hit notification
+        if (window.notificationEngine) {
+            try {
+                var session = JSON.parse(localStorage.getItem('numerael-auth-token') || '{}');
+                var uid = session && session.user ? session.user.id : null;
+                if (uid) {
+                    window.notificationEngine.createNotification(uid, 'limit_hit', {
+                        limit_type: source || 'feature'
+                    });
+                }
+            } catch(e) {}
+        }
 
         var overlay = document.createElement('div');
         overlay.id = 'numerael-paywall-overlay';

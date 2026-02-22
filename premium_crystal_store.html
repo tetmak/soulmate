@@ -160,6 +160,7 @@
     if(window.premium&&window.premium.isPremium()){document.getElementById('sec-sales').style.display='none';document.getElementById('sec-active').style.display='block';try{var c=JSON.parse(localStorage.getItem('numerael_premium')||'{}');document.getElementById('plan-info').textContent=(c.plan==='yearly'?'Yıllık Plan':'Aylık Plan')+' · Aktif';if(c.expires_at){document.getElementById('exp-info').textContent='Yenileme: '+new Date(c.expires_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});}}catch(e){}}
 })();
 </script>
+<script src="js/notification-engine.js"></script>
 <script src="js/bottom-nav.js"></script>
 </body>
 </html>
