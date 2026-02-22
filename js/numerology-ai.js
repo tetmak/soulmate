@@ -231,6 +231,12 @@
       font-size: 10px; font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.08em; font-family: 'Space Grotesk', sans-serif;
     }
+    #ael-directive {
+      margin-top: 10px; padding: 10px 14px;
+      border-radius: 10px; font-size: 13px; font-weight: 800;
+      text-align: center; letter-spacing: 0.04em;
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
     /* ─── CHAT ─── */
     #ael-chat {
@@ -382,6 +388,7 @@
             </div>
             <div id="ael-score-bar"><div id="ael-score-fill"></div></div>
             <div id="ael-reason"></div>
+            <div id="ael-directive"></div>
             <div id="ael-warning"></div>
           </div>
         </div>
@@ -542,10 +549,9 @@
       // Chat'e özet mesaj ekle
       var label = window.DecisionTiming.ACTION_LABELS[action] || action;
       addAelMessage(
-        label.charAt(0).toUpperCase() + label.slice(1) + ': ' + currentResult.score + '/100 — ' + currentResult.label + '. ' +
-        'Risk: ' + currentResult.risk_level + '. ' +
-        currentResult.main_reason +
-        (currentResult.warning ? ' Uyarı: ' + currentResult.warning : '')
+        label.charAt(0).toUpperCase() + label.slice(1) + ': ' + currentResult.score + '/100\n' +
+        'Risk: ' + currentResult.risk_level + '\n' +
+        '→ ' + currentResult.action_directive
       );
     });
   });
@@ -583,6 +589,20 @@
     if (r.risk_level === 'yüksek') { badge.style.background = 'rgba(239,68,68,0.12)'; badge.style.color = '#f87171'; }
     else if (r.risk_level === 'orta') { badge.style.background = 'rgba(255,255,255,0.06)'; badge.style.color = 'rgba(255,255,255,0.5)'; }
     else { badge.style.background = 'rgba(74,222,128,0.1)'; badge.style.color = '#4ade80'; }
+
+    // Aksiyon direktifi
+    var dirEl = document.getElementById('ael-directive');
+    dirEl.textContent = r.action_directive;
+    if (r.score < 45) {
+      dirEl.style.background = 'rgba(239,68,68,0.1)';
+      dirEl.style.color = '#f87171';
+    } else if (r.score <= 65) {
+      dirEl.style.background = 'rgba(251,191,36,0.1)';
+      dirEl.style.color = '#fbbf24';
+    } else {
+      dirEl.style.background = 'rgba(74,222,128,0.1)';
+      dirEl.style.color = '#4ade80';
+    }
 
     // Uyarı
     var warnEl = document.getElementById('ael-warning');
