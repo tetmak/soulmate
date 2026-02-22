@@ -6,14 +6,17 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Mystic Sign Up</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="js/tailwind.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <script src="js/supabase.min.js"></script>
+    <script>console.log('[DEBUG] supabase:', typeof window.supabase, window.supabase ? 'OK' : 'MISSING');</script>
     <script src="js/supabase-config.js"></script>
+    <script>console.log('[DEBUG] supabaseClient:', window.supabaseClient ? 'OK' : 'MISSING');</script>
     <script src="js/auth.js"></script>
+    <script>console.log('[DEBUG] auth:', window.auth ? 'OK' : 'MISSING');</script>
     <script
         id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#FAC638", "background-light": "#f8f8f5", "background-dark": "#231e0f" }, fontFamily: { display: "Plus Jakarta Sans" }, borderRadius: { DEFAULT: "1rem", lg: "2rem", xl: "3rem", full: "9999px" } } } };</script>
     <style>
