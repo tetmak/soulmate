@@ -147,10 +147,20 @@
     }
     #ael-close:hover { background: rgba(255,255,255,0.1); }
 
+    /* ─── SCROLLABLE CONTENT ─── */
+    #ael-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      scroll-behavior: smooth;
+    }
+    #ael-content::-webkit-scrollbar { width: 3px; }
+    #ael-content::-webkit-scrollbar-track { background: transparent; }
+    #ael-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
     /* ─── ACTION PICKER ─── */
     #ael-actions {
       padding: 16px;
-      flex-shrink: 0;
     }
     #ael-actions-label {
       font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.3);
@@ -191,7 +201,6 @@
     #ael-result {
       display: none;
       padding: 0 16px 8px;
-      flex-shrink: 0;
     }
     #ael-result-card {
       border-radius: 14px;
@@ -250,13 +259,9 @@
 
     /* ─── CHAT ─── */
     #ael-chat {
-      flex: 1; overflow-y: auto; padding: 12px 16px;
+      padding: 12px 16px;
       display: flex; flex-direction: column; gap: 10px;
-      scroll-behavior: smooth;
     }
-    #ael-chat::-webkit-scrollbar { width: 3px; }
-    #ael-chat::-webkit-scrollbar-track { background: transparent; }
-    #ael-chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
     .ael-msg { display: flex; gap: 8px; max-width: 90%; animation: ael-msg-in 0.25s ease; }
     .ael-msg-ael { align-self: flex-start; }
@@ -376,6 +381,7 @@
           <button id="ael-close">&#10005;</button>
         </div>
         <div id="ael-period"></div>
+        <div id="ael-content">
         <div id="ael-actions">
           <div id="ael-actions-label">Ne hakkında karar veriyorsun?</div>
           <div id="ael-actions-grid">
@@ -404,6 +410,7 @@
           </div>
         </div>
         <div id="ael-chat"></div>
+        </div>
         <div id="ael-input-area">
           <textarea id="ael-input" placeholder="Bir karar türü sor veya açıklama iste..." rows="1"></textarea>
           <button id="ael-send"><span class="material-symbols-outlined">send</span></button>
@@ -637,6 +644,11 @@
   // ═══════════════════════════════════════════════════════════
   // CHAT — AEL SADECE AÇIKLAR, KARAR ALMAZ
   // ═══════════════════════════════════════════════════════════
+  function scrollContentToBottom() {
+    var content = document.getElementById('ael-content');
+    if (content) content.scrollTop = content.scrollHeight;
+  }
+
   function addAelMessage(text) {
     var chat = document.getElementById('ael-chat');
     var div = document.createElement('div');
@@ -644,7 +656,7 @@
     div.innerHTML = '<div class="ael-msg-avatar"><div class="dot"></div></div>' +
       '<div class="ael-msg-bubble">' + text.replace(/\n/g, '<br>') + '</div>';
     chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+    scrollContentToBottom();
     chatMessages.push({ role: 'assistant', content: text });
   }
 
@@ -654,7 +666,7 @@
     div.className = 'ael-msg ael-msg-user';
     div.innerHTML = '<div class="ael-msg-bubble">' + text + '</div>';
     chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+    scrollContentToBottom();
     chatMessages.push({ role: 'user', content: text });
   }
 
@@ -666,7 +678,7 @@
     div.innerHTML = '<div class="ael-msg-avatar"><div class="dot"></div></div>' +
       '<div class="ael-typing"><div class="ael-typing-dot"></div><div class="ael-typing-dot"></div><div class="ael-typing-dot"></div></div>';
     chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
+    scrollContentToBottom();
   }
 
   function hideTyping() {
