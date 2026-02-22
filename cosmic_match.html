@@ -319,6 +319,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     function initial(name) { return (name||'?').charAt(0).toUpperCase(); }
 
     // ─── SESSION & USER DATA ─────────────────────────────────
+    // Supabase session recover'ını bekle — doğrudan getSession() çağırmak
+    // race condition yaratıyordu (session null → yanlış redirect)
+    if (window.auth && window.auth.whenReady) {
+        await window.auth.whenReady();
+    }
+
     var session = null;
     var userId = null;
     try {

@@ -64,6 +64,8 @@ body{min-height:max(884px,100dvh)}
 (async function() {
     try {
         if (window.auth) {
+            // Supabase session recover'ını bekle (race condition önleme)
+            if (window.auth.whenReady) await window.auth.whenReady();
             var session = await window.auth.getSession();
             if (!session) { window.location.href = 'mystic_sign_up_screen.html'; return; }
         }

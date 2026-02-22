@@ -227,6 +227,8 @@
 
         async function checkSpinStatus() {
             try {
+                // Supabase session recover'ını bekle (race condition önleme)
+                if (window.auth && window.auth.whenReady) await window.auth.whenReady();
                 const session = await window.auth.getSession();
                 if (!session) {
                     window.location.href = 'mystic_sign_up_screen.html';
