@@ -4,7 +4,7 @@
   "description": "Numerael - Mistik Numeroloji ve Ruh Eşi Uygulaması",
   "main": "index.html",
   "scripts": {
-    "build": "bash scripts/build.sh",
+    "build": "node scripts/build.js",
     "cap:build": "npm run build && npx cap sync",
     "cap:sync": "npx cap sync",
     "cap:open:ios": "npx cap open ios",
