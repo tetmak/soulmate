@@ -180,7 +180,7 @@
             '</div>' +
             '<div class="flex-1 min-w-0">' +
                 '<p class="text-slate-900 dark:text-white text-sm font-bold truncate">' + entry.name + (entry.isUser ? ' <span style="color:#a855f7;font-size:10px">(SEN)</span>' : '') + '</p>' +
-                '<p class="text-slate-400 dark:text-white/25 text-xs">' + (entry.rank ? entry.rank.name : '') + '</p>' +
+                '<p class="text-slate-400 dark:text-white/25 text-xs">' + (entry.rank ? (window.gamification && window.gamification.translateRank ? window.gamification.translateRank(entry.rank) : entry.rank.name) : '') + '</p>' +
             '</div>' +
             '<div class="text-right flex items-center gap-1">' +
                 '<span class="text-slate-700 dark:text-white/60 text-sm font-black">' + entry.weeklyXP + '</span>' +
