@@ -148,122 +148,124 @@
 
   // ─── AI PROMPT SİSTEMİ ───────────────────────────────────────
   function getCompatSystem() {
-    var _aiLang = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
-    return 'Sen bir Numeroloji Uyum Uzmanısın. Pisagor sistemini kullanarak iki kişinin sayısal enerjileri arasındaki uyumu, çatışmayı ve bağı analiz edersin.\n\n' +
-      'HESAPLAMAMANTIĞI (Pisagor):\n' +
-      '- Kader Yolu: Doğum tarihi rakamları toplamı\n' +
-      '- Ruh Güdüsü: İsmin sesli harfleri toplamı\n' +
-      '- Kişilik: İsmin sessiz harfleri toplamı\n' +
-      '- İfade: İsmin tüm harfleri toplamı\n' +
-      '- Üstat Sayılar: 11, 22, 33 — indirgeme\n\n' +
-      'YAZI KURALLARI:\n' +
-      '- ' + _aiLang + ' Doğrudan çifte hitap et (siz/ikiniz/aranızdaki).\n' +
-      '- Vaaz yok. Başlık yok. Sadece düz paragraflar.\n' +
-      '- Her zaman ÇIFTI analiz et — bireysel analiz yasak.\n' +
-      '- Somut, keskin, gerçekçi.\n' +
-      '- Ton: İki sayının ortalamasına göre: 1-5 arası enerjik/dinamik, 6-9 arası derin/mistik, Üstat sayı varsa ağır/vizyon yüklü.';
+    var _aiLang = window.i18n ? window.i18n.getAILang() : 'Write in Turkish.';
+    return 'CRITICAL LANGUAGE RULE: ' + _aiLang + '\n\n' +
+      'You are a Numerology Compatibility Expert. Using the Pythagorean system, you analyze the harmony, conflict, and bond between two people\'s numerical energies.\n\n' +
+      'CALCULATION LOGIC (Pythagorean):\n' +
+      '- Life Path: Sum of birth date digits\n' +
+      '- Soul Urge: Sum of vowels in name\n' +
+      '- Personality: Sum of consonants in name\n' +
+      '- Expression: Sum of all letters in name\n' +
+      '- Master Numbers: 11, 22, 33 — not reduced\n\n' +
+      'WRITING RULES:\n' +
+      '- ' + _aiLang + ' Address the couple directly (you/both of you/between you).\n' +
+      '- No preaching. No headings. Only plain paragraphs.\n' +
+      '- Always analyze the COUPLE — individual analysis is forbidden.\n' +
+      '- Concrete, sharp, realistic.\n' +
+      '- Tone: Based on the average of the two numbers: 1-5 energetic/dynamic, 6-9 deep/mystical, if Master Number present heavy/vision-laden.\n\n' +
+      'CRITICAL LANGUAGE RULE: ' + _aiLang;
   }
 
-  // Cinsiyet helper — prompt'lara eklenecek context
+  // Gender helper — context to inject into prompts
   function genderCtx(ctx) {
-    var g1 = ctx.p1.gender === 'female' ? 'kadın' : ctx.p1.gender === 'male' ? 'erkek' : '';
-    var g2 = ctx.p2.gender === 'female' ? 'kadın' : ctx.p2.gender === 'male' ? 'erkek' : '';
+    var g1 = ctx.p1.gender === 'female' ? 'female' : ctx.p1.gender === 'male' ? 'male' : '';
+    var g2 = ctx.p2.gender === 'female' ? 'female' : ctx.p2.gender === 'male' ? 'male' : '';
     if (!g1 && !g2) return '';
-    return '\nCinsiyetler: ' + ctx.p1.name + (g1 ? ' (' + g1 + ')' : '') + ', ' + ctx.p2.name + (g2 ? ' (' + g2 + ')' : '') + '. Cinsiyetlere uygun hitap et ve analizi cinsiyet perspektifinden zenginleştir.\n';
+    return '\nGenders: ' + ctx.p1.name + (g1 ? ' (' + g1 + ')' : '') + ', ' + ctx.p2.name + (g2 ? ' (' + g2 + ')' : '') + '. Address gender appropriately and enrich the analysis from a gender perspective.\n';
   }
 
   var COMPAT_PROMPTS = {
 
     cosmic: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için uyum özeti.\n\n' +
-        'Kader Yolları: ' + ctx.p1.lifePath + ' & ' + ctx.p2.lifePath + '\n' +
-        'Ruh Güdüsü: ' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + '\n' +
-        'Genel uyum skoru: ' + ctx.overall + '%\n' + genderCtx(ctx) + '\n' +
-        'Aranızdaki bağın özünü, bu iki Kader Yolunun birbirine ne yarattığını ve size özgü bağın ne tür bir güç taşıdığını yaz.\n' +
-        '2 paragraf, 80-100 kelime, çifte hitap et.';
+      return 'Compatibility overview for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'Life Paths: ' + ctx.p1.lifePath + ' & ' + ctx.p2.lifePath + '\n' +
+        'Soul Urge: ' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + '\n' +
+        'Overall compatibility score: ' + ctx.overall + '%\n' + genderCtx(ctx) + '\n' +
+        'Write about the essence of the bond between them, what these two Life Paths create together, and what kind of power their unique connection carries.\n' +
+        '2 paragraphs, 80-100 words, address the couple directly.';
     },
 
     soul_urge: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Ruh Güdüsü uyumu.\n\n' +
-        ctx.p1.name + ' Ruh Güdüsü: ' + ctx.p1.soulUrge + '\n' +
-        ctx.p2.name + ' Ruh Güdüsü: ' + ctx.p2.soulUrge + '\n' +
-        'Uyum skoru: ' + ctx.soulScore + '%\n' + genderCtx(ctx) + '\n' +
-        'İki kişinin içsel arzuları ve duygusal ihtiyaçları birbirini nasıl etkiliyor? Nerede derin uyum, nerede gizli sürtüşme var?\n' +
-        'Sadece Ruh Güdüsü uyumunu yaz. Kader Yolu veya Kişilik hakkında yazmak yasak.\n' +
-        '3 paragraf, 120-140 kelime.';
+      return 'Soul Urge compatibility for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        ctx.p1.name + ' Soul Urge: ' + ctx.p1.soulUrge + '\n' +
+        ctx.p2.name + ' Soul Urge: ' + ctx.p2.soulUrge + '\n' +
+        'Compatibility score: ' + ctx.soulScore + '%\n' + genderCtx(ctx) + '\n' +
+        'How do these two people\'s inner desires and emotional needs affect each other? Where is there deep harmony, and where is there hidden friction?\n' +
+        'Write only about Soul Urge compatibility. Writing about Life Path or Personality is forbidden.\n' +
+        '3 paragraphs, 120-140 words.';
     },
 
     personality: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Kişilik uyumu.\n\n' +
-        ctx.p1.name + ' Kişilik: ' + ctx.p1.personality + '\n' +
-        ctx.p2.name + ' Kişilik: ' + ctx.p2.personality + '\n' +
-        'Uyum skoru: ' + ctx.persScore + '%\n' + genderCtx(ctx) + '\n' +
-        'İki kişinin dış dünyaya yansıttığı imajlar birbirini nasıl tamamlıyor veya zorluyor? Sosyal ortamlarda aranızdaki dinamik nedir?\n' +
-        'Sadece Kişilik uyumunu yaz. Ruh Güdüsü veya Kader Yolu hakkında yazmak yasak.\n' +
-        '3 paragraf, 120-140 kelime.';
+      return 'Personality compatibility for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        ctx.p1.name + ' Personality: ' + ctx.p1.personality + '\n' +
+        ctx.p2.name + ' Personality: ' + ctx.p2.personality + '\n' +
+        'Compatibility score: ' + ctx.persScore + '%\n' + genderCtx(ctx) + '\n' +
+        'How do the images these two people project to the outside world complement or challenge each other? What is the dynamic between you in social settings?\n' +
+        'Write only about Personality compatibility. Writing about Soul Urge or Life Path is forbidden.\n' +
+        '3 paragraphs, 120-140 words.';
     },
 
     life_path: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Kader Yolu birlikteliği.\n\n' +
-        ctx.p1.name + ' Kader Yolu: ' + ctx.p1.lifePath + '\n' +
-        ctx.p2.name + ' Kader Yolu: ' + ctx.p2.lifePath + '\n' +
-        'Uyum skoru: ' + ctx.lpScore + '%\n' + genderCtx(ctx) + '\n' +
-        'Bu iki Kader Yolu bir arada yürüyünce hayat onları nereye götürüyor? Ortak temalar, tekrar eden örüntüler ve birlikte büyümeleri için gereken şey nedir?\n' +
-        (ctx.p1.lifePath === 11 || ctx.p1.lifePath === 22 || ctx.p1.lifePath === 33 || ctx.p2.lifePath === 11 || ctx.p2.lifePath === 22 || ctx.p2.lifePath === 33 ? 'Üstat Sayı var — bu birlikteliğe yüklediği ağır potansiyeli özellikle vurgula.\n' : '') +
-        'Sadece Kader Yolu uyumunu yaz. Ruh Güdüsü veya Kişilik hakkında yazmak yasak.\n' +
-        '3 paragraf, 120-140 kelime.';
+      return 'Life Path partnership for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        ctx.p1.name + ' Life Path: ' + ctx.p1.lifePath + '\n' +
+        ctx.p2.name + ' Life Path: ' + ctx.p2.lifePath + '\n' +
+        'Compatibility score: ' + ctx.lpScore + '%\n' + genderCtx(ctx) + '\n' +
+        'When these two Life Paths walk together, where does life take them? What are the common themes, recurring patterns, and what do they need to grow together?\n' +
+        (ctx.p1.lifePath === 11 || ctx.p1.lifePath === 22 || ctx.p1.lifePath === 33 || ctx.p2.lifePath === 11 || ctx.p2.lifePath === 22 || ctx.p2.lifePath === 33 ? 'Master Number present — especially emphasize the heavy potential it loads onto this partnership.\n' : '') +
+        'Write only about Life Path compatibility. Writing about Soul Urge or Personality is forbidden.\n' +
+        '3 paragraphs, 120-140 words.';
     },
 
     karmic: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için Derinlemesine Karmik Bağ analizi.\n\n' +
-        'Tüm sayılar:\n' +
-        ctx.p1.name + ': Kader=' + ctx.p1.lifePath + ', Ruh=' + ctx.p1.soulUrge + ', Kişilik=' + ctx.p1.personality + ', İfade=' + ctx.p1.expression + '\n' +
-        ctx.p2.name + ': Kader=' + ctx.p2.lifePath + ', Ruh=' + ctx.p2.soulUrge + ', Kişilik=' + ctx.p2.personality + ', İfade=' + ctx.p2.expression + '\n' +
+      return 'In-depth Karmic Bond analysis for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'All numbers:\n' +
+        ctx.p1.name + ': LifePath=' + ctx.p1.lifePath + ', Soul=' + ctx.p1.soulUrge + ', Personality=' + ctx.p1.personality + ', Expression=' + ctx.p1.expression + '\n' +
+        ctx.p2.name + ': LifePath=' + ctx.p2.lifePath + ', Soul=' + ctx.p2.soulUrge + ', Personality=' + ctx.p2.personality + ', Expression=' + ctx.p2.expression + '\n' +
         genderCtx(ctx) + '\n' +
-        'ZORUNLU FORMAT — aşağıdaki 7 başlığı aynen ve bu sırayla kullan:\n\n' +
-        '**Geçmiş Yaşam Bağı**\n[Bu iki ruhun geçmişten gelen karmik köklerini, hangi yaşamlarda karşılaştıklarını ve tamamlanmamış işlerini anlat — 2 paragraf]\n\n' +
-        '**Ruhsal Amaç**\n[Bu ilişkinin ruhsal amacını, birlikte öğrenecekleri karmik dersi ve evren tarafından neden bir araya getirildiklerini anlat — 2 paragraf]\n\n' +
-        '**Karmik Denge**\n[Aralarındaki enerji dengesini, çatışma noktalarını, tetikleyici kalıpları ve uyum alanlarını detaylı anlat — 2 paragraf]\n\n' +
-        '**Para & Maddi Dünya**\n[Bu karmik bağın para, bolluk ve maddi konulardaki etkisini analiz et. Birlikte finansal kararlar alırken hangi dinamikler devreye girer, parayla ilişkileri birbirini nasıl etkiler, ortak maddi hedeflerde uyum veya çatışma noktaları neler — 2 paragraf]\n\n' +
-        '**İlişki & Duygusal Alan**\n[Bu iki ruhun duygusal bağını, aşk dillerini, güven dinamiklerini, bağlanma biçimlerini ve ilişkide tekrar eden karmik kalıpları analiz et. Birbirlerinin hangi duygusal yaralarını tetikler, nasıl iyileştirirler — 2 paragraf]\n\n' +
-        '**Sağlık & Enerji Bedeni**\n[Bu karmik bağın fiziksel ve enerjetik sağlık üzerindeki etkisini analiz et. Birlikte hangi chakralar aktifleşir, hangi enerji blokajları çözülür, birbirlerinin fiziksel ve ruhsal enerjisini nasıl etkilerler — 2 paragraf]\n\n' +
-        '**Kariyer & Yaşam Misyonu**\n[Bu karmik bağın kariyer, iş hayatı ve yaşam misyonu üzerindeki etkisini analiz et. Profesyonel alanda birbirlerini nasıl destekler veya engellerler, ortak bir misyonları var mı, kariyer yollarında bu bağ nasıl yansır — 2 paragraf]\n\n' +
-        'Toplam 500-600 kelime, mistik ve derin ton. Her başlık altında gerçekten sayısal enerjilere dayanan somut analiz yap. Başlıkları DEĞİŞTİRME, aynen yaz.';
+        'MANDATORY FORMAT — use the following 7 headings exactly and in this order:\n\n' +
+        '**Past Life Bond**\n[Describe the karmic roots of these two souls from the past, in which lifetimes they met, and their unfinished business — 2 paragraphs]\n\n' +
+        '**Spiritual Purpose**\n[Describe the spiritual purpose of this relationship, the karmic lesson they will learn together, and why the universe brought them together — 2 paragraphs]\n\n' +
+        '**Karmic Balance**\n[Describe the energy balance between them, conflict points, trigger patterns, and areas of harmony in detail — 2 paragraphs]\n\n' +
+        '**Money & Material World**\n[Analyze the impact of this karmic bond on money, abundance, and material matters. What dynamics come into play when making financial decisions together, how do their relationships with money affect each other, what are the harmony or conflict points in shared material goals — 2 paragraphs]\n\n' +
+        '**Relationship & Emotional Realm**\n[Analyze the emotional bond of these two souls, their love languages, trust dynamics, attachment styles, and recurring karmic patterns in the relationship. Which emotional wounds do they trigger in each other, and how do they heal them — 2 paragraphs]\n\n' +
+        '**Health & Energy Body**\n[Analyze the impact of this karmic bond on physical and energetic health. Which chakras activate together, which energy blockages dissolve, and how do they affect each other\'s physical and spiritual energy — 2 paragraphs]\n\n' +
+        '**Career & Life Mission**\n[Analyze the impact of this karmic bond on career, work life, and life mission. How do they support or hinder each other professionally, do they share a common mission, and how does this bond reflect in their career paths — 2 paragraphs]\n\n' +
+        'Total 500-600 words, mystical and deep tone. Under each heading, provide concrete analysis truly based on numerical energies. Do NOT change the headings, write them exactly as shown.';
     },
 
     expression: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için İfade Sayısı uyumu.\n\n' +
-        ctx.p1.name + ' İfade: ' + ctx.p1.expression + '\n' +
-        ctx.p2.name + ' İfade: ' + ctx.p2.expression + '\n' +
-        'Uyum skoru: ' + ctx.expScore + '%\n' + genderCtx(ctx) + '\n' +
-        'İki kişinin kendini ifade ediş biçimleri, yetenekleri ve dış dünyaya verdikleri mesaj birbirini nasıl tamamlıyor veya zorluyor?\n' +
-        'Sadece İfade Sayısı uyumunu yaz. Kader Yolu veya Ruh Güdüsü hakkında yazmak yasak.\n' +
-        '3 paragraf, 120-140 kelime.';
+      return 'Expression Number compatibility for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        ctx.p1.name + ' Expression: ' + ctx.p1.expression + '\n' +
+        ctx.p2.name + ' Expression: ' + ctx.p2.expression + '\n' +
+        'Compatibility score: ' + ctx.expScore + '%\n' + genderCtx(ctx) + '\n' +
+        'How do these two people\'s modes of self-expression, talents, and the messages they project to the outside world complement or challenge each other?\n' +
+        'Write only about Expression Number compatibility. Writing about Life Path or Soul Urge is forbidden.\n' +
+        '3 paragraphs, 120-140 words.';
     },
 
     communication: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için iletişim uyumu.\n\n' +
-        'İfade Sayıları: ' + ctx.p1.expression + ' & ' + ctx.p2.expression + '\n' +
-        'Kişilik Sayıları: ' + ctx.p1.personality + ' & ' + ctx.p2.personality + '\n' +
+      return 'Communication compatibility for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'Expression Numbers: ' + ctx.p1.expression + ' & ' + ctx.p2.expression + '\n' +
+        'Personality Numbers: ' + ctx.p1.personality + ' & ' + ctx.p2.personality + '\n' +
         genderCtx(ctx) + '\n' +
-        'İki kişinin iletişim tarzları, birbirini nasıl anladıkları ve yanlış anlaşılmaların neden kaynaklandığını anlat.\n' +
-        '3 paragraf, 120-140 kelime, pratik ve dürüst ton.';
+        'Describe these two people\'s communication styles, how they understand each other, and what causes misunderstandings between them.\n' +
+        '3 paragraphs, 120-140 words, practical and honest tone.';
     },
 
     full_compat: function(ctx) {
-      return ctx.p1.name + ' ve ' + ctx.p2.name + ' için TAM PREMIUM UYUM ANALİZİ.\n\n' +
-        ctx.p1.name + ': Kader=' + ctx.p1.lifePath + ', Ruh=' + ctx.p1.soulUrge + ', Kişilik=' + ctx.p1.personality + ', İfade=' + ctx.p1.expression + '\n' +
-        ctx.p2.name + ': Kader=' + ctx.p2.lifePath + ', Ruh=' + ctx.p2.soulUrge + ', Kişilik=' + ctx.p2.personality + ', İfade=' + ctx.p2.expression + '\n' +
-        'Genel uyum: ' + ctx.overall + '%\n' + genderCtx(ctx) + '\n' +
-        (ctx.p1.lifePath === 11 || ctx.p1.lifePath === 22 || ctx.p1.lifePath === 33 || ctx.p2.lifePath === 11 || ctx.p2.lifePath === 22 || ctx.p2.lifePath === 33 ? '⚠️ Üstat Sayı var — bunu merkeze al.\n\n' : '') +
-        'PARAGRAF YAPISI (tam 6 paragraf, her biri 70-80 kelime):\n\n' +
-        '1. AÇILIŞ: Bu iki insanın bir araya gelmesinin sayısal anlamı. Sarsıcı ve keskin başla.\n' +
-        '2. KADER YOLU BİRLEŞİMİ: ' + ctx.p1.lifePath + ' ve ' + ctx.p2.lifePath + ' Kader Yolları bir arada yürüyünce ne yaratıyor?\n' +
-        '3. DUYGUSAL DERINLIK: Ruh Güdüleri (' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + ') arasındaki içsel uyum veya sürtüşme.\n' +
-        '4. ÇATIŞMA NOKTASI: Bu ilişkide kaçınılmaz olan en büyük sürtüşme. Acımasızca dürüst ol.\n' +
-        '5. BİRLİKTE BÜYÜME: Bu çiftin birlikte neyi başarabilir, neyi öğrenebilir?\n' +
-        '6. KAPANIŞ: ' + ctx.p1.name + ' ve ' + ctx.p2.name + ' için bir gerçek — soru değil.\n\n' +
-        'Toplam 350-420 kelime.';
+      return 'FULL PREMIUM COMPATIBILITY ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        ctx.p1.name + ': LifePath=' + ctx.p1.lifePath + ', Soul=' + ctx.p1.soulUrge + ', Personality=' + ctx.p1.personality + ', Expression=' + ctx.p1.expression + '\n' +
+        ctx.p2.name + ': LifePath=' + ctx.p2.lifePath + ', Soul=' + ctx.p2.soulUrge + ', Personality=' + ctx.p2.personality + ', Expression=' + ctx.p2.expression + '\n' +
+        'Overall compatibility: ' + ctx.overall + '%\n' + genderCtx(ctx) + '\n' +
+        (ctx.p1.lifePath === 11 || ctx.p1.lifePath === 22 || ctx.p1.lifePath === 33 || ctx.p2.lifePath === 11 || ctx.p2.lifePath === 22 || ctx.p2.lifePath === 33 ? '⚠️ Master Number present — make this the centerpiece.\n\n' : '') +
+        'PARAGRAPH STRUCTURE (exactly 6 paragraphs, each 70-80 words):\n\n' +
+        '1. OPENING: The numerical meaning of these two people coming together. Start striking and sharp.\n' +
+        '2. LIFE PATH UNION: What do Life Paths ' + ctx.p1.lifePath + ' and ' + ctx.p2.lifePath + ' create when they walk together?\n' +
+        '3. EMOTIONAL DEPTH: The inner harmony or friction between Soul Urges (' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + ').\n' +
+        '4. CONFLICT POINT: The biggest inevitable friction in this relationship. Be ruthlessly honest.\n' +
+        '5. GROWING TOGETHER: What can this couple achieve together, what can they learn?\n' +
+        '6. CLOSING: A truth for ' + ctx.p1.name + ' and ' + ctx.p2.name + ' — not a question.\n\n' +
+        'Total 350-420 words.';
     }
   };
 

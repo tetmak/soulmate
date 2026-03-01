@@ -50,37 +50,37 @@
   }
 
   var TONE = {
-    1: 'ateşli, meydan okuyan',
-    2: 'yumuşak ama hüzünlü',
-    3: 'canlı ama altında kaygı var',
-    4: 'ağır, ciddi, toprak gibi',
-    5: 'hızlı, kaosçu',
-    6: 'şefkatli ama boğucu',
-    7: 'soğuk görünen derinlik, seçilmiş yalnızlık',
-    8: 'güç ve madde arasında savaş',
-    9: 'yorgun bilge, bırakmayı öğrenmek',
-    11: 'yük gibi hissettiren sezgi',
-    22: 'izole vizyon sahibi',
-    33: 'saf sevgi, dünya buna hazır değil'
+    1: 'fiery, challenging',
+    2: 'soft yet melancholic',
+    3: 'vivid but with underlying anxiety',
+    4: 'heavy, serious, earthy',
+    5: 'fast, chaotic',
+    6: 'nurturing yet suffocating',
+    7: 'cold-looking depth, chosen solitude',
+    8: 'battle between power and material',
+    9: 'tired sage, learning to let go',
+    11: 'intuition that feels like a burden',
+    22: 'isolated visionary',
+    33: 'pure love, the world is not ready for this'
   };
 
   // Her kart tipi için farklı açılış kelimeleri — AI bunlardan biriyle BAŞLAMAK ZORUNDA
   var OPENINGS = {
-    'soul_urge': ['İçinde taşıdığın', 'Kimseye itiraf etmediğin', 'Gece yalnız kaldığında', 'Sevgiyi hep'],
-    'personality': ['İnsanlar seni', 'Seni ilk gören', 'Dışarıdan bakıldığında', 'Çevren seni'],
-    'life_path': ['Bu dünyaya', 'Kaderin seni', 'Hayatının bütününe bakınca', 'Tekrar eden o örüntü']
+    'soul_urge': ['What you carry inside', 'What you never confess', 'When you are alone at night', 'Love has always'],
+    'personality': ['People see you', 'Those who first meet you', 'From the outside looking in', 'Your circle perceives you'],
+    'life_path': ['Into this world', 'Destiny pulls you', 'Looking at your whole life', 'That recurring pattern']
   };
 
   var FORBIDDEN = {
-    'soul_urge': 'Yaşam yolu veya kişilik hakkında yazmak KESİNLİKLE yasak.',
-    'personality': 'Ruh dürtüsü veya yaşam yolu hakkında yazmak KESİNLİKLE yasak.',
-    'life_path': 'Ruh dürtüsü veya kişilik hakkında yazmak KESİNLİKLE yasak.'
+    'soul_urge': 'Writing about life path or personality is STRICTLY forbidden.',
+    'personality': 'Writing about soul urge or life path is STRICTLY forbidden.',
+    'life_path': 'Writing about soul urge or personality is STRICTLY forbidden.'
   };
 
   var CARD_TOPIC = {
-    'soul_urge': 'kişinin içsel arzuları, kimseye söylemediği istekleri, sevgi dili ve duygusal gerçekleri',
-    'personality': 'kişinin dışarıya yansıttığı imaj, insanların onu ilk tanıdığında ne hissettiği, toplumsal maskesi',
-    'life_path': 'kişinin bu hayattaki büyük amacı, kaderin onu nereye çektiği, hayat boyunca tekrar eden temalar'
+    'soul_urge': 'the person\'s inner desires, secret wishes they tell no one, love language and emotional truths',
+    'personality': 'the image the person projects outward, what people feel when they first meet them, their social mask',
+    'life_path': 'the person\'s great purpose in this life, where destiny pulls them, recurring themes throughout life'
   };
 
   function getCardType(titleText) {
@@ -97,22 +97,24 @@
     var opening = openings[Math.floor(Math.random() * openings.length)];
     var tone = TONE[num] || 'mistik';
 
+    var _aiLang = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
     var system = [
-      'Sen bir numeroloji üstadısın.',
-      (window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.') + ' Tam olarak 150-160 kelime — ne eksik ne fazla.',
-      'SADECE 4 kısa paragraf. Başlık yok, liste yok, madde işareti yok.',
-      'BİRİNCİ KELİMELER ZORUNLU: Analizin ilk kelimesi "' + opening + '" olacak — başka türlü başlamak yasak.',
-      '"Yaşam yolun" ifadesiyle veya herhangi bir sayı adıyla başlamak KESİNLİKLE yasak.',
+      'You are a numerology master.',
+      'CRITICAL LANGUAGE RULE: ' + _aiLang + ' Exactly 150-160 words — no more, no less.',
+      'ONLY 4 short paragraphs. No titles, no lists, no bullet points.',
+      'FIRST WORDS MANDATORY: The analysis must start with "' + opening + '" — starting any other way is forbidden.',
+      'Starting with "Your life path" or any number name is STRICTLY forbidden.',
       FORBIDDEN[cardType],
-      'Yazı tonu: ' + tone + '.',
-      'Doğrudan "sen" diye hitap et. Vaaz verme. Klişe kullanma.',
-      '"güçlü", "bağımsız", "derin", "özel" gibi her sayıya yakışan sıfatları KULLANMA.'
+      'Writing tone: ' + tone + '.',
+      'Address as "you" directly. No preaching. No clichés.',
+      'Do NOT use adjectives like "strong", "independent", "deep", "special" that fit every number.',
+      'LANGUAGE: ' + _aiLang
     ].join(' ');
 
     var user = [
-      userName + ' için ' + (cardType === 'soul_urge' ? 'Ruh Dürtüsü' : cardType === 'personality' ? 'Kişilik' : 'Yaşam Yolu') + ' Sayısı ' + num + ' analizi.',
-      'Konu: ' + CARD_TOPIC[cardType] + '.',
-      'Sadece bu konuda yaz.'
+      (cardType === 'soul_urge' ? 'Soul Urge' : cardType === 'personality' ? 'Personality' : 'Life Path') + ' Number ' + num + ' analysis for ' + userName + '.',
+      'Topic: ' + CARD_TOPIC[cardType] + '.',
+      'Write only about this topic.'
     ].join(' ');
 
     try {
@@ -204,7 +206,7 @@
           if (!loaded) {
             loaded = true;
             contentDiv.className = 'acc-loading';
-            contentDiv.textContent = '✦ Analiz hazırlanıyor...';
+            contentDiv.textContent = '✦ ' + (window.i18n ? window.i18n.t('compat.loading_preparing', 'Analiz hazırlanıyor...') : 'Analiz hazırlanıyor...');
 
             fetchAnalysis(cardType, num, name || 'Sen').then(function (text) {
               if (text) {
@@ -216,7 +218,7 @@
                   .join('');
               } else {
                 contentDiv.className = 'acc-content';
-                contentDiv.textContent = 'Analiz şu an yüklenemiyor.';
+                contentDiv.textContent = (window.i18n ? window.i18n.t('compat.analysis_error', 'Analiz yüklenemedi.') : 'Analiz şu an yüklenemiyor.');
               }
             });
           }
