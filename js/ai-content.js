@@ -1,15 +1,15 @@
 /**
- * NUMERAEL — AI İçerik Motoru
- * Tüm sayfalardaki analizleri, yorumları ve rehberleri OpenAI ile üretir
+ * NUMERAEL — AI Content Engine
+ * Generates analyses, interpretations and guides across all pages via OpenAI
  */
 (function() {
   'use strict';
 
-  // API key artık /api/openai proxy'si tarafından server-side ekleniyor
+  // API key is added server-side by /api/openai proxy
   var PAGE = window.location.pathname.split('/').pop() || '';
   var CACHE_PREFIX = 'numerael_ai_';
 
-  // Native app (Capacitor) ise Vercel production URL'sini kullan
+  // Use Vercel production URL for native app (Capacitor)
   var isNative = window.location.protocol === 'capacitor:' ||
                  window.location.protocol === 'ionic:' ||
                  window.location.hostname === 'localhost' ||
@@ -17,7 +17,7 @@
                  (typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
   var API_BASE = isNative ? 'https://soulmate-kohl.vercel.app' : '';
 
-  // ─── Skeleton loading stili ────────────────────────────────────────
+  // ─── Skeleton loading style ────────────────────────────────────────
   var skeletonStyle = document.createElement('style');
   skeletonStyle.textContent = `
     .ai-skeleton {
@@ -45,17 +45,21 @@
   `;
   document.head.appendChild(skeletonStyle);
 
-  // ─── OpenAI çağrısı ───────────────────────────────────────────────
+  // ─── OpenAI call ───────────────────────────────────────────────
   async function askAI(prompt, systemMsg) {
     var _aiLang = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
     var _langCode = window.i18n ? window.i18n.current() : 'tr';
-    var system = systemMsg || 'Sen Numantic uygulamasının Numeroloji Üstadısın. ' +
-        _aiLang + ' Mistik, etkileyici ve kişisel bir dilde yaz. ' +
-        'Sayılar, kozmik bağlantılar ve ruhsal anlamlar konusunda derin bilgeliğe sahipsin. ' +
-        'Kısa ve çarpıcı yaz — gereksiz tekrar yapma. ' +
-        'Sadece istenen metni yaz, başlık veya açıklama ekleme.';
+    var system = systemMsg || 'You are the Numerology Master of the Numantic app. ' +
+        'You have deep wisdom about numbers, cosmic connections and spiritual meanings. ' +
+        'Write concisely and impactfully in a mystical, personal tone. ' +
+        'No repetition. Only write the requested text, no titles or explanations. ' +
+        'CRITICAL LANGUAGE RULE: ' + _aiLang;
 
-    var cached = sessionStorage.getItem(CACHE_PREFIX + _langCode + '_' + btoa(prompt).slice(0,40));
+    // Append language instruction to user prompt for reliable enforcement
+    var finalPrompt = prompt + '\n\n[LANGUAGE: ' + _aiLang + ']';
+
+    var cacheKey = CACHE_PREFIX + _langCode + '_' + btoa(encodeURIComponent(prompt)).slice(0,40);
+    var cached = sessionStorage.getItem(cacheKey);
     if (cached) return cached;
 
     var r = await fetch(API_BASE + '/api/openai', {
@@ -67,7 +71,7 @@
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: system },
-          { role: 'user', content: prompt }
+          { role: 'user', content: finalPrompt }
         ],
         max_tokens: 400,
         temperature: 0.85,
@@ -75,11 +79,11 @@
     });
     var data = await r.json();
     var text = data.choices && data.choices[0] ? data.choices[0].message.content : null;
-    if (text) sessionStorage.setItem(CACHE_PREFIX + _langCode + '_' + btoa(prompt).slice(0,40), text);
+    if (text) sessionStorage.setItem(cacheKey, text);
     return text;
   }
 
-  // ─── Element'i skeleton yap, sonra doldur ─────────────────────────
+  // ─── Make element skeleton, then fill ─────────────────────────
   function skeletonFill(el, promise) {
     if (!el) return;
     var original = el.innerHTML;
@@ -95,31 +99,30 @@
     });
   }
 
-  // ─── Kullanıcı bilgilerini al ──────────────────────────────────────
+  // ─── Get user context ──────────────────────────────────────
   function getUserContext() {
     var today = new Date();
-    var days = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
-    var months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-    // Kullanıcı verilerini localStorage'dan al (data attribute'lardan daha güvenilir)
-    var userName = 'Değerli ruh';
+    var userName = 'Dear soul';
     var lifePathNumber = '7';
     var userGender = '';
     try {
       var ud = JSON.parse(localStorage.getItem('numerael_user_data') || '{}');
-      if (ud.name) userName = ud.name.split(' ')[0]; // sadece ilk isim
+      if (ud.name) userName = ud.name.split(' ')[0];
       if (ud.lifePath) lifePathNumber = String(ud.lifePath);
-      if (ud.gender) userGender = ud.gender === 'female' ? 'kadın' : (ud.gender === 'male' ? 'erkek' : '');
+      if (ud.gender) userGender = ud.gender === 'female' ? 'female' : (ud.gender === 'male' ? 'male' : '');
     } catch(e) {}
 
-    // Fallback: DOM'dan kontrol et
+    // Fallback: check DOM
     var lpEl = document.querySelector('[data-life-path]');
     if (lpEl && lpEl.dataset.lifePath) lifePathNumber = lpEl.dataset.lifePath;
     var unEl = document.querySelector('[data-user-name]');
     if (unEl && unEl.dataset.userName) userName = unEl.dataset.userName;
 
     return {
-      date: today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear(),
+      date: months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear(),
       day: days[today.getDay()],
       dayNum: today.getDate(),
       lifePathNumber: lifePathNumber,
@@ -129,7 +132,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // SAYFA BAZLI İÇERİK ÜRETİCİLERİ
+  // PAGE CONTENT GENERATORS
   // ═══════════════════════════════════════════════════════════════════
 
   // ─── Daily Spiritual Guide ────────────────────────────────────────
@@ -142,26 +145,26 @@
     var insightEl = document.querySelector('p.text-white\\/90, p.leading-relaxed.text-base, .border-l-2 + p, .border-l-2.border-primary ~ p');
     if (!insightEl) insightEl = document.querySelector('.border-l-2');
 
-    var gTag = ctx.gender ? ' (Cinsiyet: ' + ctx.gender + ')' : '';
+    var gTag = ctx.gender ? ' (Gender: ' + ctx.gender + ')' : '';
     if (affirmEl) {
       skeletonFill(affirmEl, askAI(
-        `${ctx.userName}${gTag} için ${ctx.date} tarihi, Titreşim ${vibNum} enerjisinde güçlü bir günlük afirmasyon yaz.
-         Tırnak içinde, kişisel ve kozmik bağlantılı olsun. Cinsiyete uygun hitap et. Maksimum 12 kelime.`
+        'Write a powerful daily affirmation for ' + ctx.userName + gTag + ' on ' + ctx.date + ', Vibration ' + vibNum + ' energy. ' +
+        'In quotes, personal and cosmically connected. Address gender appropriately. Maximum 12 words.'
       ));
     }
     if (insightEl) {
       skeletonFill(insightEl, askAI(
-        `${ctx.userName}${gTag} için ${ctx.date}, ${ctx.day} günü. Titreşim ${vibNum} için kişisel bir günlük rehberlik mesajı yaz.
-         Kozmik enerji, günün fırsatları ve nelere dikkat edilmesi gerektiğinden bahset. Cinsiyete uygun dil kullan.
-         2-3 cümle, mistik ve ilham verici tonda.`
+        'Write a personal daily guidance message for ' + ctx.userName + gTag + ' on ' + ctx.date + ', ' + ctx.day + '. ' +
+        'For Vibration ' + vibNum + '. Mention cosmic energy, opportunities of the day and what to watch out for. ' +
+        'Use gender-appropriate language. 2-3 sentences, mystical and inspiring tone.'
       ));
     }
 
-    // Ritüel / section başlıkları
+    // Ritual sections
     var ritualSections = document.querySelectorAll('.ritual-text, [class*="ritual"] p, .glass-card p');
     ritualSections.forEach(function(el, i) {
       if (el.textContent.trim().length > 30) {
-        skeletonFill(el, askAI(`Titreşim ${vibNum} için ${i===0?'sabah':'akşam'} ritüel tavsiyesi yaz. 1-2 cümle, pratik ve mistik.`));
+        skeletonFill(el, askAI('Write a ' + (i===0?'morning':'evening') + ' ritual recommendation for Vibration ' + vibNum + '. 1-2 sentences, practical and mystical.'));
       }
     });
   }
@@ -174,12 +177,12 @@
     var descEls = document.querySelectorAll('p.text-white\\/70, p.text-white\\/80, p.text-white\\/60, p.leading-relaxed, p.font-light');
     descEls.forEach(function(el, i) {
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('header')) {
-        var gInfo = ctx.gender ? ' Kullanıcı: ' + ctx.gender + '.' : '';
+        var gInfo = ctx.gender ? ' User: ' + ctx.gender + '.' : '';
         var prompts = [
-          `${num} sayısının kozmik anlamını ve bu günkü enerjisini açıkla.${gInfo} 2-3 cümle, derin ve mistik.`,
-          `${num} sayısını taşıyan bir ${ctx.gender || 'kişi'}nin bugün karşılaşacağı fırsatlar ve zorluklar nelerdir? 2 cümle.`,
-          `${num} sayısının ruhsal mesajı nedir?${gInfo} Kısa, çarpıcı, ilham verici. 1-2 cümle.`,
-          `${num} sayısı ve aşk, ilişkiler üzerindeki etkisi. ${ctx.gender === 'kadın' ? 'Bir kadın' : ctx.gender === 'erkek' ? 'Bir erkek' : 'Bir kişi'} perspektifinden yaz. 2 cümle, romantik ve kozmik tonda.`,
+          'Explain the cosmic meaning and today\'s energy of number ' + num + '.' + gInfo + ' 2-3 sentences, deep and mystical.',
+          'What opportunities and challenges will a ' + (ctx.gender || 'person') + ' carrying number ' + num + ' face today? 2 sentences.',
+          'What is the spiritual message of number ' + num + '?' + gInfo + ' Short, striking, inspiring. 1-2 sentences.',
+          'Number ' + num + ' and its effect on love and relationships. Write from a ' + (ctx.gender === 'female' ? 'female' : ctx.gender === 'male' ? 'male' : 'person\'s') + ' perspective. 2 sentences, romantic and cosmic tone.',
         ];
         skeletonFill(el, askAI(prompts[i % prompts.length]));
       }
@@ -188,6 +191,7 @@
 
   // ─── Name Numerology Breakdown 1 ─────────────────────────────────
   async function fillNameNumerology1() {
+    var ctx = getUserContext();
     var nameEl = document.querySelector('h2.font-extrabold, h1.font-bold, .text-primary.font-bold');
     var name = nameEl ? nameEl.textContent.trim() : 'Alex';
     var lifePathEl = document.querySelector('.text-6xl, .text-7xl, .text-8xl, .text-5xl');
@@ -198,13 +202,13 @@
     textEls.forEach(function(el) {
       if (el.textContent.trim().length > 50 && !el.closest('nav') && !el.closest('header') && !el.closest('[id*="overlay"]') && !el.closest('[id*="share"]') && count < 5) {
         count++;
-        var gCtx = ctx.gender ? ' (Cinsiyet: ' + ctx.gender + ')' : '';
+        var gCtx = ctx.gender ? ' (Gender: ' + ctx.gender + ')' : '';
         var prompts = [
-          `${name}${gCtx} ismi için Yaşam Yolu ${lifeNum} analizini yaz. Kişinin temel özellikleri ve misyonu. Cinsiyete uygun hitap et. 2-3 cümle.`,
-          `Yaşam Yolu ${lifeNum} olan ${name}${gCtx} için bu sayının ruhsal anlamı ve güçlü yönleri nelerdir? 2 cümle.`,
-          `${name} ismindeki harflerin titreşiminin kişiliğe etkisi.${gCtx} 2 cümle, mistik ton.`,
-          `Yaşam Yolu ${lifeNum} olan bir ${ctx.gender || 'kişi'} için kariyer ve aşk rehberliği. 2 cümle.`,
-          `${lifeNum} sayısının evrensel enerjisi ve ${name}${gCtx} üzerindeki kozmik etkisi. 1-2 cümle.`,
+          'Write a Life Path ' + lifeNum + ' analysis for the name ' + name + gCtx + '. Core characteristics and mission. Address gender appropriately. 2-3 sentences.',
+          'What is the spiritual meaning and strengths of this number for ' + name + gCtx + ' with Life Path ' + lifeNum + '? 2 sentences.',
+          'The effect of letter vibrations in the name ' + name + ' on personality.' + gCtx + ' 2 sentences, mystical tone.',
+          'Career and love guidance for a ' + (ctx.gender || 'person') + ' with Life Path ' + lifeNum + '. 2 sentences.',
+          'The universal energy of number ' + lifeNum + ' and its cosmic effect on ' + name + gCtx + '. 1-2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -214,7 +218,7 @@
   // ─── Name Numerology Breakdown 2 ─────────────────────────────────
   async function fillNameNumerology2() {
     var nameEl = document.querySelector('h2.font-extrabold, .text-lg.font-extrabold');
-    var names = nameEl ? nameEl.textContent.replace('&', 've') : 'Alex ve Maya';
+    var names = nameEl ? nameEl.textContent.replace('&', ' & ') : 'Alex & Maya';
 
     var sections = document.querySelectorAll('section p, .glass-card p, .card p');
     var count = 0;
@@ -222,12 +226,12 @@
       if (el.textContent.trim().length > 50 && !el.closest('[id*="overlay"]') && count < 6) {
         count++;
         var prompts = [
-          `${names} arasındaki ruhsal bağ ve kozmik çekim hakkında derin analiz. 2-3 cümle, romantik ve mistik.`,
-          `${names} ikilisinin birlikte yarattığı enerji alanı ve yaşam yolları uyumu. 2 cümle.`,
-          `${names} için ortak kader noktaları ve büyüme alanları. 2 cümle, pozitif ve ilham verici.`,
-          `${names} arasındaki iletişim titreşimi ve duygusal rezonans. 2 cümle.`,
-          `${names} birlikteliğinin evrensel amacı ve ruhsal dersleri. 2 cümle.`,
-          `${names} için ilişki tavsiyesi ve kozmik yönlendirme. 2 cümle.`,
+          'Deep analysis of the spiritual bond and cosmic attraction between ' + names + '. 2-3 sentences, romantic and mystical.',
+          'The energy field created together by ' + names + ' and their life path harmony. 2 sentences.',
+          'Shared destiny points and growth areas for ' + names + '. 2 sentences, positive and inspiring.',
+          'Communication vibration and emotional resonance between ' + names + '. 2 sentences.',
+          'The universal purpose and spiritual lessons of the ' + names + ' partnership. 2 sentences.',
+          'Relationship advice and cosmic guidance for ' + names + '. 2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -237,7 +241,7 @@
   // ─── Name Numerology Breakdown 3 ─────────────────────────────────
   async function fillNameNumerology3() {
     var nameEl = document.querySelector('h2.font-extrabold, h2.text-lg');
-    var names = nameEl ? nameEl.textContent.replace('&','ve') : 'İki ruh';
+    var names = nameEl ? nameEl.textContent.replace('&',' & ') : 'Two souls';
 
     var textEls = document.querySelectorAll('p, td p, .text-sm');
     var count = 0;
@@ -245,7 +249,7 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('header') && !el.closest('[id*="overlay"]') && count < 7) {
         count++;
         skeletonFill(el, askAI(
-          `${names} için numeroloji tablosu yorumu ${count}. Kısa, özlü, mistik tonda. 1-2 cümle.`
+          'Numerology chart interpretation #' + count + ' for ' + names + '. Short, concise, mystical tone. 1-2 sentences.'
         ));
       }
     });
@@ -256,7 +260,7 @@
     var scoreEl = document.querySelector('.text-5xl, .text-6xl, [class*="score"]');
     var score = scoreEl ? scoreEl.textContent.trim().replace(/\D/g,'') : '88';
     var nameEls = document.querySelectorAll('p.font-semibold, h3.font-bold, p.text-white.font-semibold');
-    var names = nameEls.length >= 2 ? nameEls[0].textContent + ' ve ' + nameEls[1].textContent : 'İki ruh';
+    var names = nameEls.length >= 2 ? nameEls[0].textContent + ' & ' + nameEls[1].textContent : 'Two souls';
 
     var textEls = document.querySelectorAll('p.text-white\\/80, p.text-white\\/70, p.leading-relaxed, p.text-sm.italic, p.text-base');
     var count = 0;
@@ -264,12 +268,12 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && !el.closest('[id*="share"]') && count < 6) {
         count++;
         var prompts = [
-          `${names} arasındaki uyum skoru %${score}. Bu birlikteliğin kozmik anlamı ve ruhsal bağı. 3 cümle, derin ve romantik.`,
-          `%${score} uyum skoru taşıyan ${names} için ilişkinin güçlü yönleri. 2 cümle.`,
-          `${names} ilişkisinde zorluklar ve büyüme fırsatları. 2 cümle, yapıcı ton.`,
-          `${names} birlikteliğinin evrensel amacı ve karmaik bağlantısı. 2 cümle.`,
-          `${names} için aşk dili ve duygusal uyum analizi. 2 cümle.`,
-          `${names} ikilisinin gelecek enerjisi ve ortak yolculuğu. 2 cümle.`,
+          'The compatibility score between ' + names + ' is ' + score + '%. The cosmic meaning and spiritual bond of this partnership. 3 sentences, deep and romantic.',
+          'The strengths of the relationship for ' + names + ' with ' + score + '% compatibility score. 2 sentences.',
+          'Challenges and growth opportunities in the ' + names + ' relationship. 2 sentences, constructive tone.',
+          'The universal purpose and karmic connection of the ' + names + ' partnership. 2 sentences.',
+          'Love language and emotional harmony analysis for ' + names + '. 2 sentences.',
+          'Future energy and shared journey of ' + names + '. 2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -288,13 +292,13 @@
     textEls.forEach(function(el) {
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('header') && !el.closest('[id*="overlay"]') && count < 5) {
         count++;
-        var gCtx2 = ctx.gender ? ' (Cinsiyet: ' + ctx.gender + ')' : '';
+        var gCtx2 = ctx.gender ? ' (Gender: ' + ctx.gender + ')' : '';
         var prompts = [
-          `${name}${gCtx2} için Yaşam Yolu ${lifeNum} kapsamlı ruh yolculuğu analizi. Cinsiyete uygun hitap et. 3 cümle, kişisel ve ilham verici.`,
-          `Yaşam Yolu ${lifeNum} olan ${name}${gCtx2}'in ruhsal misyonu ve bu dünyaya geliş amacı. 2 cümle.`,
-          `${name}'in güçlü yönleri ve doğal yetenekleri numeroloji perspektifinden.${gCtx2} 2 cümle.`,
-          `${name}${gCtx2} için 2026 yılı enerjisi ve fırsatları. 2 cümle.`,
-          `${name}'in ruh eşi ve ilişki enerjisi hakkında kozmik mesaj. ${ctx.gender === 'kadın' ? 'Bir kadın' : ctx.gender === 'erkek' ? 'Bir erkek' : 'Bir kişi'} perspektifinden yaz. 2 cümle.`,
+          'Comprehensive soul journey analysis for ' + name + gCtx2 + ' with Life Path ' + lifeNum + '. Address gender appropriately. 3 sentences, personal and inspiring.',
+          'The spiritual mission and purpose of coming to this world for ' + name + gCtx2 + ' with Life Path ' + lifeNum + '. 2 sentences.',
+          'Strengths and natural talents of ' + name + ' from a numerology perspective.' + gCtx2 + ' 2 sentences.',
+          '2026 energy and opportunities for ' + name + gCtx2 + '. 2 sentences.',
+          'Cosmic message about the soulmate and relationship energy of ' + name + '. Write from a ' + (ctx.gender === 'female' ? 'female' : ctx.gender === 'male' ? 'male' : 'person\'s') + ' perspective. 2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -305,11 +309,10 @@
   async function fillNumerologyHome() {
     var ctx = getUserContext();
 
-    // "Abundance" veya vibrasyon başlığı altındaki açıklama
     var vibDesc = document.querySelector('p.text-white\\/70.text-sm, p.leading-relaxed.text-sm.text-white');
     if (vibDesc && !vibDesc.closest('nav')) {
       skeletonFill(vibDesc, askAI(
-        `${ctx.date}, ${ctx.day}. Titreşim ${Math.floor(ctx.dayNum % 9) + 1} günü için kısa kozmik mesaj. 2 cümle, enerji odaklı.`
+        ctx.date + ', ' + ctx.day + '. Short cosmic message for Vibration ' + (Math.floor(ctx.dayNum % 9) + 1) + ' day. 2 sentences, energy focused.'
       ));
     }
 
@@ -317,7 +320,7 @@
     var celestialEl = document.querySelector('#card-celestial p, #card-celestial .italic');
     if (celestialEl) {
       skeletonFill(celestialEl, askAI(
-        `${ctx.date} için gezegen hizalaması ve göksel enerji tahmini. 2 cümle, astrolojik ve mistik.`
+        'Planetary alignment and celestial energy forecast for ' + ctx.date + '. 2 sentences, astrological and mystical.'
       ));
     }
 
@@ -325,7 +328,7 @@
     var lunarEl = document.querySelector('#card-lunar p, #card-lunar .italic');
     if (lunarEl) {
       skeletonFill(lunarEl, askAI(
-        `${ctx.date} için ay enerjisi ve iç dünya rehberliği. 2 cümle, sezgisel ve derin.`
+        'Moon energy and inner world guidance for ' + ctx.date + '. 2 sentences, intuitive and deep.'
       ));
     }
 
@@ -333,7 +336,7 @@
     var oracleEl = document.querySelector('p.italic.leading-relaxed, p.font-light.italic');
     if (oracleEl && !oracleEl.closest('nav')) {
       skeletonFill(oracleEl, askAI(
-        `${ctx.date} için derin, şiirsel bir numeroloji özdeyişi yaz. 1-2 cümle, tırnak işareti olmadan.`
+        'Write a deep, poetic numerology aphorism for ' + ctx.date + '. 1-2 sentences, without quotation marks.'
       ));
     }
   }
@@ -350,12 +353,12 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 6) {
         count++;
         var prompts = [
-          `${month} için kozmik enerji akışı ve genel atmosfer. 2 cümle.`,
-          `${month} boyunca güçlü günler ve dikkat edilmesi gereken dönemler. 2 cümle.`,
-          `${month} için kariyer ve maddi alan enerjisi. 2 cümle.`,
-          `${month} için aşk ve ilişkiler enerjisi. 2 cümle.`,
-          `${month} için sağlık ve enerji tavsiyesi. 2 cümle.`,
-          `${month} için spiritüel büyüme fırsatları. 2 cümle.`,
+          'Cosmic energy flow and general atmosphere for ' + month + '. 2 sentences.',
+          'Powerful days and periods to watch out for during ' + month + '. 2 sentences.',
+          'Career and financial energy for ' + month + '. 2 sentences.',
+          'Love and relationship energy for ' + month + '. 2 sentences.',
+          'Health and energy advice for ' + month + '. 2 sentences.',
+          'Spiritual growth opportunities for ' + month + '. 2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -371,7 +374,7 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 3) {
         count++;
         skeletonFill(el, askAI(
-          `${ctx.date} için Kader Çarkı spin öncesi kozmik hazırlık mesajı. 2 cümle, merak uyandırıcı ve mistik.`
+          'Cosmic preparation message before the Wheel of Destiny spin for ' + ctx.date + '. 2 sentences, curiosity-provoking and mystical.'
         ));
       }
     });
@@ -380,7 +383,7 @@
   // ─── Wheel Reward Success ─────────────────────────────────────────
   async function fillWheelRewardSuccess() {
     var resultEl = document.querySelector('.result-text, h2, h3, .reward-title');
-    var result = resultEl ? resultEl.textContent.trim() : 'Kozmik mesaj';
+    var result = resultEl ? resultEl.textContent.trim() : 'Cosmic message';
 
     var textEls = document.querySelectorAll('p.text-white\\/70, p.leading-relaxed, p.text-base');
     var count = 0;
@@ -388,7 +391,7 @@
       if (el.textContent.trim().length > 30 && !el.closest('nav') && count < 3) {
         count++;
         skeletonFill(el, askAI(
-          `Kader Çarkından "${result}" sonucu çıktı. Bu sonucun kozmik anlamı ve bugüne mesajı. 2-3 cümle.`
+          'The result "' + result + '" came from the Wheel of Destiny. The cosmic meaning and today\'s message of this result. 2-3 sentences.'
         ));
       }
     });
@@ -403,7 +406,7 @@
         count++;
         var num = count;
         skeletonFill(el, askAI(
-          `${num} sayısının temel anlamı, enerjisi ve bu sayıyı taşıyan kişinin özellikleri. 2 cümle.`
+          'The core meaning, energy and characteristics of a person carrying number ' + num + '. 2 sentences.'
         ));
       }
     });
@@ -422,10 +425,10 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 4) {
         count++;
         var prompts = [
-          `${letter} harfinin numerolojik titreşimi (${num}) ve taşıdığı enerji. 2 cümle.`,
-          `${letter} harfi başında olan isimlerin kişilik özellikleri. 2 cümle.`,
-          `${letter} harfinin kozmik anlamı ve ruhsal mesajı. 2 cümle.`,
-          `${num} titreşimini taşıyan ${letter} harfi için günlük tavsiye. 2 cümle.`,
+          'The numerological vibration (' + num + ') and energy of the letter ' + letter + '. 2 sentences.',
+          'Personality traits of names starting with the letter ' + letter + '. 2 sentences.',
+          'The cosmic meaning and spiritual message of the letter ' + letter + '. 2 sentences.',
+          'Daily advice for the letter ' + letter + ' carrying vibration ' + num + '. 2 sentences.',
         ];
         skeletonFill(el, askAI(prompts[(count-1) % prompts.length]));
       }
@@ -440,7 +443,7 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 4) {
         count++;
         skeletonFill(el, askAI(
-          `Geçmiş bir numeroloji okuması için özet yorum ve bu deneyimin kişisel büyümeye katkısı. 2 cümle.`
+          'Summary interpretation of a past numerology reading and its contribution to personal growth. 2 sentences.'
         ));
       }
     });
@@ -449,14 +452,14 @@
   // ─── Premium Crystal Store ─────────────────────────────────────────
   async function fillCrystalStore() {
     var crystalCards = document.querySelectorAll('.crystal-card, [class*="card"] p, .product-desc');
-    var crystalNames = ['Ametist','Sitrin','Obsidyen','Lapis Lazuli','Kuvars','Ay Taşı','Roze Kuvars','Turmalin'];
+    var crystalNames = ['Amethyst','Citrine','Obsidian','Lapis Lazuli','Quartz','Moonstone','Rose Quartz','Tourmaline'];
     var count = 0;
     crystalCards.forEach(function(el) {
       if (el.textContent.trim().length > 30 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 6) {
         var crystal = crystalNames[count % crystalNames.length];
         count++;
         skeletonFill(el, askAI(
-          `${crystal} kristalinin enerji özellikleri ve ruhsal faydaları. 1-2 cümle, büyüleyici ton.`
+          'The energy properties and spiritual benefits of ' + crystal + ' crystal. 1-2 sentences, enchanting tone.'
         ));
       }
     });
@@ -470,7 +473,7 @@
       if (el.textContent.trim().length > 40 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 4) {
         count++;
         skeletonFill(el, askAI(
-          `İki ruh arasındaki numerolojik bağlantı ve paylaşılan enerji alanı. 2 cümle, mistik ton.`
+          'The numerological connection and shared energy field between two souls. 2 sentences, mystical tone.'
         ));
       }
     });
@@ -484,7 +487,7 @@
       if (el.textContent.trim().length > 30 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 2) {
         count++;
         skeletonFill(el, askAI(
-          `İki kişinin doğum tarihlerinden numerolojik uyumun nasıl hesaplandığı hakkında mistik giriş. 2 cümle.`
+          'A mystical introduction about how numerological compatibility is calculated from two people\'s birth dates. 2 sentences.'
         ));
       }
     });
@@ -499,7 +502,7 @@
       if (el.textContent.trim().length > 20 && !el.closest('nav') && !el.closest('[id*="overlay"]') && !el.closest('footer') && count < 2) {
         count++;
         skeletonFill(el, askAI(
-          `${ctx.date} tarihi evrene niyet göndermek için kozmik enerjinin açık olduğunu anlatan ilham verici mesaj. 1-2 cümle.`
+          'An inspiring message about cosmic energy being open for sending intentions to the universe on ' + ctx.date + '. 1-2 sentences.'
         ));
       }
     });
@@ -513,7 +516,7 @@
       if (el.textContent.trim().length > 30 && !el.closest('nav') && count < 3) {
         count++;
         skeletonFill(el, askAI(
-          `Numantic uygulamasının ${count}. ayar özelliği için kısa açıklama. 1 cümle, sade ve kullanışlı.`
+          'Short description for the Numantic app\'s setting feature #' + count + '. 1 sentence, clear and useful.'
         ));
       }
     });
@@ -522,28 +525,28 @@
   // ─── Kisi Profil ──────────────────────────────────────────────────
   async function fillKisiProfil() {
     var nameEl = document.querySelector('h1, h2, .profile-name');
-    var name = nameEl ? nameEl.textContent.trim() : 'Ruh yolcusu';
+    var name = nameEl ? nameEl.textContent.trim() : 'Soul traveler';
     var textEls = document.querySelectorAll('p, .bio, .description');
     var count = 0;
     textEls.forEach(function(el) {
       if (el.textContent.trim().length > 30 && !el.closest('nav') && !el.closest('[id*="overlay"]') && count < 4) {
         count++;
         skeletonFill(el, askAI(
-          `${name} için numeroloji kişilik profili özeti ${count}. 2 cümle.`
+          'Numerology personality profile summary #' + count + ' for ' + name + '. 2 sentences.'
         ));
       }
     });
   }
 
   // ═══════════════════════════════════════════════════════════════════
-  // SAYFA ALGILAMA VE ÇALIŞTIRMA
+  // PAGE DETECTION AND EXECUTION
   // ═══════════════════════════════════════════════════════════════════
 
   var pageHandlers = {
     'daily_spiritual_guide': fillDailySpiritualGuide,
     'daily_number_deep_dive': fillDailyNumberDeepDive,
     'name_numerology_breakdown_1': fillNameNumerology1,
-    // name_numerology_breakdown_2: compatibility-engine.js tarafından yönetiliyor (numeroloji verileriyle)
+    // name_numerology_breakdown_2: managed by compatibility-engine.js (with numerology data)
     'name_numerology_breakdown_3': fillNameNumerology3,
     'relationship_compatibility': fillCompatibilityAnalysis,
     'profile_soul_journey': fillProfileSoulJourney,
@@ -562,7 +565,7 @@
     'kisi_profil': fillKisiProfil,
   };
 
-  // Sayfa yüklenince ilgili handler'ı çalıştır
+  // Run the appropriate handler when page loads
   function runPageHandler() {
     for (var key in pageHandlers) {
       if (PAGE.includes(key)) {
@@ -575,7 +578,7 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', runPageHandler);
   } else {
-    setTimeout(runPageHandler, 300); // Sayfanın diğer JS'leri çalışsın diye kısa bekle
+    setTimeout(runPageHandler, 300);
   }
 
 })();

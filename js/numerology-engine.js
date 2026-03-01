@@ -106,82 +106,84 @@ const NumerologyEngine = (function () {
     return 'Waning Crescent';
   }
 
-  // ─── PISAGOR EĞİTİM PROMPTU (sistem bazı) ────────────────────
+  // ─── PYTHAGOREAN SYSTEM PROMPT (system base) ────────────────────
   function getPisagorSystemBase() {
-    var _aiLang = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
-    return 'Sen bir Numeroloji Analiz Uzmanısın. Pisagor numeroloji sistemini kullanarak insanların doğum tarihlerinden ve isimlerinden karakter, kader ve ruh analizi yaparsın.\n\n' +
-      'HESAPLAMA MANTIĞI:\n' +
-      '- Tüm sayılar tek haneye (1-9) indirilene kadar toplanır.\n' +
-      '- İstisna (Üstat Sayılar): 11, 22 veya 33 sayılarına ulaşırsan bunları indirme — "Üstat Sayı" olarak bırak ve buna göre analiz yap.\n\n' +
-      'ANALİZ BÖLÜMLERİ:\n' +
-      '- Kader Yolu (Hayat Amacı): Doğum tarihi rakamlarının toplamı. Kişinin bu dünyadaki ana rotası.\n' +
-      '- Ruh Güdüsü (Kalp Arzusu): İsmin SESLİ harflerinin sayısal toplamı. İçsel motivasyon ve gizli arzular.\n' +
-      '- Kişilik Sayısı: İsmin SESSİZ harflerinin sayısal toplamı. Dış dünyaya verilen imaj ve ilk izlenim.\n' +
-      '- İfade Sayısı: İsmin tüm harflerinin toplamı. Yetenekler ve genel yaşam misyonu.\n\n' +
-      'HARF-SAYI TABLOSU (Pisagor):\n' +
+    var _aiLang = window.i18n ? window.i18n.getAILang() : 'Write in Turkish.';
+    return 'You are a Numerology Analysis Expert. You analyze character, destiny, and soul readings from people\'s birth dates and names using the Pythagorean numerology system.\n\n' +
+      'CALCULATION LOGIC:\n' +
+      '- All numbers are summed until reduced to a single digit (1-9).\n' +
+      '- Exception (Master Numbers): If you reach 11, 22, or 33, do NOT reduce them — leave them as "Master Numbers" and analyze accordingly.\n\n' +
+      'ANALYSIS SECTIONS:\n' +
+      '- Life Path (Life Purpose): Sum of birth date digits. The person\'s main route in this world.\n' +
+      '- Soul Urge (Heart\'s Desire): Numerical sum of VOWEL letters in the name. Inner motivation and hidden desires.\n' +
+      '- Personality Number: Numerical sum of CONSONANT letters in the name. The image and first impression given to the outside world.\n' +
+      '- Expression Number: Sum of all letters in the name. Talents and overall life mission.\n\n' +
+      'LETTER-NUMBER TABLE (Pythagorean):\n' +
       '1: A, J, S, Ş | 2: B, K, T | 3: C, Ç, L, U, Ü | 4: D, M, V | 5: E, N, W | 6: F, O, Ö, X | 7: G, Ğ, P, Y | 8: H, Q, Z | 9: I, İ, R\n\n' +
-      'KİŞİLİK KURALLARI:\n' +
-      '- ' + _aiLang + ' Vaaz verme. Doğrudan "sen" diye hitap et.\n' +
-      '- Başlık yazma, liste yazma — sadece düz paragraflar.\n' +
-      '- Sade, güçlü, klişesiz.\n' +
-      '- Ton kılavuzu → 1: ateşli/meydan okuyan | 2: yumuşak/hüzünlü | 3: parlak/kaygılı | 4: ağır/ciddi/toprak | 5: hızlı/keskin/kaosçu | 6: şefkatli/boğucu | 7: soğuk derinlik/seçilmiş yalnızlık | 8: güç arayışı/yıkıcı hırs | 9: bilge yorgunluğu | 11: sezgi yükü | 22: izole vizyoner | 33: saf sevgi';
+      'WRITING RULES:\n' +
+      '- CRITICAL LANGUAGE RULE: ' + _aiLang + ' No preaching. Address as "you" directly.\n' +
+      '- No headings, no lists — only plain paragraphs.\n' +
+      '- Simple, powerful, no cliches.\n' +
+      '- Tone guide → 1: fiery/challenging | 2: soft/melancholic | 3: bright/anxious | 4: heavy/serious/grounded | 5: fast/sharp/chaotic | 6: compassionate/suffocating | 7: cold depth/chosen solitude | 8: power-seeking/destructive ambition | 9: wise weariness | 11: burden of intuition | 22: isolated visionary | 33: pure love\n' +
+      '- CRITICAL LANGUAGE RULE: ' + _aiLang;
   }
 
-  // Kart bazlı kullanıcı promptları
+  // Card-based user prompts
   const CARD_PROMPTS = {
-    soul: (ctx) => `${ctx.name} (${ctx.gender || 'bilinmiyor'}) için Ruh Güdüsü (Kalp Arzusu) analizi — Sayı: ${ctx.soulUrgeNumber}.
-İçsel motivasyonu, kimseye söylemediği gizli arzuları, sevgi dili ve duygusal gerçeklerini yaz.
-Cinsiyete uygun hitap et ve cinsiyet perspektifini analze yansıt.
-Kişilik veya Kader Yolu hakkında yazmak KESİNLİKLE yasak.
-${ctx.soulUrgeNumber} sayısının tonuyla, 4 kısa paragraf, 150-170 kelime.`,
+    soul: (ctx) => `Soul Urge (Heart's Desire) analysis for ${ctx.name} (${ctx.gender || 'unknown'}) — Number: ${ctx.soulUrgeNumber}.
+Write about their inner motivation, hidden desires they never tell anyone, love language, and emotional truths.
+Address with gender-appropriate language and reflect the gender perspective in the analysis.
+Writing about Personality or Life Path is STRICTLY forbidden.
+In the tone of number ${ctx.soulUrgeNumber}, 4 short paragraphs, 150-170 words.`,
 
-    pers: (ctx) => `${ctx.name} (${ctx.gender || 'bilinmiyor'}) için Kişilik Sayısı analizi — Sayı: ${ctx.personalityNumber}.
-Dışarıya yansıttığı imajı, insanların ${ctx.gender === 'kadın' ? 'onu' : ctx.gender === 'erkek' ? 'onu' : 'bu kişiyi'} ilk tanıdığında ne hissettiğini, toplumsal maskesini yaz.
-Cinsiyete uygun hitap et.
-Ruh Güdüsü veya Kader Yolu hakkında yazmak KESİNLİKLE yasak.
-${ctx.personalityNumber} sayısının tonuyla, 4 kısa paragraf, 150-170 kelime.`,
+    pers: (ctx) => `Personality Number analysis for ${ctx.name} (${ctx.gender || 'unknown'}) — Number: ${ctx.personalityNumber}.
+Write about the image they project outward, what people feel when they first meet ${ctx.gender === 'female' || ctx.gender === 'kadın' ? 'her' : ctx.gender === 'male' || ctx.gender === 'erkek' ? 'him' : 'this person'}, and their social mask.
+Address with gender-appropriate language.
+Writing about Soul Urge or Life Path is STRICTLY forbidden.
+In the tone of number ${ctx.personalityNumber}, 4 short paragraphs, 150-170 words.`,
 
-    lp: (ctx) => `${ctx.name} (${ctx.gender || 'bilinmiyor'}) için Kader Yolu (Hayat Amacı) analizi — Sayı: ${ctx.lifePathNumber}.
-Bu hayattaki büyük amacını, kaderin ${ctx.gender === 'kadın' ? 'onu' : ctx.gender === 'erkek' ? 'onu' : 'bu kişiyi'} nereye çektiğini, hayat boyunca tekrar eden temaları yaz.
-Cinsiyete uygun hitap et ve analizi cinsiyetin perspektifinden zenginleştir.
-Ruh Güdüsü veya Kişilik hakkında yazmak KESİNLİKLE yasak.
-Eğer ${ctx.lifePathNumber} bir Üstat Sayı ise (11/22/33) bunun yüksek potansiyelini ve zorluklarını özellikle vurgula.
-${ctx.lifePathNumber} sayısının tonuyla, 4 kısa paragraf, 150-170 kelime.`,
+    lp: (ctx) => `Life Path (Life Purpose) analysis for ${ctx.name} (${ctx.gender || 'unknown'}) — Number: ${ctx.lifePathNumber}.
+Write about their great purpose in this life, where destiny pulls ${ctx.gender === 'female' || ctx.gender === 'kadın' ? 'her' : ctx.gender === 'male' || ctx.gender === 'erkek' ? 'him' : 'this person'}, and the recurring themes throughout their life.
+Address with gender-appropriate language and enrich the analysis from the gender perspective.
+Writing about Soul Urge or Personality is STRICTLY forbidden.
+If ${ctx.lifePathNumber} is a Master Number (11/22/33), especially emphasize its high potential and challenges.
+In the tone of number ${ctx.lifePathNumber}, 4 short paragraphs, 150-170 words.`,
 
-    full: (ctx) => `${ctx.name} (Cinsiyet: ${ctx.gender || 'bilinmiyor'}) için PREMIUM TAM KADER ANALİZİ. Doğum Tarihi: ${ctx.birthDate}.
+    full: (ctx) => `PREMIUM FULL DESTINY ANALYSIS for ${ctx.name} (Gender: ${ctx.gender || 'unknown'}). Birth Date: ${ctx.birthDate}.
 
-SAYILAR:
-- Kader Yolu (Hayat Amacı): ${ctx.lifePathNumber}
-- İfade (İsim) Sayısı: ${ctx.expressionNumber}
-- Ruh Güdüsü (Kalp Arzusu): ${ctx.soulUrgeNumber}
-- Kişilik Sayısı: ${ctx.personalityNumber}
+NUMBERS:
+- Life Path (Life Purpose): ${ctx.lifePathNumber}
+- Expression (Name) Number: ${ctx.expressionNumber}
+- Soul Urge (Heart's Desire): ${ctx.soulUrgeNumber}
+- Personality Number: ${ctx.personalityNumber}
 
-${(ctx.lifePathNumber === 11 || ctx.lifePathNumber === 22 || ctx.lifePathNumber === 33) ? `⚠️ ÜSTAT SAYI TESPİTİ: Kader Yolu ${ctx.lifePathNumber} bir Üstat Sayıdır. Bunu analizin merkezine al, yüksek potansiyeli VE ağır yükünü ayrıntılı anlat.` : ''}
+${(ctx.lifePathNumber === 11 || ctx.lifePathNumber === 22 || ctx.lifePathNumber === 33) ? `⚠️ MASTER NUMBER DETECTED: Life Path ${ctx.lifePathNumber} is a Master Number. Place this at the center of the analysis, describe both its high potential AND heavy burden in detail.` : ''}
 
-YAZI KURALLARI:
-- ${window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.'} Vaaz yok. "Sen" diye hitap et.
-- Cinsiyete uygun hitap et ve cinsiyet perspektifini analize yansıt (${ctx.gender === 'kadın' ? 'kadın' : ctx.gender === 'erkek' ? 'erkek' : 'kişi'} perspektifi).
-- Başlık yok, madde işareti yok. Sadece akıcı düz paragraflar.
-- ${ctx.lifePathNumber} sayısının tonu hâkim — ton kılavuzuna bak.
-- Her paragraf bir öncekinden daha derine iner.
+WRITING RULES:
+- CRITICAL LANGUAGE RULE: ${window.i18n ? window.i18n.getAILang() : 'Write in Turkish.'} No preaching. Address as "you" directly.
+- Address with gender-appropriate language and reflect the gender perspective in the analysis (${ctx.gender === 'female' || ctx.gender === 'kadın' ? 'female' : ctx.gender === 'male' || ctx.gender === 'erkek' ? 'male' : 'person'} perspective).
+- No headings, no bullet points. Only flowing plain paragraphs.
+- The tone of number ${ctx.lifePathNumber} dominates — refer to the tone guide.
+- Each paragraph goes deeper than the previous one.
 
-PARAGRAF YAPISI (tam olarak bu 8 paragrafı yaz):
+PARAGRAPH STRUCTURE (write exactly these 8 paragraphs):
 
-1. AÇILIŞ — ${ctx.name} adı ve ${ctx.lifePathNumber} Kader Yolunun birleşiminden doğan ilk gerçek. Keskin, sarsıcı.
+1. OPENING — The first truth born from the combination of the name ${ctx.name} and Life Path ${ctx.lifePathNumber}. Sharp, striking.
 
-2. KADER YOLU (${ctx.lifePathNumber}) — Bu sayının ${ctx.name}'in hayatındaki büyük amacını, tekrar eden örüntüleri ve kaderin onu hangi yöne çektiğini anlat. Somut ve derin.
+2. LIFE PATH (${ctx.lifePathNumber}) — Describe this number's great purpose in ${ctx.name}'s life, recurring patterns, and which direction destiny pulls them. Concrete and deep.
 
-3. RUH GÜDÜSİ (${ctx.soulUrgeNumber}) — İçsel arzu ve gizli motivasyonlar. Kimseye itiraf etmediği istekler. Duygusal gerçekler.
+3. SOUL URGE (${ctx.soulUrgeNumber}) — Inner desires and hidden motivations. Wishes they never confess to anyone. Emotional truths.
 
-4. KİŞİLİK MASKES (${ctx.personalityNumber}) — Dış dünyaya yansıyan imaj ile iç dünya arasındaki uçurum veya uyum. İnsanlar ${ctx.name}'i nasıl görür — bu doğru mu?
+4. PERSONALITY MASK (${ctx.personalityNumber}) — The gap or harmony between the image projected to the outside world and the inner world. How do people see ${ctx.name} — is it accurate?
 
-5. İFADE MİSYONU (${ctx.expressionNumber}) — Yaşam boyunca kullanması gereken asıl yetenekler ve misyon. Ne yapması gerektiği değil, ne OLMASI gerektiği.
+5. EXPRESSION MISSION (${ctx.expressionNumber}) — The true talents and mission they should use throughout life. Not what they should DO, but what they should BE.
 
-6. SAYI GERİLİMLERİ — ${ctx.lifePathNumber}, ${ctx.soulUrgeNumber} ve ${ctx.expressionNumber} arasındaki çatışmalar veya uyumlar. Bu sayılar birbirine ne zaman yardım eder, ne zaman savaşır?
+6. NUMBER TENSIONS — Conflicts or harmonies between ${ctx.lifePathNumber}, ${ctx.soulUrgeNumber}, and ${ctx.expressionNumber}. When do these numbers help each other, when do they fight?
 
-7. TUZAKLAR VE KARARLI ANLAR — ${ctx.name}'in kaçınması gereken enerji kalıpları, tekrar eden hayat hataları. Acımasızca dürüst ol.
+7. PITFALLS AND DECISIVE MOMENTS — Energy patterns ${ctx.name} must avoid, recurring life mistakes. Be ruthlessly honest.
 
-8. KAPANIŞ — Bir gerçek, bir soru değil. ${ctx.name}'in adını kullanarak bitir. 350-400 kelime toplam.`
+8. CLOSING — A truth, not a question. End by using ${ctx.name}'s name. 350-400 words total.
+CRITICAL LANGUAGE RULE: ${window.i18n ? window.i18n.getAILang() : 'Write in Turkish.'}`
   };
 
   // AI Analysis Fetcher — Pisagor Sistemi
@@ -190,8 +192,8 @@ PARAGRAF YAPISI (tam olarak bu 8 paragrafı yaz):
 
     const system = context.system || 'pythagorean';
     var genderLabel = '';
-    if (context.gender === 'female' || context.gender === 'kadın') genderLabel = 'kadın';
-    else if (context.gender === 'male' || context.gender === 'erkek') genderLabel = 'erkek';
+    if (context.gender === 'female' || context.gender === 'kadın') genderLabel = 'female';
+    else if (context.gender === 'male' || context.gender === 'erkek') genderLabel = 'male';
     const numCtx = {
       name: context.name,
       birthDate: context.birthDate,
@@ -217,18 +219,18 @@ PARAGRAF YAPISI (tam olarak bu 8 paragrafı yaz):
           birthDate: context.birthDate
         });
 
-        let contextAddition = '\n\nBAĞLAM BİLGİSİ (bunu analize entegre et):\n';
-        contextAddition += '- Baskın temalar: ' + weightedCtx.dominant_themes.join(', ') + '\n';
-        contextAddition += '- Gerilim alanları: ' + weightedCtx.tension_areas.join(', ') + '\n';
-        contextAddition += '- Yoğunluk: ' + weightedCtx.intensity + '/2.5\n';
+        let contextAddition = '\n\nCONTEXT INFORMATION (integrate this into the analysis):\n';
+        contextAddition += '- Dominant themes: ' + weightedCtx.dominant_themes.join(', ') + '\n';
+        contextAddition += '- Tension areas: ' + weightedCtx.tension_areas.join(', ') + '\n';
+        contextAddition += '- Intensity: ' + weightedCtx.intensity + '/2.5\n';
         if (weightedCtx.period) {
-          contextAddition += '- Kişisel Yıl: ' + weightedCtx.period.personal_year + ' (Yıl temaları: ' + weightedCtx.period.year_themes.join(', ') + ')\n';
-          contextAddition += '- Kişisel Ay: ' + weightedCtx.period.personal_month + ', Kişisel Gün: ' + weightedCtx.period.personal_day + '\n';
-          contextAddition += 'ÖNEMLİ: Bu kişi şu an Kişisel Yıl ' + weightedCtx.period.personal_year + ' döneminde. ';
-          contextAddition += 'Analizi bu döneme göre uyarla — hangi temalar şu an aktif, hangileri arka planda.\n';
+          contextAddition += '- Personal Year: ' + weightedCtx.period.personal_year + ' (Year themes: ' + weightedCtx.period.year_themes.join(', ') + ')\n';
+          contextAddition += '- Personal Month: ' + weightedCtx.period.personal_month + ', Personal Day: ' + weightedCtx.period.personal_day + '\n';
+          contextAddition += 'IMPORTANT: This person is currently in Personal Year ' + weightedCtx.period.personal_year + ' period. ';
+          contextAddition += 'Adapt the analysis to this period — which themes are currently active, which ones are in the background.\n';
         }
         if (weightedCtx.is_master_path) {
-          contextAddition += '- ÜSTAT SAYI AKTİF — yoğunluğu ve çift katmanlı doğayı vurgula.\n';
+          contextAddition += '- MASTER NUMBER ACTIVE — emphasize the intensity and dual-layered nature.\n';
         }
 
         userPrompt += contextAddition;

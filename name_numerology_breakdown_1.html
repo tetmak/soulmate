@@ -1068,7 +1068,7 @@
                             return;
                         }
                         var birthDisplay = birthDate.split('-').reverse().join('/'); // YYYY-MM-DD → DD/MM/YYYY
-                        var prompt = birthDisplay + ' için en baskın ve yorucu karma';
+                        var prompt = 'The most dominant and exhausting karma for ' + birthDisplay;
                         // Timeout ile fetch
                         var controller = new AbortController();
                         var timeoutId = setTimeout(function() {
@@ -1084,9 +1084,9 @@
                             body: JSON.stringify({
                                 model: 'gpt-4o-mini',
                                 messages: [
-                                    { role: 'system', content: 'Sen Pisagor numerolojisi karmik borç uzmanısın. ' + (window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.') + ' Net ve pratik ol. Karmik borç sayıları SADECE 13,14,16,19. Gün sayısını ASLA indirgeme.\n\nZORUNLU FORMAT — her yanıtta aşağıdaki 5 başlığı **kalın** işaretiyle (**) ve tam bu sırayla kullan. Başlıkları DEĞİŞTİRME, aynen yaz:\n\n**Karmik Borç Tespiti**\n[Tespit edilen borç sayısı ve 1-2 cümle açıklama]\n\n**Neden Bu Karma?**\n[Numerolojik sebep — neden bu sayı, neyin işareti]\n\n**Pratik Etkileri**\n* [en az 4, en fazla 6 madde]\n\n**Bu Karmanın Dersi**\n* [en az 3, en fazla 4 madde]\n\n**Net Gerçek**\n[Tek cümle, sert ve gerçekçi]\n\nBaşlıklar HER KULLANICI İÇİN AYNI olmalı. Sadece içerikler kişiye göre değişmeli.' },
-                                    { role: 'user', content: '19/10/1997 için en baskın ve yorucu karma' },
-                                    { role: 'assistant', content: '**Karmik Borç Tespiti**\n19/1 karmik borcu tespit edildi. Doğum tarihindeki 19 sayısı, güç ve otoritenin yanlış kullanımına işaret eden klasik bir karmik borç sayısıdır.\n\n**Neden Bu Karma?**\nNumerolojide 19; güçün, otoritenin ve bireyselliğin yanlış kullanımıyla ilişkilendirilen karmik borç sayısıdır. Geçmiş yaşamda bencil liderlik ve başkalarını yok sayma kalıpları bu borca yol açmıştır.\n\n**Pratik Etkileri**\n* Yalnız ilerlemek zorunda kalma\n* Ego-tevazu çatışması\n* Otoriteyle sürtüşme\n* Erken sorumluluk yüklenme\n* Başarı gecikmesi\n\n**Bu Karmanın Dersi**\n* Gücü başkalarıyla paylaşarak kullanmak\n* Yardım istemeyi zayıflık görmemek\n* Liderliği örnek olarak göstermek\n\n**Net Gerçek**\nBu karma şanssızlık değil; yanlış güç kullanımını düzeltmeye zorlayan bir mekanizma.' },
+                                    { role: 'system', content: 'You are a Pythagorean numerology karmic debt expert. ' + (window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.') + ' Be clear and practical. Karmic debt numbers are ONLY 13,14,16,19. NEVER reduce the day number.\n\nMANDATORY FORMAT — use these 5 headings with bold markers (**) in this exact order in every response:\n\n**Karmic Debt Detection**\n[Detected debt number and 1-2 sentence explanation]\n\n**Why This Karma?**\n[Numerological reason — why this number, what it signals]\n\n**Practical Effects**\n* [at least 4, at most 6 bullet points]\n\n**Lesson of This Karma**\n* [at least 3, at most 4 bullet points]\n\n**Hard Truth**\n[Single sentence, blunt and realistic]\n\nHeadings must be THE SAME for every user. Only the content changes per person. CRITICAL LANGUAGE RULE: ' + (window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.') },
+                                    { role: 'user', content: 'The most dominant and exhausting karma for 19/10/1997' },
+                                    { role: 'assistant', content: '**Karmic Debt Detection**\n19/1 karmic debt detected. The number 19 in the birth date is a classic karmic debt number pointing to misuse of power and authority.\n\n**Why This Karma?**\nIn numerology, 19 is the karmic debt number associated with misuse of power, authority and individuality. Patterns of selfish leadership and disregarding others in past lives led to this debt.\n\n**Practical Effects**\n* Being forced to progress alone\n* Ego-humility conflict\n* Friction with authority\n* Taking on responsibility early\n* Delayed success\n\n**Lesson of This Karma**\n* Using power by sharing it with others\n* Not seeing asking for help as weakness\n* Leading by example\n\n**Hard Truth**\nThis karma is not bad luck; it is a mechanism forcing correction of misused power.' },
                                     { role: 'user', content: prompt }
                                 ],
                                 temperature: 0.75,
@@ -1192,47 +1192,49 @@
 
             addMessage('assistant', openingMsg);
             var _aiLangChat = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
-            chatHistory.push({ role: 'system', content: `Sen Pisagor numerolojisi karmik borç uzmanısın. ${_aiLangChat} Net ve pratik ol.
+            chatHistory.push({ role: 'system', content: `You are a Pythagorean numerology karmic debt expert. ${_aiLangChat} Be clear and practical.
 
-Analiz ettiğin kişi:
-- İsim: ${name}
-- Doğum: ${birthDate}
-- Yaşam Yolu: ${lp}
-- Karmik borç: ${primaryDebt ? karmicLabel : 'yok'}
+Person being analyzed:
+- Name: ${name}
+- Birth date: ${birthDate}
+- Life Path: ${lp}
+- Karmic debt: ${primaryDebt ? karmicLabel : 'none'}
 
-KURALLAR:
-- Mistik dil yok, astroloji yok, motivasyonel laf yok.
-- Kullanıcı "para/iş", "ilişki", "sağlık" veya meslek/sektör yazarsa o başlık altında analiz yap.
-- Kullanıcı sektör belirtirse (otomasyon, yazılım, gıda vs.) o sektöre özel karmik etkiyi açıkla.
-- Her yanıtın sonunda başka bir başlık öner.
+RULES:
+- No mystical language, no astrology, no motivational fluff.
+- If user writes about "money/work", "relationships", "health" or mentions a profession/sector, analyze under that topic.
+- If user specifies a sector (automation, software, food etc.), explain the karmic impact specific to that sector.
+- At the end of each response, suggest another topic.
 
-PARA/İŞ BAŞLIĞI İSTENİRSE bu formatta yaz:
-[TARİH] – Para & İş karması ([BORÇ]) net analizi
+IF MONEY/WORK TOPIC IS REQUESTED, write in this format:
+[DATE] – Money & Work karma ([DEBT]) clear analysis
 
-Temel problem
-* [madde]
-* [madde]
+Core problem
+* [bullet]
+* [bullet]
 
-İş hayatında tipik döngü
-[numaralı liste]
+Typical cycle in work life
+[numbered list]
 
-Para kaybına açık alanlar
-* [madde]
+Areas vulnerable to money loss
+* [bullet]
 
-Para kazanmanın doğru yolu
-* [madde]
+The right way to earn money
+* [bullet]
 
-Uygun iş modelleri
-* [madde]
+Suitable business models
+* [bullet]
 
-Zamanlama gerçeği
-* [madde]
+Timing reality
+* [bullet]
 
-Altın kural
-[tek cümle]
+Golden rule
+[single sentence]
 
-İLİŞKİ BAŞLIĞI İSTENİRSE benzer yapıda ilişki odaklı analiz yap.
-SAĞLIK BAŞLIĞI İSTENİRSE sağlık ve psikoloji odaklı analiz yap.` });
+IF RELATIONSHIPS TOPIC IS REQUESTED, do a similar structured relationship-focused analysis.
+IF HEALTH TOPIC IS REQUESTED, do a health and psychology-focused analysis.
+
+CRITICAL LANGUAGE RULE: ${_aiLangChat}` });
             chatHistory.push({ role: 'assistant', content: openingMsg });
 
             document.getElementById('master-input').focus();

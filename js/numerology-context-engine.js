@@ -277,15 +277,17 @@
 
   function getContextSystemPrompt() {
     var _aiLang = window.i18n ? window.i18n.getAILang() : 'Türkçe yaz.';
-    return 'Sen bir Numeroloji Bağlam Analiz Uzmanısın. Pisagor sistemini kullanıyorsun.\n\n' +
-      'KURALLAR:\n' +
-      '- ' + _aiLang + ' Doğrudan "sen" diye hitap et.\n' +
-      '- Nötr, ayakları yere basan, mistik olmayan ton.\n' +
-      '- "Evren diyor ki" veya "Özelsin" gibi klişe kullanma.\n' +
-      '- Her cümlede sayısal bir neden göster (örn: "4 baskın olduğu için…").\n' +
-      '- Her modül en fazla 3-4 cümle.\n' +
-      '- Başlık ekleme. Sadece düz paragraflar yaz.\n' +
-      '- İstenen modülü yaz, diğerlerine bulaşma.';
+    return 'You are a Numerology Context Analysis Expert. You use the Pythagorean system.\n\n' +
+      'CRITICAL LANGUAGE RULE: ' + _aiLang + '\n\n' +
+      'RULES:\n' +
+      '- Address as "you" directly.\n' +
+      '- Neutral, grounded, non-mystical tone.\n' +
+      '- Do not use cliches like "The universe says" or "You\'re special".\n' +
+      '- Show a numerical reason in every sentence (e.g., "because 4 is dominant...").\n' +
+      '- Each module max 3-4 sentences.\n' +
+      '- Don\'t add titles. Write only plain paragraphs.\n' +
+      '- Write the requested module, don\'t touch others.\n\n' +
+      'LANGUAGE REMINDER: ' + _aiLang;
   }
 
   /**
@@ -321,66 +323,66 @@
     var n = ctx.numbers;
     var p = ctx.period;
 
-    // Module 1: Core Personality (zamansız, sabit)
+    // Module 1: Core Personality (timeless, fixed)
     var corePrompt =
-      name + ' için Temel Kişilik modülü.\n\n' +
-      'Sayılar: Kader Yolu=' + n.life_path + ', İfade=' + n.expression +
-      ', Ruh Güdüsü=' + n.soul_urge + ', Kişilik=' + n.personality + '.\n' +
-      'Baskın temalar: ' + ctx.dominant_themes.join(', ') + '.\n' +
-      'Yoğunluk: ' + ctx.intensity + '/2.5.\n' +
-      (ctx.is_master_path ? 'UYARI: Kader Yolu ' + n.life_path + ' bir Üstat Sayıdır — yoğunluğu artır, temayı değiştirme.\n' : '') +
-      '\nBu kişinin değişmeyen temel karakterini, doğuştan gelen eğilimlerini ve hayatının ana eksenini yaz. ' +
-      'Her cümlede hangi sayının neden bu etkiyi yarattığını açıkla. 3-4 cümle, sade ve somut.';
+      'Core Personality module for ' + name + '.\n\n' +
+      'Numbers: Life Path=' + n.life_path + ', Expression=' + n.expression +
+      ', Soul Urge=' + n.soul_urge + ', Personality=' + n.personality + '.\n' +
+      'Dominant themes: ' + ctx.dominant_themes.join(', ') + '.\n' +
+      'Intensity: ' + ctx.intensity + '/2.5.\n' +
+      (ctx.is_master_path ? 'WARNING: Life Path ' + n.life_path + ' is a Master Number — increase intensity, do not change themes.\n' : '') +
+      '\nWrite about this person\'s unchanging core character, innate tendencies, and the main axis of their life. ' +
+      'In each sentence, explain which number creates this effect and why. 3-4 sentences, plain and concrete.';
 
-    // Module 2: Current Period Influence (dönemsel)
+    // Module 2: Current Period Influence (periodic)
     var periodPrompt = null;
     if (p) {
       periodPrompt =
-        name + ' için Güncel Dönem Etkisi modülü.\n\n' +
-        'Temel: Kader Yolu=' + n.life_path + ', İfade=' + n.expression + '.\n' +
-        'Dönemsel: Kişisel Yıl=' + p.personal_year +
-        ', Kişisel Ay=' + p.personal_month +
-        ', Kişisel Gün=' + p.personal_day + '.\n' +
-        'Yıl temaları: ' + p.year_themes.join(', ') + '.\n' +
-        'Yıl gerilimleri: ' + p.year_tension.join(', ') + '.\n' +
-        '\nBu kişinin ŞU ANKİ dönemini analiz et. ' +
-        'Kişisel Yıl ' + p.personal_year + ' enerjisinin hayatına ne getirdiğini, ' +
-        'bugünkü Kişisel Gün ' + p.personal_day + ' ile nasıl kesiştiğini anlat. ' +
-        'Kader Yolu ' + n.life_path + ' ile dönemsel sayıların çatışma veya uyum noktalarını göster. ' +
-        '3-4 cümle, pratik ve zamana özgü.';
+        'Current Period Influence module for ' + name + '.\n\n' +
+        'Base: Life Path=' + n.life_path + ', Expression=' + n.expression + '.\n' +
+        'Periodic: Personal Year=' + p.personal_year +
+        ', Personal Month=' + p.personal_month +
+        ', Personal Day=' + p.personal_day + '.\n' +
+        'Year themes: ' + p.year_themes.join(', ') + '.\n' +
+        'Year tensions: ' + p.year_tension.join(', ') + '.\n' +
+        '\nAnalyze this person\'s CURRENT period. ' +
+        'Explain what Personal Year ' + p.personal_year + ' energy brings to their life, ' +
+        'and how it intersects with today\'s Personal Day ' + p.personal_day + '. ' +
+        'Show the conflict or harmony points between Life Path ' + n.life_path + ' and the periodic numbers. ' +
+        '3-4 sentences, practical and time-specific.';
     }
 
-    // Module 3: Karmic Pressure (sadece karmik borç varsa)
+    // Module 3: Karmic Pressure (only if karmic debt exists)
     var karmicPrompt = null;
     if (ctx.karmic_layer) {
       var kl = ctx.karmic_layer;
       karmicPrompt =
-        name + ' için Karmik Baskı modülü.\n\n' +
-        'Karmik Borç: ' + kl.label + '.\n' +
-        'Kader Yolu: ' + n.life_path + '.\n' +
-        'Karmik temalar: ' + kl.themes.join(', ') + '.\n' +
-        'Karmik baskı alanları: ' + kl.pressure.join(', ') + '.\n' +
-        (p ? 'Kişisel Yıl: ' + p.personal_year + '.\n' : '') +
-        '\nBu karmik borcun ' + name + '\'in günlük hayatında nasıl hissedildiğini yaz. ' +
-        kl.label + ' borcunun spesifik olarak hangi kalıpları tetiklediğini, ' +
-        'Kader Yolu ' + n.life_path + ' ile nasıl etkileştiğini açıkla. ' +
-        (p ? 'Kişisel Yıl ' + p.personal_year + ' döneminde bu borcun şiddetlenip şiddetlenmediğini belirt. ' : '') +
-        '3-4 cümle, keskin ve pratik.';
+        'Karmic Pressure module for ' + name + '.\n\n' +
+        'Karmic Debt: ' + kl.label + '.\n' +
+        'Life Path: ' + n.life_path + '.\n' +
+        'Karmic themes: ' + kl.themes.join(', ') + '.\n' +
+        'Karmic pressure areas: ' + kl.pressure.join(', ') + '.\n' +
+        (p ? 'Personal Year: ' + p.personal_year + '.\n' : '') +
+        '\nWrite about how this karmic debt is felt in ' + name + '\'s daily life. ' +
+        'Explain which specific patterns the ' + kl.label + ' debt triggers, ' +
+        'and how it interacts with Life Path ' + n.life_path + '. ' +
+        (p ? 'Indicate whether this debt intensifies during Personal Year ' + p.personal_year + ' period. ' : '') +
+        '3-4 sentences, sharp and practical.';
     }
 
-    // Module 4: Conscious Use Advice (pratik rehber)
+    // Module 4: Conscious Use Advice (practical guide)
     var guidancePrompt =
-      name + ' için Bilinçli Kullanım Rehberi modülü.\n\n' +
-      'Sayılar: Kader Yolu=' + n.life_path + ', İfade=' + n.expression +
-      ', Ruh Güdüsü=' + n.soul_urge + '.\n' +
-      'Gerilim alanları: ' + ctx.tension_areas.join(', ') + '.\n' +
-      'Gelişim anahtarları: ' + ctx.growth_keys.join(', ') + '.\n' +
-      (ctx.karmic_layer ? 'Karmik borç: ' + ctx.karmic_layer.label + '.\n' : '') +
-      (p ? 'Kişisel Yıl: ' + p.personal_year + '.\n' : '') +
-      '\nBu kişiye somut, uygulanabilir tavsiyeler ver. ' +
-      'Gerilim alanlarını nasıl dengeleyeceğini, gelişim anahtarlarını günlük hayatta nasıl kullanacağını anlat. ' +
-      '"Şunu yap" formatında, doğrudan ve pratik. Vaaz verme. ' +
-      '3-4 cümle.';
+      'Conscious Use Guide module for ' + name + '.\n\n' +
+      'Numbers: Life Path=' + n.life_path + ', Expression=' + n.expression +
+      ', Soul Urge=' + n.soul_urge + '.\n' +
+      'Tension areas: ' + ctx.tension_areas.join(', ') + '.\n' +
+      'Growth keys: ' + ctx.growth_keys.join(', ') + '.\n' +
+      (ctx.karmic_layer ? 'Karmic debt: ' + ctx.karmic_layer.label + '.\n' : '') +
+      (p ? 'Personal Year: ' + p.personal_year + '.\n' : '') +
+      '\nGive this person concrete, actionable advice. ' +
+      'Explain how to balance tension areas and how to use growth keys in daily life. ' +
+      'Use a "Do this" format, direct and practical. Don\'t preach. ' +
+      '3-4 sentences.';
 
     return {
       core: corePrompt,
