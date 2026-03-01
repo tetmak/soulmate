@@ -67,23 +67,39 @@
             });
         }
 
-        // Web: hidden file input
+        // Web: file input — mobile-compatible approach
+        // Mobile browsers block .click() on display:none inputs.
+        // Use off-screen positioning instead so the element is "visible" to the browser.
         return new Promise(function(resolve, reject) {
             var input = document.createElement('input');
             input.type = 'file';
-            input.accept = 'image/jpeg,image/png,image/webp';
-            input.style.display = 'none';
+            input.accept = 'image/*';
+            input.setAttribute('capture', 'environment');
+            // Off-screen but NOT display:none — critical for mobile Safari/Chrome
+            input.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;width:1px;height:1px;';
             document.body.appendChild(input);
+
+            var cleaned = false;
+            function cleanup() {
+                if (cleaned) return;
+                cleaned = true;
+                try { document.body.removeChild(input); } catch(e) {}
+            }
+
             input.onchange = function() {
                 var file = input.files[0];
-                document.body.removeChild(input);
-                if (!file) { reject(new Error('Dosya seçilmedi')); return; }
+                cleanup();
+                if (!file) { reject(new Error('No file selected')); return; }
                 var reader = new FileReader();
                 reader.onload = function() { resolve(reader.result); };
-                reader.onerror = function() { reject(new Error('Dosya okunamadı')); };
+                reader.onerror = function() { reject(new Error('File could not be read')); };
                 reader.readAsDataURL(file);
             };
-            input.click();
+
+            // Some mobile browsers need a small delay before .click()
+            setTimeout(function() {
+                input.click();
+            }, 100);
         });
     }
 
