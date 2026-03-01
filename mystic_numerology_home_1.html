@@ -438,7 +438,7 @@
                     var xpColor = q.completed ? 'rgba(34,197,94,0.5)' : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)');
                     el.innerHTML =
                         '<span class="material-symbols-outlined text-base" style="color:' + iconColor + ';font-variation-settings:\'FILL\' ' + (q.completed ? '1' : '0') + '">' + (q.completed ? 'check_circle' : q.icon) + '</span>' +
-                        '<span class="flex-1 text-xs font-medium" style="color:' + textColor + ';' + (q.completed ? 'text-decoration:line-through' : '') + '">' + q.name + '</span>' +
+                        '<span class="flex-1 text-xs font-medium" style="color:' + textColor + ';' + (q.completed ? 'text-decoration:line-through' : '') + '">' + (window.gamification.translateQuest ? window.gamification.translateQuest(q) : q.name) + '</span>' +
                         '<span class="text-xs font-bold" style="color:' + xpColor + '">+' + q.xp + ' XP</span>';
                     ql.appendChild(el);
                 });

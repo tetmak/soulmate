@@ -346,7 +346,7 @@
     if (window.gamification) {
         var rp = window.gamification.getRankProgress();
         var r = rp.current;
-        document.getElementById('pr-rank-name').textContent = r.name;
+        document.getElementById('pr-rank-name').textContent = window.gamification.translateRank ? window.gamification.translateRank(r) : r.name;
         document.getElementById('pr-rank-name').style.color = r.color;
         document.getElementById('pr-nbp').textContent = rp.nbp + ' NBP';
         document.getElementById('pr-progress').style.width = rp.progress + '%';
