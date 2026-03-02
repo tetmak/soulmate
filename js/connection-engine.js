@@ -427,6 +427,92 @@
     }
 
     // ═══════════════════════════════════════════════════════
+    // KULLANICI ARAMA
+    // ═══════════════════════════════════════════════════════
+
+    /**
+     * Kullanıcıları isme göre ara.
+     * discovery_profiles (opt-in kullanıcılar) + profiles tablosundan avatar.
+     * Her sonuç için bağlantı durumunu kontrol eder.
+     * @param {string} query - aranacak isim
+     * @param {string} currentUserId - mevcut kullanıcı ID (hariç tutulur)
+     * @returns {Array} [{ user_id, full_name, gender, life_path, avatar_url, status }]
+     */
+    async function searchUsers(query, currentUserId) {
+        if (!query || query.trim().length < 2 || !sb()) return [];
+        var q = query.trim();
+
+        try {
+            // 1. discovery_profiles'dan ara (Cosmic Match opt-in, discoverable)
+            var dpRes = await sb().from('discovery_profiles')
+                .select('user_id, full_name, gender, life_path, avatar_url')
+                .eq('discoverable', true)
+                .neq('user_id', currentUserId)
+                .ilike('full_name', '%' + q + '%')
+                .limit(10);
+
+            if (!dpRes.data || dpRes.data.length === 0) return [];
+
+            var results = dpRes.data;
+            var userIds = results.map(function(r) { return r.user_id; });
+
+            // 2. profiles tablosundan güncel avatar_url çek (öncelikli)
+            var profRes = await sb().from('profiles')
+                .select('id, avatar_url')
+                .in('id', userIds);
+            var profMap = {};
+            if (profRes.data) {
+                profRes.data.forEach(function(p) {
+                    if (p.avatar_url) profMap[p.id] = p.avatar_url;
+                });
+            }
+
+            // 3. Mevcut bağlantıları kontrol et
+            var connRes = await sb().from('connections')
+                .select('user_a, user_b')
+                .or('user_a.eq.' + currentUserId + ',user_b.eq.' + currentUserId);
+            var connSet = {};
+            if (connRes.data) {
+                connRes.data.forEach(function(c) {
+                    var other = c.user_a === currentUserId ? c.user_b : c.user_a;
+                    connSet[other] = true;
+                });
+            }
+
+            // 4. Pending request'leri kontrol et
+            var reqRes = await sb().from('connection_requests')
+                .select('sender_id, receiver_id')
+                .eq('status', 'pending')
+                .or('sender_id.eq.' + currentUserId + ',receiver_id.eq.' + currentUserId);
+            var pendingSet = {};
+            if (reqRes.data) {
+                reqRes.data.forEach(function(r) {
+                    var other = r.sender_id === currentUserId ? r.receiver_id : r.sender_id;
+                    pendingSet[other] = true;
+                });
+            }
+
+            // 5. Sonuçları birleştir
+            return results.map(function(r) {
+                var status = 'none';
+                if (connSet[r.user_id]) status = 'connected';
+                else if (pendingSet[r.user_id]) status = 'pending';
+                return {
+                    user_id: r.user_id,
+                    full_name: r.full_name,
+                    gender: r.gender,
+                    life_path: r.life_path,
+                    avatar_url: profMap[r.user_id] || r.avatar_url || null,
+                    status: status
+                };
+            });
+        } catch(e) {
+            console.warn('[ConnectionEngine] searchUsers error:', e);
+            return [];
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
     // GLOBAL EXPORT
     // ═══════════════════════════════════════════════════════
 
@@ -442,6 +528,9 @@
         // Connections
         areConnected: areConnected,
         getConnections: getConnections,
+
+        // Search
+        searchUsers: searchUsers,
 
         // Messaging
         sendMessage: sendMessage,
