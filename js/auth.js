@@ -192,19 +192,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // - Bu race condition yüzünden yeni kullanıcılar birth form'u hiç görmüyordu
     if (window.supabaseClient && window.supabaseClient.auth) {
         var done = false;
-        var hasOAuthCode = window.location.search.indexOf('code=') !== -1;
+        // OAuth redirect algılama: hem PKCE (?code=) hem implicit (#access_token=) kontrol et
+        var hasOAuthRedirect = window.location.search.indexOf('code=') !== -1 ||
+                               window.location.hash.indexOf('access_token') !== -1 ||
+                               window.location.hash.indexOf('refresh_token') !== -1;
+        console.log('[Auth] sayfa:', window.location.pathname, 'OAuth redirect:', hasOAuthRedirect, 'hash:', window.location.hash.substring(0, 50));
         var sub = window.supabaseClient.auth.onAuthStateChange(function(event, session) {
             if (done) return;
+            console.log('[Auth] event:', event, 'session:', !!session, 'done:', done);
             if (event === 'INITIAL_SESSION') {
-                // OAuth redirect → code exchange henüz tamamlanmamış olabilir
+                // OAuth redirect → token exchange henüz tamamlanmamış olabilir
                 // Session yoksa SIGNED_IN event'ini bekle
-                if (hasOAuthCode && !session) {
-                    console.log('[Auth] OAuth code algılandı, session bekleniyor...');
+                if (hasOAuthRedirect && !session) {
+                    console.log('[Auth] OAuth redirect algılandı ama session yok, SIGNED_IN bekleniyor...');
                     return; // done=true yapma, SIGNED_IN'i bekle
                 }
                 // Normal sayfa yüklenme — session recover oldu, yönlendirme yap
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
+                console.log('[Auth] INITIAL_SESSION → checkSession çağrılıyor, session:', !!session);
                 auth.checkSession().then(function() {
                     _authResolve();
                 }).catch(function() {
@@ -213,9 +219,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
-                // OAuth redirect → code exchange tamamlandı, yönlendir
-                if (event === 'SIGNED_IN' && hasOAuthCode) {
-                    console.log('[Auth] OAuth login başarılı, checkSession çağrılıyor');
+                // OAuth redirect veya aktif giriş → yönlendir
+                if (event === 'SIGNED_IN' && hasOAuthRedirect) {
+                    console.log('[Auth] OAuth SIGNED_IN → checkSession çağrılıyor');
                     auth.checkSession().then(function() {
                         _authResolve();
                     }).catch(function() {
@@ -223,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 } else {
                     // Normal email signup — sayfanın kendi kodu yönlendirmeyi yapacak
+                    console.log('[Auth] Normal SIGNED_IN/SIGNED_OUT, sayfaya bırakılıyor');
                     _authResolve();
                 }
             }
