@@ -192,14 +192,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // - Bu race condition yüzünden yeni kullanıcılar birth form'u hiç görmüyordu
     if (window.supabaseClient && window.supabaseClient.auth) {
         var done = false;
-        var sub = window.supabaseClient.auth.onAuthStateChange(function(event) {
+        var hasOAuthCode = window.location.search.indexOf('code=') !== -1;
+        var sub = window.supabaseClient.auth.onAuthStateChange(function(event, session) {
             if (done) return;
             if (event === 'INITIAL_SESSION') {
-                // Sayfa ilk yüklendiğinde session recover oldu — yönlendirme yap
+                // OAuth redirect → code exchange henüz tamamlanmamış olabilir
+                // Session yoksa SIGNED_IN event'ini bekle
+                if (hasOAuthCode && !session) {
+                    console.log('[Auth] OAuth code algılandı, session bekleniyor...');
+                    return; // done=true yapma, SIGNED_IN'i bekle
+                }
+                // Normal sayfa yüklenme — session recover oldu, yönlendirme yap
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
-                // checkSession tamamlandıktan SONRA authReady resolve et
-                // Böylece Supabase'den güncel veri localStorage'a yazılmış olur
                 auth.checkSession().then(function() {
                     _authResolve();
                 }).catch(function() {
@@ -208,17 +213,16 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
-                // OAuth redirect ise (URL'de code parametresi var) → checkSession çağır
-                // Normal email signup ise → sayfanın kendi kodu yönlendirmeyi yapacak
-                var urlParams = new URLSearchParams(window.location.search);
-                if (event === 'SIGNED_IN' && urlParams.has('code')) {
-                    console.log('[Auth] OAuth redirect algılandı, checkSession çağrılıyor');
+                // OAuth redirect → code exchange tamamlandı, yönlendir
+                if (event === 'SIGNED_IN' && hasOAuthCode) {
+                    console.log('[Auth] OAuth login başarılı, checkSession çağrılıyor');
                     auth.checkSession().then(function() {
                         _authResolve();
                     }).catch(function() {
                         _authResolve();
                     });
                 } else {
+                    // Normal email signup — sayfanın kendi kodu yönlendirmeyi yapacak
                     _authResolve();
                 }
             }
