@@ -19,7 +19,18 @@ var auth = {
 
     async signInWithGoogle() {
         if (!window.supabaseClient) throw new Error('Supabase not available');
-        var res = await window.supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+        var redirectUrl = window.location.origin + '/mystic_sign_up_screen.html';
+        var res = await window.supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: redirectUrl }
+        });
+        if (res.error) throw res.error;
+        return res.data;
+    },
+
+    async signInWithApple() {
+        if (!window.supabaseClient) throw new Error('Supabase not available');
+        var res = await window.supabaseClient.auth.signInWithOAuth({ provider: 'apple' });
         if (res.error) throw res.error;
         return res.data;
     },
@@ -181,25 +192,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // - Bu race condition yüzünden yeni kullanıcılar birth form'u hiç görmüyordu
     if (window.supabaseClient && window.supabaseClient.auth) {
         var done = false;
-        var sub = window.supabaseClient.auth.onAuthStateChange(function(event) {
+        // OAuth redirect algılama: hem PKCE (?code=) hem implicit (#access_token=) kontrol et
+        var hasOAuthRedirect = window.location.search.indexOf('code=') !== -1 ||
+                               window.location.hash.indexOf('access_token') !== -1 ||
+                               window.location.hash.indexOf('refresh_token') !== -1;
+        console.log('[Auth] sayfa:', window.location.pathname, 'OAuth redirect:', hasOAuthRedirect, 'hash:', window.location.hash.substring(0, 50));
+        var sub = window.supabaseClient.auth.onAuthStateChange(function(event, session) {
             if (done) return;
+            console.log('[Auth] event:', event, 'session:', !!session, 'done:', done);
             if (event === 'INITIAL_SESSION') {
-                // Sayfa ilk yüklendiğinde session recover oldu — yönlendirme yap
+                // OAuth redirect → token exchange henüz tamamlanmamış olabilir
+                // Session yoksa SIGNED_IN event'ini bekle
+                if (hasOAuthRedirect && !session) {
+                    console.log('[Auth] OAuth redirect algılandı ama session yok, SIGNED_IN bekleniyor...');
+                    return; // done=true yapma, SIGNED_IN'i bekle
+                }
+                // Normal sayfa yüklenme — session recover oldu, yönlendirme yap
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
-                // checkSession tamamlandıktan SONRA authReady resolve et
-                // Böylece Supabase'den güncel veri localStorage'a yazılmış olur
+                console.log('[Auth] INITIAL_SESSION → checkSession çağrılıyor, session:', !!session);
                 auth.checkSession().then(function() {
                     _authResolve();
                 }).catch(function() {
                     _authResolve();
                 });
             } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-                // Aktif login/signup — sayfanın kendi kodu yönlendirmeyi yapacak
                 done = true;
                 try { sub.data.subscription.unsubscribe(); } catch(e) {}
-                _authResolve();
-                // checkSession() ÇAĞIRMA — race condition'ı önle
+                // OAuth redirect veya aktif giriş → yönlendir
+                if (event === 'SIGNED_IN' && hasOAuthRedirect) {
+                    console.log('[Auth] OAuth SIGNED_IN → checkSession çağrılıyor');
+                    auth.checkSession().then(function() {
+                        _authResolve();
+                    }).catch(function() {
+                        _authResolve();
+                    });
+                } else {
+                    // Normal email signup — sayfanın kendi kodu yönlendirmeyi yapacak
+                    console.log('[Auth] Normal SIGNED_IN/SIGNED_OUT, sayfaya bırakılıyor');
+                    _authResolve();
+                }
             }
         });
         // Fallback: 3 saniye içinde event gelmezse yine de kontrol et

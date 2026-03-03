@@ -67,12 +67,12 @@
 
     <!-- Profile Hero -->
     <div class="flex p-6 pt-8 flex-col items-center fade-in">
-        <div class="relative">
+        <div class="relative" style="touch-action:manipulation">
             <div id="profile-avatar" class="h-32 w-32 rounded-full border-4 border-primary/40 glow-border overflow-hidden bg-primary/20 flex items-center justify-center cursor-pointer" onclick="window._triggerAvatarUpload && window._triggerAvatarUpload()">
                 <span id="profile-initial" class="text-primary text-5xl font-bold">?</span>
             </div>
-            <div id="avatar-edit-badge" class="absolute bottom-0 left-0 bg-white dark:bg-card-dark text-slate-700 dark:text-white h-9 w-9 rounded-full flex items-center justify-center border-2 border-background-light dark:border-[#181711] cursor-pointer shadow-lg z-10" onclick="window._triggerAvatarUpload && window._triggerAvatarUpload()">
-                <span class="material-symbols-outlined text-base">photo_camera</span>
+            <div id="avatar-edit-badge" class="absolute -bottom-1 -left-1 bg-white dark:bg-card-dark text-slate-700 dark:text-white h-11 w-11 rounded-full flex items-center justify-center border-2 border-background-light dark:border-[#181711] cursor-pointer shadow-lg z-10" style="touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-width:44px;min-height:44px" onclick="window._triggerAvatarUpload && window._triggerAvatarUpload()">
+                <span class="material-symbols-outlined text-lg">photo_camera</span>
             </div>
             <div class="absolute -bottom-2 -right-2 bg-primary text-[#181711] h-12 w-12 rounded-full flex flex-col items-center justify-center border-4 border-background-light dark:border-[#181711] font-bold shadow-lg">
                 <span class="text-[9px] leading-none uppercase tracking-tighter">Path</span>
@@ -257,13 +257,15 @@
         if(!d) return null;
         return reduce(d.replace(/\D/g,'').split('').reduce(function(a,x){return a+parseInt(x);},0));
     }
+    var _locMap = {tr:'tr-TR',en:'en-US',de:'de-DE',fr:'fr-FR',es:'es-ES',ar:'ar-SA',ru:'ru-RU',pt:'pt-BR'};
+    function _getLocale() { var l = (window.i18n && window.i18n.current) ? window.i18n.current() : 'tr'; return _locMap[l] || 'tr-TR'; }
     function formatDate(s) {
         if(!s) return '';
-        try { return new Date(s+'T00:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}); } catch(e){return s;}
+        try { return new Date(s+'T00:00:00').toLocaleDateString(_getLocale(),{day:'numeric',month:'long',year:'numeric'}); } catch(e){return s;}
     }
     function shortDate(s) {
         if(!s) return '';
-        try { return new Date(s).toLocaleDateString('tr-TR',{day:'numeric',month:'short'}); } catch(e){return '';}
+        try { return new Date(s).toLocaleDateString(_getLocale(),{day:'numeric',month:'short'}); } catch(e){return '';}
     }
     var ARCH = {1:'The Leader',2:'The Diplomat',3:'The Creator',4:'The Builder',5:'The Adventurer',6:'The Nurturer',7:'The Seeker',8:'The Achiever',9:'The Humanitarian',11:'The Illuminator',22:'The Master Builder',33:'The Teacher'};
     // Uyumluluk skoru artık CompatEngine üzerinden hesaplanıyor (tek kaynak, 4 boyutlu)
@@ -324,17 +326,26 @@
     window.avatarUtil.setAvatar(avatarEl, { avatarUrl: ud.avatarUrl || null, name: name, gender: gender });
 
     // Avatar yükleme handler
+    // KRİTİK: pickPhoto() DOĞRUDAN user gesture içinde çağrılmalı!
+    // getSession().then() async olduğu için gesture zincirini kırar → mobil tarayıcıda dosya seçici açılmaz.
+    // Bu yüzden ÖNCE fotoğrafı seç, SONRA auth kontrolü yap ve yükle.
     window._triggerAvatarUpload = function() {
         if (!window.avatarUpload) return;
-        window.supabaseClient.auth.getSession().then(function(res) {
-            var session = res && res.data && res.data.session;
-            if (!session || !session.user) return;
-            window.avatarUpload.changeAvatar(session.user.id).then(function(newUrl) {
-                if (newUrl) {
-                    window.avatarUtil.setAvatar(avatarEl, { avatarUrl: newUrl, name: name, gender: gender });
-                }
-            }).catch(function(e) { console.error('[Avatar] Upload hatası:', e); });
-        });
+        // 1. HEMEN fotoğraf seç (user gesture zinciri korunsun)
+        window.avatarUpload.pickPhoto().then(function(dataUrl) {
+            if (!dataUrl) return;
+            // 2. Auth kontrolü (artık async olması sorun değil — fotoğraf zaten seçildi)
+            window.supabaseClient.auth.getSession().then(function(res) {
+                var session = res && res.data && res.data.session;
+                if (!session || !session.user) { console.warn('[Avatar] Oturum yok'); return; }
+                // 3. Yükle
+                window.avatarUpload.uploadAvatar(session.user.id, dataUrl).then(function(newUrl) {
+                    if (newUrl) {
+                        window.avatarUtil.setAvatar(avatarEl, { avatarUrl: newUrl, name: name, gender: gender });
+                    }
+                }).catch(function(e) { console.error('[Avatar] Upload hatası:', e); });
+            });
+        }).catch(function(e) { console.log('[Avatar] Fotoğraf seçilmedi:', e.message); });
     };
 
     document.getElementById('profile-name').textContent = name;
@@ -415,7 +426,7 @@
                 '</div>' +
                 '<div class="flex-1 min-w-0">' +
                     '<p class="text-slate-900 dark:text-white font-bold text-sm truncate">' + name + ' &amp; ' + pName + '</p>' +
-                    '<p class="text-slate-500 dark:text-white/40 text-xs mt-0.5">Life Path ' + (lp||'?') + ' &amp; ' + lp2 + ' · <span class="text-primary font-bold">' + score + '% uyum</span></p>' +
+                    '<p class="text-slate-500 dark:text-white/40 text-xs mt-0.5">Life Path ' + (lp||'?') + ' &amp; ' + lp2 + ' · <span class="text-primary font-bold">' + score + '% ' + (window.i18n ? window.i18n.t('profile.compatibility', 'compatibility') : 'uyum') + '</span></p>' +
                 '</div>' +
                 '<div class="flex items-center gap-2 shrink-0">' +
                     '<div class="text-right">' +

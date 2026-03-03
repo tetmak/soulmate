@@ -68,22 +68,21 @@
         }
 
         // Web: file input — mobile-compatible approach
-        // Mobile browsers block .click() on display:none inputs.
-        // Use off-screen positioning instead so the element is "visible" to the browser.
+        // KRITIK: setTimeout kullanma! Mobil tarayıcılar user gesture zincirini kırar.
+        // capture attribute kullanma — bazı tarayıcılarda sessizce başarısız olur.
         return new Promise(function(resolve, reject) {
             var input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
-            input.setAttribute('capture', 'environment');
-            // Off-screen but NOT display:none — critical for mobile Safari/Chrome
-            input.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;width:1px;height:1px;';
+            // capture kaldırıldı — kullanıcı kamera veya galeri seçebilsin
+            input.style.cssText = 'position:fixed;top:0;left:0;opacity:0.01;width:1px;height:1px;pointer-events:none;';
             document.body.appendChild(input);
 
             var cleaned = false;
             function cleanup() {
                 if (cleaned) return;
                 cleaned = true;
-                try { document.body.removeChild(input); } catch(e) {}
+                setTimeout(function() { try { document.body.removeChild(input); } catch(e) {} }, 500);
             }
 
             input.onchange = function() {
@@ -96,10 +95,8 @@
                 reader.readAsDataURL(file);
             };
 
-            // Some mobile browsers need a small delay before .click()
-            setTimeout(function() {
-                input.click();
-            }, 100);
+            // Direkt click — setTimeout KULLANMA (user gesture zinciri kırılır)
+            input.click();
         });
     }
 

@@ -174,6 +174,10 @@
         // Gender'ı normalize et (Supabase case-sensitive .in() filtresi için)
         freshGender = (freshGender || 'unknown').toLowerCase().trim();
 
+        // Kullanıcının seçili dilini al
+        var userLang = 'tr';
+        try { if (window.i18n && window.i18n.current) userLang = window.i18n.current(); } catch(e) {}
+
         var data = {
             user_id: userId,
             full_name: ud.name,
@@ -184,6 +188,7 @@
             soul_urge: calcSoul(ud.name),
             personality_num: calcPers(ud.name),
             discoverable: true,
+            language: userLang,
             updated_at: new Date().toISOString()
         };
 
@@ -245,7 +250,7 @@
         return null;
     }
 
-    async function fetchDiscoverableProfiles(excludeUserId, userGender) {
+    async function fetchDiscoverableProfiles(excludeUserId, userGender, userLang) {
         try {
             var query = window.supabaseClient
                 .from('discovery_profiles')
@@ -253,14 +258,18 @@
                 .eq('discoverable', true)
                 .neq('user_id', excludeUserId);
 
+            // Dil filtresi: sadece aynı dildeki kullanıcılarla eşleş
+            if (userLang) {
+                query = query.eq('language', userLang);
+                console.log('[Discovery] Dil filtresi:', userLang);
+            }
+
             // Cinsiyet filtresi: karşı cinsiyeti göster (case-insensitive)
             var myGender = getOppositeGender(userGender);
             if (myGender === 'male') {
-                // Ben erkeğim → karşı cinsiyet: female/kadın (case-insensitive)
                 query = query.or('gender.ilike.female,gender.ilike.kadın,gender.ilike.kadin');
                 console.log('[Discovery] Cinsiyet filtresi: erkek → sadece kadın gösterilecek');
             } else if (myGender === 'female') {
-                // Ben kadınım → karşı cinsiyet: male/erkek (case-insensitive)
                 query = query.or('gender.ilike.male,gender.ilike.erkek');
                 console.log('[Discovery] Cinsiyet filtresi: kadın → sadece erkek gösterilecek');
             } else {
@@ -269,7 +278,7 @@
             }
 
             var res = await query;
-            console.log('[Discovery] Filtrelenmiş profil sayısı:', (res.data || []).length);
+            console.log('[Discovery] Filtrelenmiş profil sayısı:', (res.data || []).length, '(dil:', userLang + ')');
             return res.data || [];
         } catch(e) {
             console.error('[Discovery] Fetch error:', e);
@@ -328,6 +337,10 @@
         // ─── Bugünkü eşleşmeler zaten var mı? ───
         var userGender = userProfile ? (userProfile.gender || 'unknown') : 'unknown';
         var myNormGender = getOppositeGender(userGender); // normalizes: 'male' or 'female'
+        // Kullanıcının dilini al (discovery_profiles veya localStorage)
+        var userLang = (userProfile && userProfile.language) ? userProfile.language : null;
+        if (!userLang) { try { if (window.i18n && window.i18n.current) userLang = window.i18n.current(); } catch(e) {} }
+        if (!userLang) userLang = 'tr';
         try {
             var existing = await sb.from('daily_matches')
                 .select('*')
@@ -356,7 +369,7 @@
                 if (!needsRegen) {
                     // Havuzda mevcut eşleşmelere dahil olmayan yeni profiller var mı kontrol et
                     var existingMatchedIds = existing.data.map(function(m) { return m.matched_user_id; });
-                    var allOpposite = await fetchDiscoverableProfiles(userId, userGender);
+                    var allOpposite = await fetchDiscoverableProfiles(userId, userGender, userLang);
                     var missingProfiles = allOpposite.filter(function(p) {
                         return existingMatchedIds.indexOf(p.user_id) === -1;
                     });
@@ -401,7 +414,7 @@
         } catch(e) { console.warn('[Match] Existing check error:', e); }
 
         // ─── Yoksa yeni eşleşmeler hesapla ───
-        var profiles = await fetchDiscoverableProfiles(userId, userGender);
+        var profiles = await fetchDiscoverableProfiles(userId, userGender, userLang);
         if (!profiles.length) {
             console.log('[Match] Karşı cinsiyet profil yok, eşleşme oluşturulamadı');
             return [];
