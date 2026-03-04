@@ -108,30 +108,38 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
-    // 3. Auth verification
+    // 3. Auth verification (soft — auth hatasi olursa IP rate limit ile devam)
     const authResult = await verifyAuth(req);
-    if (!requireAuth(authResult, res)) return;
+    let userId = null;
+    let premium = false;
 
-    const userId = authResult.userId;
-
-    // 4. Rate limiting - user-based
-    const premium = await isPremiumUser(userId);
-    const userLimit = premium ? PREMIUM_DAILY_LIMIT : FREE_DAILY_LIMIT;
-    const userRateCheck = checkRateLimit("ai:" + userId, userLimit, DAY_IN_SECONDS);
-    if (!userRateCheck.allowed) {
-        return res.status(429).json({
-            error: "rate_limit_exceeded",
-            message: premium
-                ? "G\u00fcnl\u00fck AI limiti a\u015f\u0131ld\u0131 (200 istek). Yar\u0131n tekrar dene."
-                : "G\u00fcnl\u00fck AI limiti a\u015f\u0131ld\u0131. Premium ile limiti art\u0131r.",
-            remaining: 0,
-            resetAt: userRateCheck.resetAt
-        });
+    if (!authResult.error) {
+        if (authResult.isSuspended) {
+            return res.status(403).json({ error: "account_suspended" });
+        }
+        userId = authResult.userId;
+        // 4a. Rate limiting - user-based
+        premium = await isPremiumUser(userId);
+        const userLimit = premium ? PREMIUM_DAILY_LIMIT : FREE_DAILY_LIMIT;
+        const userRateCheck = checkRateLimit("ai:" + userId, userLimit, DAY_IN_SECONDS);
+        if (!userRateCheck.allowed) {
+            return res.status(429).json({
+                error: "rate_limit_exceeded",
+                message: premium
+                    ? "G\u00fcnl\u00fck AI limiti a\u015f\u0131ld\u0131 (200 istek). Yar\u0131n tekrar dene."
+                    : "G\u00fcnl\u00fck AI limiti a\u015f\u0131ld\u0131. Premium ile limiti art\u0131r.",
+                remaining: 0,
+                resetAt: userRateCheck.resetAt
+            });
+        }
+    } else {
+        console.warn("[OpenAI] Auth failed:", authResult.error, "- falling back to IP rate limit");
     }
 
-    // 5. Rate limiting - IP-based secondary
+    // 4b. Rate limiting - IP-based (tüm istekler için)
     const clientIP = getClientIP(req);
-    const ipRateCheck = checkRateLimit("ai-ip:" + clientIP, IP_DAILY_LIMIT, DAY_IN_SECONDS);
+    const ipLimit = userId ? IP_DAILY_LIMIT : Math.floor(IP_DAILY_LIMIT / 2);
+    const ipRateCheck = checkRateLimit("ai-ip:" + clientIP, ipLimit, DAY_IN_SECONDS);
     if (!ipRateCheck.allowed) {
         return res.status(429).json({
             error: "rate_limit_exceeded",
@@ -212,7 +220,7 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         // 13. Log usage to ai_usage table
-        if (data.usage) {
+        if (data.usage && userId) {
             const feature = body._feature || "chat";
             logUsage(
                 userId,
