@@ -241,11 +241,10 @@ CRITICAL LANGUAGE RULE: ${window.i18n ? window.i18n.getAILang() : 'Write in Turk
     }
 
     try {
+      var _h = window.__getAiAuthHeaders ? await window.__getAiAuthHeaders() : { 'Content-Type': 'application/json' };
       const response = await fetch(API_BASE + '/api/openai', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: _h,
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [

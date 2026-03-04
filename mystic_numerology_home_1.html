@@ -666,24 +666,26 @@
             '. Doğum tarihi: ' + ud.birthDate +
             '. Bugünün enerjisini bu kişiye özel anlat. Başlık yok, madde işareti yok.';
 
-        fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: 'gpt-4o-mini',
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.8,
-                max_tokens: 80
-            })
-        }).then(function(r){ return r.json(); })
-        .then(function(data) {
-            var text = data.choices && data.choices[0] ? data.choices[0].message.content.trim() : null;
-            if (text && dscEl) {
-                dscEl.style.animation = 'fadeIn 0.6s ease';
-                dscEl.textContent = text;
-                try { localStorage.setItem(cacheKey, text); } catch(e) {}
-            }
-        }).catch(function(e){ console.warn('Daily vibration AI error:', e); });
+        (window.__getAiAuthHeaders ? window.__getAiAuthHeaders() : Promise.resolve({'Content-Type':'application/json'})).then(function(_hdr) {
+            fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
+                method: 'POST',
+                headers: _hdr,
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.8,
+                    max_tokens: 80
+                })
+            }).then(function(r){ return r.json(); })
+            .then(function(data) {
+                var text = data.choices && data.choices[0] ? data.choices[0].message.content.trim() : null;
+                if (text && dscEl) {
+                    dscEl.style.animation = 'fadeIn 0.6s ease';
+                    dscEl.textContent = text;
+                    try { localStorage.setItem(cacheKey, text); } catch(e) {}
+                }
+            }).catch(function(e){ console.warn('Daily vibration AI error:', e); });
+        });
 
     })();
     </script>

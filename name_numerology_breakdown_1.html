@@ -1080,10 +1080,11 @@
                             loaded = false; // tekrar denenebilsin
                         }, 30000);
 
+                        (window.__getAiAuthHeaders ? window.__getAiAuthHeaders() : Promise.resolve({'Content-Type':'application/json'})).then(function(_hdr) {
                         fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                             method: 'POST',
                             signal: controller.signal,
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: _hdr,
                             body: JSON.stringify({
                                 model: 'gpt-4o-mini',
                                 messages: [
@@ -1120,6 +1121,7 @@
                             aiText.innerHTML = '<p style="color:#ef4444;font-size:13px;padding:8px 0;">⚠ ' + _t('karmic.connection_error', 'Connection error') + ': ' + (err.message||_t('karmic.check_internet', 'Check your internet connection.')) + '</p>';
                             loaded = false; // tekrar denenebilsin
                         });
+                        }); // close __getAiAuthHeaders
                     }
                 });
             }
@@ -1298,9 +1300,10 @@ CRITICAL LANGUAGE RULE: ${_aiLangChat}` });
             }
 
             try {
+                var _h = window.__getAiAuthHeaders ? await window.__getAiAuthHeaders() : { 'Content-Type': 'application/json' };
                 var r = await fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: _h,
                     body: JSON.stringify({ model: 'gpt-4o-mini', messages: messagesWithExamples, temperature: 0.75, max_tokens: 600 })
                 });
                 var d = await r.json();

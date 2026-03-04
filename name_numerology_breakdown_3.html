@@ -799,20 +799,22 @@
       msgEl.appendChild(loadDiv);
       msgEl.scrollTop = msgEl.scrollHeight;
 
-      fetch((window.__NUMERAEL_API_BASE||'')+'/api/openai', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'gpt-4o-mini', messages:guideChatHistory, temperature:0.8, max_tokens:500})
-      }).then(function(r){return r.json();}).then(function(d){
-        var el = document.getElementById('guide-loading');
-        if (el) el.remove();
-        var reply = d.choices && d.choices[0] ? d.choices[0].message.content.trim() : 'Yan\u0131t al\u0131namad\u0131.';
-        addGuideMessage('assistant', reply);
-        guideChatHistory.push({role:'assistant', content:reply});
-      }).catch(function(){
-        var el = document.getElementById('guide-loading');
-        if (el) el.remove();
-        addGuideMessage('assistant', 'Ba\u011Flant\u0131 hatas\u0131.');
+      (window.__getAiAuthHeaders ? window.__getAiAuthHeaders() : Promise.resolve({'Content-Type':'application/json'})).then(function(_hdr) {
+        fetch((window.__NUMERAEL_API_BASE||'')+'/api/openai', {
+          method:'POST',
+          headers:_hdr,
+          body:JSON.stringify({model:'gpt-4o-mini', messages:guideChatHistory, temperature:0.8, max_tokens:500})
+        }).then(function(r){return r.json();}).then(function(d){
+          var el = document.getElementById('guide-loading');
+          if (el) el.remove();
+          var reply = d.choices && d.choices[0] ? d.choices[0].message.content.trim() : 'Yan\u0131t al\u0131namad\u0131.';
+          addGuideMessage('assistant', reply);
+          guideChatHistory.push({role:'assistant', content:reply});
+        }).catch(function(){
+          var el = document.getElementById('guide-loading');
+          if (el) el.remove();
+          addGuideMessage('assistant', 'Ba\u011Flant\u0131 hatas\u0131.');
+        });
       });
     }
 

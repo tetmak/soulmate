@@ -118,9 +118,10 @@
     ].join(' ');
 
     try {
+      var _h = window.__getAiAuthHeaders ? await window.__getAiAuthHeaders() : { 'Content-Type': 'application/json' };
       var res = await fetch(API_BASE + '/api/openai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: _h,
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [{ role: 'system', content: system }, { role: 'user', content: user }],

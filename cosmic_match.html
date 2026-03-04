@@ -907,39 +907,41 @@ document.addEventListener('DOMContentLoaded', async function() {
             'Compatibility Score: ' + score + '%\n\n' +
             'Briefly explain why these two people matched, which numbers harmonize, and what energy they create together.\n\n[LANGUAGE: ' + _aiLang + ']';
 
-        fetch(API_BASE + '/api/openai', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: 'gpt-4o-mini',
-                messages: [
-                    { role: 'system', content: 'You are a numerology compatibility expert. Analyze in a brief, concise and warm language. Maximum 5 sentences. CRITICAL: ' + _aiLang },
-                    { role: 'user', content: prompt }
-                ],
-                max_tokens: 300,
-                temperature: 0.7
-            }),
-            signal: controller.signal
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            var text = '';
-            if (data.choices && data.choices[0] && data.choices[0].message) {
-                text = data.choices[0].message.content.trim();
-            }
-            if (!text) text = (window.i18n ? window.i18n.t('compat.analysis_error', 'Analiz yüklenemedi.') : 'Analiz şu an yüklenemiyor.');
-            _insightCache[cacheKey] = text;
-            try { sessionStorage.setItem('numatch_ai_' + _matchLang + '_' + cacheKey, text); } catch(e) {}
-            loadingEl.style.display = 'none';
-            aiEl.style.display = 'block';
-            aiEl.textContent = text;
-        })
-        .catch(function(err) {
-            if (err.name === 'AbortError') return;
-            console.warn('[CosmicMatch] AI analiz hatası:', err);
-            loadingEl.style.display = 'none';
-            aiEl.style.display = 'block';
-            aiEl.textContent = 'Uyum analizi yüklenirken bir hata oluştu.';
+        (window.__getAiAuthHeaders ? window.__getAiAuthHeaders() : Promise.resolve({'Content-Type':'application/json'})).then(function(_hdr) {
+            fetch(API_BASE + '/api/openai', {
+                method: 'POST',
+                headers: _hdr,
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        { role: 'system', content: 'You are a numerology compatibility expert. Analyze in a brief, concise and warm language. Maximum 5 sentences. CRITICAL: ' + _aiLang },
+                        { role: 'user', content: prompt }
+                    ],
+                    max_tokens: 300,
+                    temperature: 0.7
+                }),
+                signal: controller.signal
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                var text = '';
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    text = data.choices[0].message.content.trim();
+                }
+                if (!text) text = (window.i18n ? window.i18n.t('compat.analysis_error', 'Analiz yüklenemedi.') : 'Analiz şu an yüklenemiyor.');
+                _insightCache[cacheKey] = text;
+                try { sessionStorage.setItem('numatch_ai_' + _matchLang + '_' + cacheKey, text); } catch(e) {}
+                loadingEl.style.display = 'none';
+                aiEl.style.display = 'block';
+                aiEl.textContent = text;
+            })
+            .catch(function(err) {
+                if (err.name === 'AbortError') return;
+                console.warn('[CosmicMatch] AI analiz hatası:', err);
+                loadingEl.style.display = 'none';
+                aiEl.style.display = 'block';
+                aiEl.textContent = 'Uyum analizi yüklenirken bir hata oluştu.';
+            });
         });
     }
 

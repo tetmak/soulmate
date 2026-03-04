@@ -307,18 +307,20 @@
         if (lifePath && soulUrge && destiny) {
             var prompt = `Numeroloji okumasi: ${name} için Life Path ${lifePath}, Soul Urge ${soulUrge}, Destiny ${destiny}.\n\nİngilizce olarak 4 paragraf yaz (mistik ve derin bir üslupla):\n\n1. Life Path ${lifePath}'in anlamı ve ${name} için ne ifade ettiği\n2. Soul Urge ${soulUrge}'un kişilik ve iç dünyaya etkisi\n3. Destiny ${destiny}'nin Life Path ile dengesi\n4. Bu sayıların birleşiminin genel yorumu\n\nAyrıca bir alıntı cümlesi (quote) ekle.`;
             
-            fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: 'gpt-4o-mini',
-                    messages: [
-                        { role: 'system', content: 'You are a mystical numerology reader. Write in an elegant, spiritual tone. Use HTML <span class="text-primary font-bold">tags for emphasis on numbers.' },
-                        { role: 'user', content: prompt }
-                    ],
-                    temperature: 0.8,
-                    max_tokens: 500
-                })
+            (window.__getAiAuthHeaders ? window.__getAiAuthHeaders() : Promise.resolve({'Content-Type':'application/json'})).then(function(_hdr) {
+                return fetch((window.__NUMERAEL_API_BASE||'') + '/api/openai', {
+                    method: 'POST',
+                    headers: _hdr,
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: 'You are a mystical numerology reader. Write in an elegant, spiritual tone. Use HTML <span class="text-primary font-bold">tags for emphasis on numbers.' },
+                            { role: 'user', content: prompt }
+                        ],
+                        temperature: 0.8,
+                        max_tokens: 500
+                    })
+                });
             }).then(function(r){ return r.json(); }).then(function(d){
                 if (d.choices && d.choices[0]) {
                     var text = d.choices[0].message.content.trim();
