@@ -27,7 +27,7 @@
     var PREMIUM_PRICE = { monthly: 79.99, yearly: 599.99, currency: 'TRY' };
 
     // ─── PREMIUM DURUMU ──────────────────────────────────────
-    var EVERYONE_IS_PREMIUM = false;
+    var EVERYONE_IS_PREMIUM = true;
 
     function isPremium() {
         if (EVERYONE_IS_PREMIUM) return true;
