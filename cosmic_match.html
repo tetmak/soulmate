@@ -147,15 +147,15 @@
 </header>
 
 <!-- ═══ OPT-IN EKRANI ═══ -->
-<div id="optin-screen" style="display:none" class="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
-    <div class="size-28 rounded-full flex items-center justify-center mb-8 pulse-glow" style="background:radial-gradient(circle,rgba(196,124,32,0.15),rgba(24,15,10,0.8));border:3px solid var(--primary-copper)">
-        <span class="material-symbols-outlined text-5xl text-primary">auto_awesome</span>
+<div id="optin-screen" style="display:none" class="relative z-10 flex-1 flex flex-col items-center px-6 pt-6 pb-28 text-center overflow-y-auto no-scrollbar">
+    <div class="size-20 rounded-full flex items-center justify-center mb-4 mt-auto pulse-glow" style="background:radial-gradient(circle,rgba(196,124,32,0.15),rgba(24,15,10,0.8));border:3px solid var(--primary-copper)">
+        <span class="material-symbols-outlined text-4xl text-primary">auto_awesome</span>
     </div>
-    <h2 class="font-display text-2xl font-bold copper-gradient-text mb-3 tracking-wider" data-i18n="match.optin_title">Kozmik Eşleşme</h2>
-    <p class="text-text-muted text-sm leading-relaxed max-w-[300px] mb-8" data-i18n="match.optin_subtitle">
+    <h2 class="font-display text-2xl font-bold copper-gradient-text mb-2 tracking-wider" data-i18n="match.optin_title">Kozmik Eşleşme</h2>
+    <p class="text-text-muted text-sm leading-relaxed max-w-[300px] mb-5" data-i18n="match.optin_subtitle">
         Numerolojik profilini diğer kullanıcılarla paylaş ve evrenin senin için seçtiği ruh eşlerini keşfet.
     </p>
-    <div class="glass-light dark:glass rounded-2xl p-4 mb-6 w-full max-w-[320px]">
+    <div class="glass-light dark:glass rounded-2xl p-4 mb-4 w-full max-w-[320px]">
         <div class="flex items-center gap-3 mb-3">
             <span class="material-symbols-outlined text-primary">visibility</span>
             <div class="flex-1 text-left">
@@ -188,7 +188,7 @@
             <option value="" data-i18n="match.select_province">— İl seçin —</option>
         </select>
     </div>
-    <button id="btn-optin" class="w-full max-w-[320px] py-4 rounded-2xl text-sm font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-3 text-white transition active:scale-95 bg-gradient-to-r from-primary/80 to-primary shadow-lg shadow-primary/20 border border-white/10">
+    <button id="btn-optin" class="w-full max-w-[320px] py-4 rounded-2xl text-sm font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-3 text-white transition active:scale-95 bg-gradient-to-r from-primary/80 to-primary shadow-lg shadow-primary/20 border border-white/10 mb-auto flex-shrink-0">
         <span class="material-symbols-outlined">rocket_launch</span>
         <span data-i18n="match.join_discovery_btn">Keşfe Katıl</span>
     </button>
