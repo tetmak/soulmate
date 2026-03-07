@@ -233,41 +233,126 @@
 
 
   <script>
-    // NUMERAEL APP - Navigation & Premium Gate
-    window.addEventListener('DOMContentLoaded', async function () {
-      // Auth hazır olana kadar bekle (Supabase'den veri çekilsin)
+    // NUMERAEL APP — Breakdown Page 2: Deep Analysis
+    (async function() {
+      'use strict';
+
+      // Auth hazır olana kadar bekle
       if (window.auth && window.auth.whenReady) await window.auth.whenReady();
 
-      // Premium gate — sayfa 2 ve 3 sadece premium
+      // Premium gate — sayfa 2 sadece premium
       if (window.premium && !window.premium.isPremium()) {
         window.premium.showPaywall('Bu analiz sayfası Premium özelliğidir.', 'breakdown_page_2');
         return;
       }
 
-      // İsimleri compat data'dan al
-      var raw = null;
-      try { raw = JSON.parse(localStorage.getItem('numerael_compat_data')); } catch(e) {}
-      var p1Name = (raw && raw.person1 && raw.person1.name) || 'Kişi 1';
-      var p2Name = (raw && raw.person2 && raw.person2.name) || 'Kişi 2';
+      // CompatEngine hazır olana kadar bekle
+      function waitForEngine(cb) {
+        if (window.CompatEngine) return cb();
+        setTimeout(function(){ waitForEngine(cb); }, 150);
+      }
 
-      // URL'den kisi parametresi (geri butonu için)
-      var params = new URLSearchParams(window.location.search);
-      var kisiParam = params.get('kisi') || p2Name;
+      waitForEngine(function() {
+        var ctx = window.CompatEngine.getCompatData();
+        var name1 = ctx.p1.name;
+        var name2 = ctx.p2.name;
 
-      // Navigation: Geri butonu
-      document.querySelectorAll('button, a, [class*="cursor"]').forEach(function (el) {
-        var txt = (el.textContent || '') + (el.innerHTML || '');
-        if (txt.includes('arrow_back')) {
-          el.onclick = function (e) {
-            e.preventDefault();
-            window.location.href = 'name_numerology_breakdown_3.html?kisi=' + encodeURIComponent(kisiParam);
-          };
+        // URL'den kisi parametresi (geri butonu için)
+        var params = new URLSearchParams(window.location.search);
+        var kisiParam = params.get('kisi') || name2;
+
+        // === HEADER GÜNCELLE ===
+        var headerH2 = document.querySelector('header h2');
+        if (headerH2) headerH2.textContent = name1 + ' & ' + name2;
+
+        // === NAVİGASYON ===
+        document.querySelectorAll('button, a, [class*="cursor"]').forEach(function(el) {
+          var txt = (el.textContent || '') + (el.innerHTML || '');
+          if (txt.includes('arrow_back')) {
+            el.onclick = function(e) {
+              e.preventDefault();
+              window.location.href = 'name_numerology_breakdown_3.html?kisi=' + encodeURIComponent(kisiParam);
+            };
+          }
+        });
+
+        // === AI TEXT RENDER ===
+        function renderText(text) {
+          return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#f2cc0d;font-weight:800;">$1</strong>')
+            .split(/\n\n+/).filter(function(p){ return p.trim(); })
+            .map(function(p){
+              var lines = p.trim().split('\n');
+              var hasBullets = lines.some(function(l){ var t=l.trim(); return t.startsWith('-') || t.startsWith('*'); });
+              if (hasBullets) {
+                var items = lines.map(function(l){
+                  l = l.trim();
+                  if (l.startsWith('-') || l.startsWith('*')) {
+                    return '<li style="margin-bottom:6px;list-style:none;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#e8454d;">\u2726</span>' + l.slice(1).trim() + '</li>';
+                  }
+                  return '<p style="margin-bottom:8px;font-weight:700;">' + l + '</p>';
+                }).join('');
+                return '<ul style="margin:0 0 14px;padding:0;">' + items + '</ul>';
+              }
+              return '<p style="margin-bottom:14px;font-size:14px;line-height:1.85;">' + p.trim().replace(/\n/g,'<br>') + '</p>';
+            }).join('');
         }
-        if (txt.includes('Home') || el.innerHTML.includes('>home<')) {
-          el.onclick = function() { window.location.href = 'mystic_numerology_home_1.html'; };
+
+        // === SECTION ANALİZLERİ YÜKLE ===
+        var sections = document.querySelectorAll('main > section');
+        var sectionConfig = [
+          { idx: 0, type: 'deep_karmic', msg: 'Derin karmik bağ okunuyor...' },
+          { idx: 1, type: 'deep_communication', msg: 'İletişim dinamikleri analiz ediliyor...' },
+          { idx: 2, type: 'deep_emotional', msg: 'Duygusal sinerji hesaplanıyor...' },
+          { idx: 3, type: 'deep_destiny', msg: 'Ortak kader haritası çiziliyor...' }
+        ];
+
+        // Emotional Synergy — skor güncelle
+        var soulMatchLabel = sections[2] ? sections[2].querySelector('.text-lg.font-bold.text-gold') : null;
+        if (soulMatchLabel) soulMatchLabel.textContent = ctx.soulScore + '% Uyum';
+        var soulMatchScore = sections[2] ? sections[2].querySelector('.text-3xl.font-black.text-primary') : null;
+        if (soulMatchScore) soulMatchScore.textContent = ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge;
+
+        // Communication — bar yüksekliklerini güncelle
+        var bars = sections[1] ? sections[1].querySelectorAll('.relative.h-48 > div > div:first-child') : [];
+        if (bars.length >= 4) {
+          var expAvg = Math.round((ctx.expScore + ctx.persScore) / 2);
+          var soulAvg = Math.round((ctx.soulScore + ctx.lpScore) / 2);
+          bars[0].style.height = Math.max(30, ctx.expScore) + '%';  // Logic
+          bars[1].style.height = Math.max(30, ctx.soulScore) + '%'; // Intuition
+          bars[2].style.height = Math.max(30, ctx.persScore) + '%'; // Verbal
+          bars[3].style.height = Math.max(30, ctx.lpScore) + '%';   // Empathy
         }
+
+        sectionConfig.forEach(function(cfg) {
+          var section = sections[cfg.idx];
+          if (!section) return;
+
+          // İçerik hedef elementi bul
+          var contentEl = section.querySelector('.text-elegant, p[style*="italic"]');
+          if (!contentEl) return;
+
+          // Önce cache'e bak
+          var cached = window.CompatEngine.getCachedAnalysis ? window.CompatEngine.getCachedAnalysis(cfg.type, ctx) : null;
+
+          if (cached) {
+            contentEl.innerHTML = '<div style="animation:compat-in 0.5s ease;">' + renderText(cached) + '</div>';
+          } else {
+            // Loading göster
+            contentEl.innerHTML = '<div style="text-align:center;color:rgba(207,161,23,0.6);font-style:italic;font-size:13px;animation:compat-pulse 1.5s infinite;">\u2726 ' + cfg.msg + '</div>';
+
+            // AI analiz yükle
+            window.CompatEngine.fetchCompatAnalysis(cfg.type, ctx).then(function(text) {
+              if (text) {
+                contentEl.innerHTML = '<div style="animation:compat-in 0.5s ease;">' + renderText(text) + '</div>';
+              } else {
+                contentEl.innerHTML = '<p style="color:#ef4444;font-size:13px;">Analiz yüklenemedi. Lütfen tekrar deneyin.</p>';
+              }
+            });
+          }
+        });
       });
-    });
+    })();
   </script>
 
 

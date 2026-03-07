@@ -270,6 +270,69 @@
         '3 paragraphs, 120-140 words, practical and honest tone.';
     },
 
+    // ─── BREAKDOWN 2 DEEP ANALİZLER ──────────────────────
+    deep_karmic: function(ctx) {
+      return 'DEEP KARMIC BOND ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'All numbers:\n' +
+        ctx.p1.name + ': LifePath=' + ctx.p1.lifePath + ', Soul=' + ctx.p1.soulUrge + ', Personality=' + ctx.p1.personality + ', Expression=' + ctx.p1.expression + '\n' +
+        ctx.p2.name + ': LifePath=' + ctx.p2.lifePath + ', Soul=' + ctx.p2.soulUrge + ', Personality=' + ctx.p2.personality + ', Expression=' + ctx.p2.expression + '\n' +
+        genderCtx(ctx) + '\n' +
+        'This is a DEEP, detailed karmic bond reading — NOT a summary.\n\n' +
+        'MANDATORY FORMAT — use the following 4 headings exactly:\n\n' +
+        '**Geçmiş Yaşam İzi**\n[Which past lifetimes brought these souls together? What unresolved karma do they carry? Describe the emotional imprint from before — 2 detailed paragraphs]\n\n' +
+        '**Karmik Ders**\n[What is the core lesson the universe wants them to learn through each other? What pain must they transform? — 2 detailed paragraphs]\n\n' +
+        '**Karmik Denge**\n[Where is the give-take balance between them? Who holds more energetic debt? What triggers unresolved patterns? — 2 detailed paragraphs]\n\n' +
+        '**Karmik Dönüşüm**\n[How can they transcend these patterns? What is the ultimate karmic gift this bond offers if they do the work? — 2 detailed paragraphs]\n\n' +
+        'Total 350-400 words. Deep, mystical, emotionally resonant tone.';
+    },
+
+    deep_communication: function(ctx) {
+      return 'DEEP COMMUNICATION DYNAMICS ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'Expression Numbers: ' + ctx.p1.expression + ' & ' + ctx.p2.expression + '\n' +
+        'Personality Numbers: ' + ctx.p1.personality + ' & ' + ctx.p2.personality + '\n' +
+        'Soul Urge Numbers: ' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + '\n' +
+        genderCtx(ctx) + '\n' +
+        'This is a DEEP communication analysis — NOT a summary.\n\n' +
+        'MANDATORY FORMAT — use these 4 headings:\n\n' +
+        '**Konuşma Dili**\n[How does each person express themselves? One may be direct while the other is indirect. Analyze their verbal patterns based on Expression numbers — 2 paragraphs]\n\n' +
+        '**Sessiz İletişim**\n[What do they communicate through silence, body language, energy? How do their Personality numbers shape unspoken dynamics? — 2 paragraphs]\n\n' +
+        '**Çatışma Noktaları**\n[Where do misunderstandings happen most? What triggers communication breakdowns? Be specific and honest — 2 paragraphs]\n\n' +
+        '**Uyum Anahtarı**\n[What is the key to unlocking perfect communication between them? Practical, actionable advice based on their numbers — 2 paragraphs]\n\n' +
+        'Total 300-350 words. Insightful and practical tone.';
+    },
+
+    deep_emotional: function(ctx) {
+      return 'DEEP EMOTIONAL SYNERGY ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'Soul Urge Numbers: ' + ctx.p1.soulUrge + ' & ' + ctx.p2.soulUrge + '\n' +
+        'Life Path Numbers: ' + ctx.p1.lifePath + ' & ' + ctx.p2.lifePath + '\n' +
+        'Overall compatibility: ' + ctx.overall + '%\n' +
+        'Soul match score: ' + ctx.soulScore + '%\n' +
+        genderCtx(ctx) + '\n' +
+        'This is a DEEP emotional bond analysis — NOT a summary.\n\n' +
+        'MANDATORY FORMAT — use these 4 headings:\n\n' +
+        '**Duygusal Rezonans**\n[How do their inner emotional worlds resonate with each other? Where do they feel deeply understood? Analyze based on Soul Urge numbers — 2 paragraphs]\n\n' +
+        '**Bağlanma Dinamiği**\n[What are their attachment styles based on their numbers? How do they seek and give love? — 2 paragraphs]\n\n' +
+        '**Duygusal Yaralar**\n[Which emotional wounds do they trigger in each other? What childhood patterns replay in this relationship? Be honest — 2 paragraphs]\n\n' +
+        '**İyileşme Yolu**\n[How can they heal through each other? What is the emotional gift this bond carries? — 2 paragraphs]\n\n' +
+        'Total 300-350 words. Emotionally deep, empathetic tone.';
+    },
+
+    deep_destiny: function(ctx) {
+      return 'DEEP SHARED DESTINY ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
+        'Life Path Numbers: ' + ctx.p1.lifePath + ' & ' + ctx.p2.lifePath + '\n' +
+        'Expression Numbers: ' + ctx.p1.expression + ' & ' + ctx.p2.expression + '\n' +
+        'Overall compatibility: ' + ctx.overall + '%\n' +
+        genderCtx(ctx) + '\n' +
+        (ctx.p1.lifePath === 11 || ctx.p1.lifePath === 22 || ctx.p1.lifePath === 33 || ctx.p2.lifePath === 11 || ctx.p2.lifePath === 22 || ctx.p2.lifePath === 33 ? 'Master Number present — this amplifies the shared mission.\n\n' : '') +
+        'This is a DEEP destiny analysis — NOT a summary.\n\n' +
+        'MANDATORY FORMAT — use these 4 headings:\n\n' +
+        '**Ortak Misyon**\n[What is the shared life mission when Life Paths ' + ctx.p1.lifePath + ' and ' + ctx.p2.lifePath + ' join? What are they meant to build together? — 2 paragraphs]\n\n' +
+        '**Büyüme Haritası**\n[How do they push each other to grow? What challenges will test them and make them stronger? — 2 paragraphs]\n\n' +
+        '**Gelecek Projeksiyonu**\n[What does the next chapter look like for them? What milestones, crossroads, and turning points lie ahead based on their combined energy? — 2 paragraphs]\n\n' +
+        '**Kader Armağanı**\n[What is the ultimate gift the universe offers through this union? What legacy can they create? — 2 paragraphs]\n\n' +
+        'Total 300-350 words. Visionary, inspiring tone.';
+    },
+
     full_compat: function(ctx) {
       return 'FULL PREMIUM COMPATIBILITY ANALYSIS for ' + ctx.p1.name + ' and ' + ctx.p2.name + '.\n\n' +
         ctx.p1.name + ': LifePath=' + ctx.p1.lifePath + ', Soul=' + ctx.p1.soulUrge + ', Personality=' + ctx.p1.personality + ', Expression=' + ctx.p1.expression + '\n' +
@@ -316,7 +379,7 @@
     var promptFn = COMPAT_PROMPTS[type];
     if (!promptFn) return null;
 
-    var maxTokens = (type === 'full_compat') ? 1000 : (type === 'karmic') ? 900 : 350;
+    var maxTokens = (type === 'full_compat') ? 1000 : (type === 'karmic' || type === 'deep_karmic') ? 900 : (type.indexOf('deep_') === 0) ? 700 : 350;
 
     try {
       var _aiH = await _getAiAuthHeaders();
@@ -981,6 +1044,7 @@
   window.CompatEngine = {
     getCompatData: getCompatData,
     fetchCompatAnalysis: fetchCompatAnalysis,
+    getCachedAnalysis: getCachedAnalysis,
     initCompatAnalysis: initCompatAnalysis,
     initBreakdown3: initBreakdown3,
     initBreakdown2: initBreakdown2,
