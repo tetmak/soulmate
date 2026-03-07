@@ -465,10 +465,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         '1-11':68,'2-11':75,'3-11':70,'4-22':78,'6-33':85,'9-11':72,'9-33':80
     };
 
-    // Ham skoru [28,88] → [70,98] aralığına ölçekle (alt limit %70)
+    // Ham skoru [28,88] → [45,98] aralığına ölçekle
     function scaleScore(raw) {
-        var scaled = 70 + (raw - 28) * 28 / 60;
-        return Math.max(70, Math.min(98, Math.round(scaled)));
+        var scaled = 45 + (raw - 28) * 53 / 60;
+        return Math.max(45, Math.min(98, Math.round(scaled)));
     }
 
     function getCompatScore(n1, n2) {
@@ -478,8 +478,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // ─── ARKETIP ETİKETLERİ (Arkadaşlık) ──────────────────────
     var FRIEND_BONDS = {
-        94: 'Ruh İkizi Dostluk', 89: 'Kozmik Yol Arkadaşı', 84: 'Karmik Dost Bağı',
-        79: 'Güçlü Enerji Ortaklığı', 74: 'Dengeli Dostluk', 70: 'Büyüme Yoldaşı',
+        90: 'Ruh İkizi Dostluk', 82: 'Kozmik Yol Arkadaşı', 74: 'Karmik Dost Bağı',
+        66: 'Güçlü Enerji Ortaklığı', 58: 'Dengeli Dostluk', 50: 'Büyüme Yoldaşı',
         0: 'Keşfedilecek Bağ'
     };
     function friendBondLabel(score) {
