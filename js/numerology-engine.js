@@ -450,12 +450,56 @@ CRITICAL LANGUAGE RULE: ${window.i18n ? window.i18n.getAILang() : 'Write in Turk
     const kisiName = params.get('kisi');
     let data = null;
 
-    // 1. URL parametresiyle başka kişi analizi
-    if (kisiName && window.profile) {
+    // 1. URL parametresiyle başka kişi analizi — çoklu kaynak
+    if (kisiName) {
+      // Kaynak 1: numerael_kisi_temp (kisi_profil.html'den geliyorsa)
       try {
-        const conn = await window.profile.getConnectionDetail(kisiName);
-        if (conn) data = { name: conn.fullName, birthDate: conn.birthDate, gender: conn.gender };
+        var tempKisi = JSON.parse(localStorage.getItem('numerael_kisi_temp') || 'null');
+        if (tempKisi && tempKisi.isTemp && tempKisi.birthDate) {
+          data = { name: tempKisi.name || tempKisi.fullName || kisiName, birthDate: tempKisi.birthDate, gender: tempKisi.gender || '' };
+        }
       } catch(e) {}
+
+      // Kaynak 2: Supabase discovery_profiles
+      if (!data && window.supabaseClient) {
+        try {
+          var dpRes = await window.supabaseClient.from('discovery_profiles')
+            .select('full_name, birth_date, gender')
+            .ilike('full_name', '%' + kisiName + '%')
+            .limit(1).maybeSingle();
+          if (dpRes.data && dpRes.data.birth_date) {
+            data = { name: dpRes.data.full_name || kisiName, birthDate: dpRes.data.birth_date, gender: dpRes.data.gender || '' };
+          }
+        } catch(e) {}
+      }
+
+      // Kaynak 3: Supabase profiles
+      if (!data && window.supabaseClient) {
+        try {
+          var profRes = await window.supabaseClient.from('profiles')
+            .select('full_name, birth_date, gender')
+            .ilike('full_name', '%' + kisiName + '%')
+            .limit(1).maybeSingle();
+          if (profRes.data && profRes.data.birth_date) {
+            data = { name: profRes.data.full_name || kisiName, birthDate: profRes.data.birth_date, gender: profRes.data.gender || '' };
+          }
+        } catch(e) {}
+      }
+
+      // Kaynak 4: localStorage connections
+      if (!data && window.profile) {
+        try {
+          var conn = await window.profile.getConnectionDetail(kisiName);
+          if (conn && conn.birthDate) {
+            data = { name: conn.fullName || kisiName, birthDate: conn.birthDate, gender: conn.gender || '' };
+          }
+        } catch(e) {}
+      }
+
+      // Fallback: kisi parametresi var ama veri bulunamadı — URL'den gelen ismi kullan
+      if (!data) {
+        data = { name: kisiName, birthDate: params.get('dt') || '1990-01-01', gender: '' };
+      }
     }
 
     // 2. URL'de kisi yoksa → her zaman ANA KULLANICI (numerael_user_data)
