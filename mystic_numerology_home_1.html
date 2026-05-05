@@ -742,11 +742,37 @@
     (function() {
         var isPrem = window.premium && window.premium.isPremium();
 
+        // Kişisel ay titreşimini hesapla (haftalık enerji = aylık enerji bağlamı)
+        function _wkReduce(n) {
+            n = parseInt(n) || 0;
+            while (n > 9) {
+                n = String(n).split('').reduce(function(a,d){return a+parseInt(d);},0);
+                if (n===11||n===22||n===33) break;
+            }
+            return n;
+        }
+        function _wkPersonalMonth(birthDate) {
+            if (!birthDate) return null;
+            var parts = birthDate.split('-');
+            if (parts.length < 3) return null;
+            var bDay = parseInt(parts[2]);
+            var bMonth = parseInt(parts[1]);
+            var now = new Date();
+            var yearSum = String(now.getFullYear()).split('').reduce(function(a,d){return a+parseInt(d);},0);
+            var pYear = _wkReduce(bDay + bMonth + yearSum);
+            return _wkReduce(pYear + (now.getMonth()+1));
+        }
+
+        var _ud = null;
+        try { _ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null'); } catch(e) {}
+        var personalMonth = _ud && _ud.birthDate ? _wkPersonalMonth(_ud.birthDate) : null;
+        var vibNum = personalMonth || 7; // fallback: 7
+
         // Weekly Report Card: blur for free, full for premium
         var reportCard = document.getElementById('weekly-report-card');
         var reportContent = document.getElementById('weekly-report-content');
         if (reportCard && reportContent) {
-            var reportText = 'Bu hafta kisisel enerjin 7 titresiminin etkisi altinda. Ozellikle Carsamba ve Persembe gunleri ic sesinizi dinlemeye ozen gosterin. Hafta sonu romantik enerjiler yukseliyor — onemli konusmalari bu doneme planlayabilirsiniz. Kariyer alaninda sabir odul getirecek, aceleci kararlardan kacinin.';
+            var reportText = 'Bu hafta kisisel enerjin ' + vibNum + ' titresiminin etkisi altinda. Ozellikle Carsamba ve Persembe gunleri ic sesinizi dinlemeye ozen gosterin. Hafta sonu romantik enerjiler yukseliyor — onemli konusmalari bu doneme planlayabilirsiniz. Kariyer alaninda sabir odul getirecek, aceleci kararlardan kacinin.';
             if (isPrem) {
                 reportContent.innerHTML = '<p class="text-slate-700 dark:text-white/70 text-xs leading-relaxed">' + reportText + '</p>';
             } else {
