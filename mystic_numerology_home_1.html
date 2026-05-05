@@ -742,7 +742,7 @@
     (function() {
         var isPrem = window.premium && window.premium.isPremium();
 
-        // Kişisel ay titreşimini hesapla (haftalık enerji = aylık enerji bağlamı)
+        // Personal Day Number — sayfa üstündeki günlük titreşim ile aynı
         function _wkReduce(n) {
             n = parseInt(n) || 0;
             while (n > 9) {
@@ -751,7 +751,7 @@
             }
             return n;
         }
-        function _wkPersonalMonth(birthDate) {
+        function _wkPersonalDay(birthDate) {
             if (!birthDate) return null;
             var parts = birthDate.split('-');
             if (parts.length < 3) return null;
@@ -760,13 +760,14 @@
             var now = new Date();
             var yearSum = String(now.getFullYear()).split('').reduce(function(a,d){return a+parseInt(d);},0);
             var pYear = _wkReduce(bDay + bMonth + yearSum);
-            return _wkReduce(pYear + (now.getMonth()+1));
+            var pMonth = _wkReduce(pYear + (now.getMonth()+1));
+            return _wkReduce(pMonth + now.getDate());
         }
 
         var _ud = null;
         try { _ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null'); } catch(e) {}
-        var personalMonth = _ud && _ud.birthDate ? _wkPersonalMonth(_ud.birthDate) : null;
-        var vibNum = personalMonth || 7; // fallback: 7
+        var personalDay = _ud && _ud.birthDate ? _wkPersonalDay(_ud.birthDate) : null;
+        var vibNum = personalDay || 7; // fallback: 7
 
         // Weekly Report Card: blur for free, full for premium
         var reportCard = document.getElementById('weekly-report-card');
