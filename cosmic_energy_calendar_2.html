@@ -245,19 +245,42 @@
 
         var MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 
-        // Vibrasyon hesaplama (gün sayılarını topla)
-        function calcVibration(date) {
-            var d = date.getDate();
-            var m = date.getMonth() + 1;
-            var y = date.getFullYear();
-            var sum = 0;
-            ('' + d + m + y).split('').forEach(function (c) { sum += parseInt(c); });
-            while (sum > 9 && sum !== 11 && sum !== 22) {
-                var s2 = 0;
-                ('' + sum).split('').forEach(function (c) { s2 += parseInt(c); });
-                sum = s2;
+        // Numeroloji indirgeme (üstat sayılar 11/22/33 korunur)
+        function reduceNum(n) {
+            n = parseInt(n) || 0;
+            while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+                var s = 0;
+                ('' + n).split('').forEach(function (c) { s += parseInt(c); });
+                n = s;
             }
-            return sum;
+            return n;
+        }
+
+        // Kullanıcının doğum tarihini bir kez al — her render'da tekrar parse etme
+        var _userBirth = null;
+        try {
+            var _ud = JSON.parse(localStorage.getItem('numerael_user_data') || 'null');
+            if (_ud && _ud.birthDate) {
+                var _bp = _ud.birthDate.split('-');
+                if (_bp.length >= 3) {
+                    _userBirth = { day: parseInt(_bp[2]), month: parseInt(_bp[1]) };
+                }
+            }
+        } catch(e) {}
+
+        // Personal Day Number — kullanıcının doğum tarihine bağlı kişisel titreşim
+        // Doğum tarihi yoksa Universal Day Number'a fallback yapar
+        function calcVibration(date) {
+            if (_userBirth) {
+                var yearSum = String(date.getFullYear()).split('').reduce(function(a,c){return a+parseInt(c);},0);
+                var pYear = reduceNum(_userBirth.day + _userBirth.month + yearSum);
+                var pMonth = reduceNum(pYear + (date.getMonth() + 1));
+                return reduceNum(pMonth + date.getDate());
+            }
+            // Fallback: Universal Day Number
+            var sum = 0;
+            ('' + date.getDate() + (date.getMonth()+1) + date.getFullYear()).split('').forEach(function (c) { sum += parseInt(c); });
+            return reduceNum(sum);
         }
 
         // Günlük içerik verisi — fixed vibration map
